@@ -83,16 +83,16 @@ targets:
             - name: Create bin
               abortAfterFailed: false
               command: ${workspaceFolder}/pack/csky-elfabiv2-objcopy.exe -O binary ${OutDir}/${ProjectName}.elf ${OutDir}/${ProjectName}.bin
-              disable: false
+              disable: true
             - name: Compress bin
               abortAfterFailed: false
               command: ${workspaceFolder}/pack/prepare_firmware.py ${OutDir}/${ProjectName}.bin
-              disable: false
+              disable: true
           asm-compiler:
-            ASM_FLAGS: -D__NO_BOARD_INIT -DTXW4002ACK803
+            ASM_FLAGS: -mcpu=ck803 -g -pipe -D__NO_BOARD_INIT -DTXW4002ACK803
           beforeBuildTasks: []
           c/cpp-compiler:
-            C_FLAGS: -ffunction-sections -fdata-sections -D__NO_BOARD_INIT -DTXW4002ACK803 -D__CK803__-DSKBPOOL_ENABLE -DMPOOL_ALLOC -DCONFIG_UMAC4
+            C_FLAGS: -mcpu=ck803 -Os -g -Wall -ffunction-sections -fdata-sections -Wno-comment -Wno-unused-function -Wno-unused-but-set-variable -mno-required-printf -pipe -D__NO_BOARD_INIT -DTXW4002ACK803 -DSKBPOOL_ENABLE -DMPOOL_ALLOC -DCONFIG_UMAC4
             language-c: c11
             language-cpp: gnu++11
             one-elf-section-per-data: true
@@ -104,7 +104,7 @@ targets:
             output-debug-info: enable
           linker:
             $disableOutputTask: true
-            LD_FLAGS: -Wl,-zmax-page-size=1024 -Wl,-Map=project.map -Wl,--no-warn-mismatch
+            LD_FLAGS: -mcpu=ck803 -nostartfiles -Wl,--gc-sections -Wl,-zmax-page-size=1024 -Wl,-Map=project.map -Wl,--ckmap=txw4002a.map
             LIB_FLAGS: -L libs -lcore -lnetutils -lcommon -losal -latcmd -llmac -lwifi -lm
             linker-type: gcc
             output-format: elf
@@ -113,7 +113,7 @@ targets:
     uploadConfigMap:
       Custom:
         bin: ""
-        commandLine: ${workspaceFolder}/flasher/csky-usb-flasher.exe ${OutDir}/${ProjectName}.bin.packed.bin
+        commandLine: python ${workspaceFolder}/flasher/cklnk-flasher.py ${OutDir}/${ProjectName}.elf
         eraseChipCommand: ""
       JLink:
         baseAddr: ""
