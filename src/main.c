@@ -151,9 +151,11 @@ int32 wifi_proc_drvcmd_cust(uint16 cmd_id, uint8 *data, uint32 len, void *hdr)
 
 __init static void sys_cfg_load(void)
 {
+    #if SYSCFG_ENABLE
     if (syscfg_init(&sys_cfgs, sizeof(sys_cfgs)) == RET_OK) {
         return;
     }
+    #endif
 
     os_printf("use default params.\r\n");
     syscfg_set_default_val();

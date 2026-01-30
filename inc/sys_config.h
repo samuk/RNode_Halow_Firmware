@@ -5,7 +5,7 @@
 #define PROJECT_TYPE PRO_TYPE_FMAC
 
 #ifndef SYSCFG_ENABLE
-#define SYSCFG_ENABLE 1
+#define SYSCFG_ENABLE 0
 #endif
 
 #ifndef K_iPA

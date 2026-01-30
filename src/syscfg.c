@@ -54,7 +54,11 @@ struct sys_config sys_cfgs = {
 
 int32 syscfg_save(void)
 {
+#if SYSCFG_ENABLE
     return syscfg_write(&sys_cfgs, sizeof(sys_cfgs));
+#else
+    return RET_OK;
+#endif
 }
 
 int32 wificfg_save(int8 force)
@@ -163,11 +167,11 @@ void syscfg_set_default_val(void)
         sys_cfgs.chan_cnt = 2;
         sys_cfgs.bss_bw   = 2;
     } else { // 915M case
-        sys_cfgs.chan_list[0] = 9080;
+        sys_cfgs.chan_list[0] = 8660;
         sys_cfgs.chan_list[1] = 9160;
         sys_cfgs.chan_list[2] = 9240;
-        sys_cfgs.chan_cnt = 3;
-        sys_cfgs.bss_bw   = 8;
+        sys_cfgs.chan_cnt = 1;
+        sys_cfgs.bss_bw   = 1;
     }
 }
 
