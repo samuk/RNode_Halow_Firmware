@@ -70,7 +70,7 @@
 #endif
 
 #ifndef DEFAULT_SYS_CLK
-#define DEFAULT_SYS_CLK   64000000UL //options: 32M/48M/72M/144M, and 16*N from 64M to 128M
+#define DEFAULT_SYS_CLK   144000000UL //options: 32M/48M/72M/144M, and 16*N from 64M to 128M
 #endif
 
 #ifndef ATCMD_UARTDEV
@@ -94,7 +94,7 @@
 #endif
 
 #ifndef TX_POWER
-#define TX_POWER 10
+#define TX_POWER 2
 #endif
 
 #ifndef DC_DC_1_3V
@@ -106,7 +106,7 @@
 #endif
 
 #ifndef WIFI_AP_SUPPORT
-#define WIFI_AP_SUPPORT 1
+#define WIFI_AP_SUPPORT 0
 #endif
 
 #ifndef WIFI_STA_SUPPORT
@@ -138,7 +138,7 @@
 #endif
 
 #ifndef WIFI_DHCPC_SUPPORT
-#define WIFI_DHCPC_SUPPORT 1
+#define WIFI_DHCPC_SUPPORT 0
 #endif
 
 #ifndef SYS_APP_DSLEEP_TEST
@@ -150,11 +150,11 @@
 #endif
 
 #ifndef SYS_APP_PAIR
-#define SYS_APP_PAIR 1
+#define SYS_APP_PAIR 0
 #endif
 
 #ifndef SYS_APP_WNBOTA
-#define SYS_APP_WNBOTA 1
+#define SYS_APP_WNBOTA 0
 #endif
 
 #ifndef WNB_PAIRKEY_IO
@@ -174,11 +174,11 @@
 #endif
 
 #ifndef SYS_SAVE_PAIRSTA
-#define SYS_SAVE_PAIRSTA 1
+#define SYS_SAVE_PAIRSTA 0
 #endif
 
 #ifndef WIFI_MGR_CMD
-#define WIFI_MGR_CMD 1
+#define WIFI_MGR_CMD 0
 #endif
 
 #ifndef WIFI_PAIR_MAGIC

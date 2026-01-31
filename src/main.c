@@ -157,10 +157,6 @@ __init static void sys_cfg_load(void)
         return;
     }
     #endif
-
-    os_printf("use default params.\r\n");
-    syscfg_set_default_val();
-    syscfg_save();
 }
 
 __init static void sys_wifi_ap_init(void)
@@ -221,152 +217,89 @@ __init static void sys_wifi_start_acs(void *ops)
     }
 }
 
-__init static void sys_wifi_init(void)
+// __init static void sys_wifi_init(void){
+//     struct lmac_init_param lparam;
+//     struct ieee80211_initparam param;
+
+//     skbpool_init(SKB_POOL_ADDR, (uint32)SKB_POOL_SIZE, 90, 0);
+//     os_memset(&lparam, 0, sizeof(lparam));
+//     lparam.rxbuf = WIFI_RX_BUFF_ADDR;
+//     lparam.rxbuf_size = WIFI_RX_BUFF_SIZE;
+//     lparam.tdma_buff = TDMA_BUFF_ADDR;
+//     lparam.tdma_buff_size = TDMA_BUFF_SIZE;
+
+//     lparam.uart_tx_io = 0;//pa13 - ТУТ ПОТОМ ПЕРЕРАБОТАТЬ, СЕЙЧАС ЮЗАЮТСЯ ПИНЫ USB
+//     lparam.dual_ant = 0;//disable dual ant
+//     os_printf("lmac init\r\n");
+//     lmacops = lmac_ah_init(&lparam);
+
+//     os_memset(&param, 0, sizeof(param));
+//     param.vif_maxcnt = 4;
+//     param.sta_maxcnt = sys_cfgs.sta_max ? sys_cfgs.sta_max : 8;
+//     param.bss_maxcnt = 32;
+//     param.bss_lifetime  = 300; //300 seconds
+//     param.evt_cb = sys_ieee80211_event_cb;
+
+//     os_printf("ieee80211 init\r\n");
+//     ieee80211_init(&param);
+//     ieee80211_support_txw830x(lmacops);
+//     wifi_mgr_init(FMAC_MAC_BUS, WIFIMGR_FRM_TYPE, DRV_AGGSIZE, lmacops, NULL);
+//     ieee80211_deliver_init(128, 60);
+//     ieee80211_iface_create_sta(WIFI_MODE_STA, IEEE80211_BAND_S1GHZ);
+//     ieee80211_pair_enable(WIFI_MODE_STA, WIFI_PAIR_MAGIC);
+//     ieee80211_conf_stabr_table(WIFI_MODE_STA, 128, 10 * 60);
+//     wificfg_flush(WIFI_MODE_STA);
+//     uint8 ifidx = wificfg_get_ifidx(sys_cfgs.wifi_mode, 0);
+//     ieee80211_iface_start(ifidx);
+// }
+
+static void lmac_rx_handler(const struct hgic_rx_info *info, const uint8 *data, uint32 len)
+{
+    /* здесь ты получаешь “сырой” payload (как приходит из LMAC) */
+    (void)info;
+    (void)data;
+    (void)len;
+
+    /* пример: просто логнуть первые байты */
+    dump_hex("RX", (uint8 *)data, (len > 64) ? 64 : len, 1);
+}
+
+__init static void sys_wifi_init (void)
 {
     struct lmac_init_param lparam;
-    struct ieee80211_initparam param;
 
+    /* пул skb нужен для TX/RX skb */
     skbpool_init(SKB_POOL_ADDR, (uint32)SKB_POOL_SIZE, 90, 0);
+
     os_memset(&lparam, 0, sizeof(lparam));
-    lparam.rxbuf = WIFI_RX_BUFF_ADDR;
-    lparam.rxbuf_size = WIFI_RX_BUFF_SIZE;
-    lparam.tdma_buff = TDMA_BUFF_ADDR;
+    lparam.rxbuf          = WIFI_RX_BUFF_ADDR;
+    lparam.rxbuf_size     = WIFI_RX_BUFF_SIZE;
+    lparam.tdma_buff      = TDMA_BUFF_ADDR;
     lparam.tdma_buff_size = TDMA_BUFF_SIZE;
 
-#ifdef MACBUS_USB
-    lparam.uart_tx_io = 1;//pa11
-#else
-    #ifdef UART_TX_PA31
-        lparam.uart_tx_io = 2;//pa31
-    #else
-        lparam.uart_tx_io = 0;//pa13
-    #endif
-#endif
-    //os_printf("uart_tx_io=%d in main\r\n",lparam.uart_tx_io);
+    lparam.uart_tx_io = 0; /* pa13; как у тебя */
+    lparam.dual_ant   = 0;
 
-#ifdef DUAL_ANT_OPT
-    lparam.dual_ant = 1;//enable dual ant
-#else
-    lparam.dual_ant = 0;//disable dual ant
-#endif
+    os_printf("lmac-only init\r\n");
 
-    lmacops = lmac_ah_init(&lparam);
-
-    os_memset(&param, 0, sizeof(param));
-    param.vif_maxcnt = 4;
-    param.sta_maxcnt = sys_cfgs.sta_max ? sys_cfgs.sta_max : 8;
-    param.bss_maxcnt = 32;
-    param.bss_lifetime  = 300; //300 seconds
-    param.evt_cb = sys_ieee80211_event_cb;
-
-    ieee80211_init(&param);
-    ieee80211_support_txw830x(lmacops);
-    wifi_mgr_init(FMAC_MAC_BUS, WIFIMGR_FRM_TYPE, DRV_AGGSIZE, lmacops, NULL);
-
-    ieee80211_deliver_init(128, 60);
-
-#if WIFI_AP_SUPPORT
-    sys_wifi_ap_init();
-#endif
-
-#if WIFI_STA_SUPPORT
-    sys_wifi_sta_init();
-#endif
-
-#if WIFI_WNBAP_SUPPORT
-    sys_wifi_wnbap_init();
-#endif
-
-#if WIFI_WNBSTA_SUPPORT
-    sys_wifi_wnbsta_init();
-#endif
-
-#ifdef CONFIG_SLEEP
-#if WIFI_PSALIVE_SUPPORT
-    wifi_mgr_enable_psalive();
-#endif
-
-#if WIFI_PSCONNECT_SUPPORT
-    wifi_mgr_enable_psconnect();
-#endif
-#endif
-
-#if WIFI_MGR_CMD
-    wifi_mgrcmd_enable();
-#endif
-
-#if WIFI_DHCPC_SUPPORT
-    wifi_mgr_enable_dhcpc();
-#endif
-    //sys_wifi_start_acs(lmacops);
-    sys_wifi_start();
-
-    
-    uint8 ifidx = wificfg_get_ifidx(sys_cfgs.wifi_mode, 0);
-    os_printf("set ifidx %d mcast txrate %d\r\n", ifidx);
-    //ieee80211_conf_set_mcast_txrate(ifidx, txrate);
-}
-
-__init static void sys_network_init(void)
-{
-#if SYS_NETWORK_SUPPORT
-    ip_addr_t ipaddr, netmask, gw;
-    struct netdev *ndev;
-
-    tcpip_init(NULL, NULL);
-    sock_monitor_init();
-
-    /*register wifi netif: w0*/
-    ndev = (struct netdev *)dev_get(HG_WIFI0_DEVID);
-    if (ndev) {
-        ipaddr.addr  = sys_cfgs.ipaddr;
-        netmask.addr = sys_cfgs.netmask;
-        gw.addr      = sys_cfgs.gw_ip;
-        lwip_netif_add(ndev, "w0", &ipaddr, &netmask, &gw);
-        lwip_netif_set_default(ndev);
-        if (sys_cfgs.dhcpc_en) {
-            sys_status.dhcpc_done = 0;
-            lwip_netif_set_dhcp2("w0", 1);
-        }
+    /*
+     * lmac_only_init() внутри:
+     *  - вызовет lmac_ah_init(&lparam)
+     *  - сделает lmac_open()
+     *  - поставит свои hooks на rx/tx_status
+     */
+    (void)lparam; /* если внутри lmac_only_init ты не используешь lparam напрямую */
+    if (lmac_only_init(WIFI_RX_BUFF_ADDR, WIFI_RX_BUFF_SIZE, TDMA_BUFF_ADDR, TDMA_BUFF_SIZE) != 0) {
+        os_printf("lmac-only init failed\r\n");
+        return;
     }
-#endif
+
+    /* RX callback: теперь всё принятие идёт сюда (без ieee80211) */
+    lmac_raw_register_rx_cb(lmac_rx_handler);
+
+    //lmac_only_post_init(lparam);
+    //lmac_set_txpower(lmacops, 20); /* выставляем мощность TX, например 20 dBm */
 }
-
-__init static void sys_app_init(void)
-{
-#if SYS_APP_SNTP
-    sntp_client_init("ntp.aliyun.com", 60);
-#endif
-
-#if SYS_APP_PAIR
-    //sys_pairled_init();
-#endif
-
-#if SYS_APP_DSLEEP_TEST
-    dsleep_test_init(DSLEEP_TEST_SVR, 200);
-#endif
-
-#if SYS_APP_WNBOTA
-    wnb_ota_init();
-#endif
-
-#if SYS_APP_NETLOG
-    netlog_init(64320);
-#endif
-
-}
-
-#if (WIFI_STA_SUPPORT || WIFI_WNBSTA_SUPPORT) && SYS_NETWORK_SUPPORT
-static void sys_dhcpc_check(void)
-{
-    if (sys_cfgs.dhcpc_en && !sys_status.dhcpc_done) {
-        ip_addr_t ip = lwip_netif_get_ip2("w0");
-        if (ip.addr == 0) {
-            lwip_netif_set_dhcp2("w0", 1);
-        }
-    }
-}
-#endif
 
 static void sys_dbginfo_print(void)
 {
@@ -383,94 +316,36 @@ static void sys_dbginfo_print(void)
         if (sys_status.dbg_lmac) {
             lmac_transceive_statics(sys_status.dbg_lmac);
         }
-        if (sys_status.dbg_umac) {
-            ieee80211_status(_print_buf, sizeof(_print_buf));
-            wifi_mgr_status();
-        }
         if (sys_status.dbg_irq) {
             irq_status();
         }
-
-#if SYS_APP_SNTP //sample code for NTP
-        do {
-            struct timeval tv;
-            gettimeofday(&tv, 0);
-            tv.tv_sec  += 8 * 3600; //时区
-            os_printf("system time: %s\r\n", ctime((const time_t *)&tv.tv_sec));
-        } while (0);
-#endif
-
         print_interval = 0;
     }
 }
 
-
-#include <string.h>
-#include <stdint.h>
-
-
-static int32 ieee80211_scatter_demo (uint8 ifidx)
-{
-    /* 802.11 QoS Data header: 24 + 2 */
-    uint8 hdr[26];
-    uint8 payload[1] = { 0x00 };
-
-    static const uint8 da[6]    = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
-    static const uint8 sa[6]    = { 0x02, 0x00, 0x00, 0x00, 0x00, 0x01 };
-    static const uint8 bssid[6] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
-
-    scatter_data v[2];
-
-    memset(hdr, 0, sizeof(hdr));
-
-    /* Frame Control: QoS Data, pv0: 0x0088 (little endian) */
-    hdr[0] = 0x88;
-    hdr[1] = 0x00;
-
-    /* addr1/addr2/addr3 */
-    memcpy(&hdr[4],  da,    6);
-    memcpy(&hdr[10], sa,    6);
-    memcpy(&hdr[16], bssid, 6);
-
-    /* scatter: header + payload */
-    v[0].addr = hdr;
-    v[0].size = (uint32)sizeof(hdr);
-    v[1].addr = payload;
-    v[1].size = (uint32)sizeof(payload);
-    ieee80211_tx(ifidx, hdr, sizeof(hdr));
-    ah_ce_start();
-    return 0;
-}
-
-
-
-static int32 sys_main_loop(struct os_work *work)
-{
-    static uint8 pa7_val = 0;
-
-    //sys_dbginfo_print();
-
-#if (WIFI_STA_SUPPORT || WIFI_WNBSTA_SUPPORT) && SYS_NETWORK_SUPPORT
-    sys_dhcpc_check();
-#endif
-
-    /* blink PA7 */
-    pa7_val = !pa7_val;
-    gpio_set_val(PA_7, pa7_val);
-
-    /* run again after 1000 ms */
-    //uint8 ifidx = wificfg_get_ifidx(sys_cfgs.wifi_mode, 0);
-    //os_printf("TX state %d\r\n", ieee80211_scatter_demo(ifidx));
-    lmac_send_ant_pkt();
-    os_run_work_delay(&main_wk, 1);
-    return 0;
+static int32 sys_main_loop(struct os_work *work){
+    while(1){
+        static uint8 pa7_val = 0;
+        //sys_dbginfo_print();
+        pa7_val = !pa7_val;
+        gpio_set_val(PA_7, pa7_val);
+        
+        //lmac_send_ant_pkt();
+        //lmac_raw_tx((const uint8_t *)"Hello, LMAC!", 12);
+        os_sleep_ms(100);
+    }
 }
 
 __init int main(void)
 {
     extern uint32 __sinit, __einit;
     mcu_watchdog_timeout(0);
-    sys_cfg_load();
+    //sys_cfg_load();
+
+    os_printf("use default params.\r\n");
+    syscfg_set_default_val();
+    syscfg_save();
+
     syscfg_check();
 	
 	gpio_set_dir(PA_7, GPIO_DIR_OUTPUT);
@@ -480,14 +355,14 @@ __init int main(void)
     sys_event_take(0xffffffff, sys_event_hdl, 0);
     //sys_atcmd_init();
     sys_wifi_init();
-    sys_network_init();
-    sys_app_init();
+    //sys_network_init();
+    //sys_app_init();
 	OS_WORK_INIT(&main_wk, sys_main_loop, 0);
     os_run_work_delay(&main_wk, 1000);
     sys_check_wkreason(WKREASON_START_UP);
 
     //wificfg_set_tx_mcs(0); //set mcs0 for test
-    wificfg_set_beacon_int(60000);
+    //wificfg_set_beacon_int(60000);
     sysheap_collect_init(&sram_heap, (uint32)&__sinit, (uint32)&__einit);
     return 0;
 }

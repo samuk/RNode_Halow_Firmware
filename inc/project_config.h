@@ -15,8 +15,8 @@
 #endif
 
 #define CONFIG_SLEEP             //默认支持SLEEP
-#define WIFI_PSALIVE_SUPPORT 1   //默认支持标准协议的psmode2（服务器保活）
-#define WIFI_PSCONNECT_SUPPORT 1 //默认支持PSCONNECT（不连接状态时休眠和发起连接周期进行）
+#define WIFI_PSALIVE_SUPPORT 0   //默认支持标准协议的psmode2（服务器保活）
+#define WIFI_PSCONNECT_SUPPORT 0 //默认支持PSCONNECT（不连接状态时休眠和发起连接周期进行）
 
 #define WIFI_REPEATER_SUPPORT 0  //中继模式默认关掉的
 
