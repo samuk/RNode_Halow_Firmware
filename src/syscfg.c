@@ -26,7 +26,7 @@ extern void *lmacops;
 struct sys_config sys_cfgs = {
     .wifi_mode      = SYS_WIFI_MODE,
     .channel        = 0,
-    .beacon_int     = 500,
+    .beacon_int     = 60000,
     .dtim_period    = 2,
     .bss_max_idle   = 300,
     .key_mgmt       = WPA_KEY_MGMT_PSK,
@@ -35,9 +35,9 @@ struct sys_config sys_cfgs = {
     .gw_ip          = 0x010A0A0A,
     .auto_save      = 1,
     .pri_chan       = 3,
-    .tx_mcs         = 0xff,
+    .tx_mcs         = 0x00,
     .sta_max        = SYS_STA_MAX,
-    .acs_enable     = 1,
+    .acs_enable     = 0,
     .wkio_mode      = 0,
     .pa_pwrctrl_dis = DSLEEP_PAPWRCTL_DIS,
     .dcdc13         = DC_DC_1_3V,
@@ -171,7 +171,7 @@ void syscfg_set_default_val(void)
         sys_cfgs.chan_list[1] = 9160;
         sys_cfgs.chan_list[2] = 9240;
         sys_cfgs.chan_cnt = 1;
-        sys_cfgs.bss_bw   = 1;
+        sys_cfgs.bss_bw   = 2;
     }
 }
 

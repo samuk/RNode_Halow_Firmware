@@ -94,7 +94,7 @@
 #endif
 
 #ifndef TX_POWER
-#define TX_POWER 20
+#define TX_POWER 10
 #endif
 
 #ifndef DC_DC_1_3V

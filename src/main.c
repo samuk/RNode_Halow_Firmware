@@ -22,6 +22,7 @@
 #include "lib/net/skmonitor/skmonitor.h"
 #include "pairled.h"
 #include "syscfg.h"
+#include "lib/lmac/lmac_def.h"
 #ifdef MULTI_WAKEUP
 #include "lib/common/sleep_api.h"
 #include "hal/gpio.h"
@@ -38,7 +39,7 @@ struct system_status  sys_status=
     .dbg_lmac=2,
 };
 
-void *lmacops;
+struct lmac_ops* lmacops;
 
 extern void sys_check_wkreason(uint8 type);
 extern void lmac_transceive_statics(uint8 en);
@@ -297,8 +298,13 @@ __init static void sys_wifi_init(void)
 #if WIFI_DHCPC_SUPPORT
     wifi_mgr_enable_dhcpc();
 #endif
-    sys_wifi_start_acs(lmacops);
+    //sys_wifi_start_acs(lmacops);
     sys_wifi_start();
+
+    
+    uint8 ifidx = wificfg_get_ifidx(sys_cfgs.wifi_mode, 0);
+    os_printf("set ifidx %d mcast txrate %d\r\n", ifidx);
+    //ieee80211_conf_set_mcast_txrate(ifidx, txrate);
 }
 
 __init static void sys_network_init(void)
@@ -398,11 +404,51 @@ static void sys_dbginfo_print(void)
     }
 }
 
+
+#include <string.h>
+#include <stdint.h>
+
+
+static int32 ieee80211_scatter_demo (uint8 ifidx)
+{
+    /* 802.11 QoS Data header: 24 + 2 */
+    uint8 hdr[26];
+    uint8 payload[1] = { 0x00 };
+
+    static const uint8 da[6]    = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+    static const uint8 sa[6]    = { 0x02, 0x00, 0x00, 0x00, 0x00, 0x01 };
+    static const uint8 bssid[6] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+
+    scatter_data v[2];
+
+    memset(hdr, 0, sizeof(hdr));
+
+    /* Frame Control: QoS Data, pv0: 0x0088 (little endian) */
+    hdr[0] = 0x88;
+    hdr[1] = 0x00;
+
+    /* addr1/addr2/addr3 */
+    memcpy(&hdr[4],  da,    6);
+    memcpy(&hdr[10], sa,    6);
+    memcpy(&hdr[16], bssid, 6);
+
+    /* scatter: header + payload */
+    v[0].addr = hdr;
+    v[0].size = (uint32)sizeof(hdr);
+    v[1].addr = payload;
+    v[1].size = (uint32)sizeof(payload);
+    ieee80211_tx(ifidx, hdr, sizeof(hdr));
+    ah_ce_start();
+    return 0;
+}
+
+
+
 static int32 sys_main_loop(struct os_work *work)
 {
     static uint8 pa7_val = 0;
 
-    sys_dbginfo_print();
+    //sys_dbginfo_print();
 
 #if (WIFI_STA_SUPPORT || WIFI_WNBSTA_SUPPORT) && SYS_NETWORK_SUPPORT
     sys_dhcpc_check();
@@ -413,7 +459,10 @@ static int32 sys_main_loop(struct os_work *work)
     gpio_set_val(PA_7, pa7_val);
 
     /* run again after 1000 ms */
-    os_run_work_delay(&main_wk, 1000);
+    //uint8 ifidx = wificfg_get_ifidx(sys_cfgs.wifi_mode, 0);
+    //os_printf("TX state %d\r\n", ieee80211_scatter_demo(ifidx));
+    lmac_send_ant_pkt();
+    os_run_work_delay(&main_wk, 1);
     return 0;
 }
 
@@ -436,6 +485,9 @@ __init int main(void)
 	OS_WORK_INIT(&main_wk, sys_main_loop, 0);
     os_run_work_delay(&main_wk, 1000);
     sys_check_wkreason(WKREASON_START_UP);
+
+    //wificfg_set_tx_mcs(0); //set mcs0 for test
+    wificfg_set_beacon_int(60000);
     sysheap_collect_init(&sram_heap, (uint32)&__sinit, (uint32)&__einit);
     return 0;
 }

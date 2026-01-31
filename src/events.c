@@ -159,8 +159,8 @@ static const char *evt_name(uint16 evt)
 
 int32 sys_ieee80211_event_cb(uint8 ifidx, uint16 evt, uint32 param1, uint32 param2)
 {
-    os_printf("EVT if=%u evt=%u(%s) p1=0x%08x p2=0x%08x\r\n",
-          ifidx, evt, evt_name(evt), (unsigned)param1, (unsigned)param2);
+    os_printf("EVT if=%u evt=%u(%s)\r\n",
+          ifidx, evt, evt_name(evt));
 
     int32 ret = 0;
 
@@ -224,14 +224,14 @@ int32 sys_ieee80211_event_cb(uint8 ifidx, uint16 evt, uint32 param1, uint32 para
             sys_cfgs.channel = param2;
             break;
             case IEEE80211_EVENT_ADD_EXTRA_IE: {
-                os_printf("ADD_EXTRA_IE: skb=%p ctx=%p\r\n", (void *)param1, (void *)param2);
+                //os_printf("ADD_EXTRA_IE: skb=%p ctx=%p\r\n", (void *)param1, (void *)param2);
             
-                if (param1 >= 0x20000000 && param1 < 0x200C0000) {
-                    hex_dump32("skb(head)", (void *)param1, 64);
-                }
-                if (param2 >= 0x20000000 && param2 < 0x200C0000) {
-                    hex_dump32("ctx(head)", (void *)param2, 64);
-                }
+                //if (param1 >= 0x20000000 && param1 < 0x200C0000) {
+                //    hex_dump32("skb(head)", (void *)param1, 64);
+                //}
+                //if (param2 >= 0x20000000 && param2 < 0x200C0000) {
+                //    hex_dump32("ctx(head)", (void *)param2, 64);
+                //}
             } break;
         default:
             break;
