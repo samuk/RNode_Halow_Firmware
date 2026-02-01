@@ -35,7 +35,7 @@ struct sys_config sys_cfgs = {
     .gw_ip          = 0x010A0A0A,
     .auto_save      = 1,
     .pri_chan       = 3,
-    .tx_mcs         = 0x00,
+    .tx_mcs         = LMAC_RATE_S1G_1_NSS_MCS0,
     .sta_max        = SYS_STA_MAX,
     .acs_enable     = 0,
     .wkio_mode      = 0,
@@ -252,6 +252,8 @@ int32 wificfg_flush(uint8 ifidx)
 
     lmac_set_bss_bw(lmacops, sys_cfgs.bss_bw);
     lmac_set_tx_mcs(lmacops, sys_cfgs.tx_mcs);
+    lmac_set_fallback_mcs(lmacops, sys_cfgs.tx_mcs);
+    lmac_set_mcast_txmcs(lmacops, sys_cfgs.tx_mcs);
     lmac_set_txpower(lmacops, sys_cfgs.txpower);
     //lmac_set_pri_chan(lmacops, sys_cfgs.pri_chan);
     lmac_set_aggcnt(lmacops, sys_cfgs.agg_cnt);
