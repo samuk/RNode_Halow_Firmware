@@ -74,10 +74,12 @@ static void halow_post_init(struct lmac_ops *ops){
     lmac_set_freq(ops, sys_cfgs.chan_list[0]);
     lmac_set_bss_bw(ops, sys_cfgs.bss_bw);
     lmac_set_tx_mcs(ops, sys_cfgs.tx_mcs);
+    lmac_set_fix_tx_rate(ops, sys_cfgs.tx_mcs);
     lmac_set_fallback_mcs(ops, sys_cfgs.tx_mcs);
     lmac_set_mcast_txmcs(ops, sys_cfgs.tx_mcs);
     lmac_set_txpower(ops, sys_cfgs.txpower);
-    lmac_set_aggcnt(ops, sys_cfgs.agg_cnt);
+    lmac_set_aggcnt(ops, 1);
+    lmac_set_rx_aggcnt(ops, 1);
     lmac_set_auto_chan_switch(ops, !sys_cfgs.auto_chsw);
     lmac_set_wakeup_io(ops, sys_cfgs.wkup_io, sys_cfgs.wkio_edge);
     lmac_set_super_pwr(ops, sys_cfgs.super_pwr_set ? sys_cfgs.super_pwr : 1);
@@ -97,6 +99,9 @@ static void halow_post_init(struct lmac_ops *ops){
     lmac_set_standby(ops, sys_cfgs.standby_channel - 1, sys_cfgs.standby_period_ms * 1000);
     lmac_set_dbg_levle(ops, 0);
     lmac_set_cca_for_ce(ops, sys_cfgs.cca_for_ce);
+    lmac_set_retry_cnt(ops, 0, 0);
+    lmac_set_retry_fallback_cnt(ops, 0);
+    lmac_set_rts(ops, 0xFFFF);
 }
 
 /* ===== public API ===== */
