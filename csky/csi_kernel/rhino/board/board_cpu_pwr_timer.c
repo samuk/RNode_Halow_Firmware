@@ -19,7 +19,7 @@
 //#if (RHINO_CONFIG_CPU_TICKLESS > 0)
 
 #include "cpu_tickless.h"
-//#include "drv_timer.h"
+#include "drv_timer.h"
 #include "soc.h"
 
 //#define TIM_DBG

@@ -75,8 +75,9 @@ targets:
       - sdk/lib/usb_app
       - src/deep_sleep_placeholder.c
       - <virtual_root>/libcore.S
-      - src/halow.c
       - src/events.c
+      - src/pairsta.c
+      - sdk/lib/common/atcmd.c
     toolchain: ANY_GCC
     toolchainConfigMap:
       ANY_GCC:
@@ -109,7 +110,7 @@ targets:
           linker:
             $disableOutputTask: true
             LD_FLAGS: -mcpu=ck803 -nostartfiles -Wl,--gc-sections -Wl,-zmax-page-size=1024 -Wl,-Map=project.map -Wl,--ckmap=txw4002a.map
-            LIB_FLAGS: -L libs -lcore -lnetutils -lcommon -losal -latcmd -llmac -lwifi -lm
+            LIB_FLAGS: -L libs -lcore -lnetutils -lcommon -losal -llmac -lm
             linker-type: gcc
             output-format: elf
             print-mem-usage: true
