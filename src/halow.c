@@ -12,62 +12,61 @@
 /* ===== Wi-Fi HaLow fixed config ===== */
 
 /* Channel / RF */
-#define HALOW_FREQ_KHZ          8665        /* sys_cfgs.chan_list[0] */
-#define HALOW_BSS_BW            1           /* 1 MHz */
+#define HALOW_FREQ_KHZ 8665 /* sys_cfgs.chan_list[0] */
+#define HALOW_BSS_BW   1    /* 1 MHz */
 
 /* PHY / rate */
-#define HALOW_TX_MCS            LMAC_RATE_S1G_1_NSS_MCS0
+#define HALOW_TX_MCS LMAC_RATE_S1G_1_NSS_MCS0
 
 /* Power */
-#define HALOW_TX_POWER          8
-#define HALOW_PA_PWRCTRL_EN     1
-#define HALOW_VDD13_MODE        0
+#define HALOW_TX_POWER      8
+#define HALOW_PA_PWRCTRL_EN 1
+#define HALOW_VDD13_MODE    0
 
 /* Antenna */
-#define HALOW_DUAL_ANT_EN       0
-#define HALOW_ANT_AUTO_EN       0
-#define HALOW_ANT_SEL           0
+#define HALOW_DUAL_ANT_EN 0
+#define HALOW_ANT_AUTO_EN 0
+#define HALOW_ANT_SEL     0
 
 /* Aggregation */
-#define HALOW_TX_AGGCNT         1
-#define HALOW_RX_AGGCNT         1
+#define HALOW_TX_AGGCNT 1
+#define HALOW_RX_AGGCNT 1
 
 /* Power save / sleep */
-#define HALOW_PS_MODE           DSLEEP_MODE_NONE
-#define HALOW_WAIT_PSMODE       DSLEEP_WAIT_MODE_PS_CONNECT
-#define HALOW_PSCONNECT_PERIOD  60
+#define HALOW_PS_MODE          DSLEEP_MODE_NONE
+#define HALOW_WAIT_PSMODE      DSLEEP_WAIT_MODE_PS_CONNECT
+#define HALOW_PSCONNECT_PERIOD 60
 
 /* Standby */
-#define HALOW_STANDBY_CH        1           /* channel index starts from 1 */
+#define HALOW_STANDBY_CH        1 /* channel index starts from 1 */
 #define HALOW_STANDBY_PERIOD_MS 5000
 
 /* ACK / retry */
-#define HALOW_ACK_TMO_EXTRA     0
-#define HALOW_RETRY_FRM_MAX     0
-#define HALOW_RETRY_RTS_MAX     0
-#define HALOW_RETRY_FB_CNT      0
-#define HALOW_RTS_THRESH        0xFFFF
+#define HALOW_ACK_TMO_EXTRA 0
+#define HALOW_RETRY_FRM_MAX 0
+#define HALOW_RETRY_RTS_MAX 0
+#define HALOW_RETRY_FB_CNT  0
+#define HALOW_RTS_THRESH    0xFFFF
 
 /* CCA */
-#define HALOW_CCA_FOR_CE        0
+#define HALOW_CCA_FOR_CE 0
 
 /* Wakeup */
-#define HALOW_WAKEUP_IO         0
-#define HALOW_WAKEUP_EDGE       0
+#define HALOW_WAKEUP_IO   0
+#define HALOW_WAKEUP_EDGE 0
 
 /* Debug */
-#define HALOW_DBG_LEVEL         0
-
+#define HALOW_DBG_LEVEL 0
 
 /* ===== internal state ===== */
 
 static struct lmac_ops *g_ops = NULL;
-static halow_rx_cb      g_rx_cb;
-static uint16_t         g_seq;
+static halow_rx_cb g_rx_cb;
+static uint16_t g_seq;
 
 /* ===== helpers ===== */
 
-static inline void mac_bcast(uint8_t mac[6]){
+static inline void mac_bcast(uint8_t mac[6]) {
     memset(mac, 0xff, 6);
 }
 
@@ -76,7 +75,7 @@ static inline void mac_bcast(uint8_t mac[6]){
 static int32_t halow_lmac_rx(struct lmac_ops *ops,
                              struct hgic_rx_info *info,
                              uint8_t *data,
-                             int32_t len){
+                             int32_t len) {
     (void)ops;
 
     if (!data || len < (int32_t)sizeof(struct ieee80211_hdr)) {
@@ -90,7 +89,7 @@ static int32_t halow_lmac_rx(struct lmac_ops *ops,
     }
 
     const uint8_t *payload = data + sizeof(*hdr);
-    int32_t payload_len = len - (int32_t)sizeof(*hdr);
+    int32_t payload_len    = len - (int32_t)sizeof(*hdr);
 
     if (payload_len <= 0 || !g_rx_cb) {
         return 0;
@@ -101,7 +100,7 @@ static int32_t halow_lmac_rx(struct lmac_ops *ops,
 }
 
 static int32_t halow_lmac_tx_status(struct lmac_ops *ops,
-                                   struct sk_buff *skb){
+                                    struct sk_buff *skb) {
     (void)ops;
     if (skb) {
         kfree_skb(skb);
@@ -110,11 +109,9 @@ static int32_t halow_lmac_tx_status(struct lmac_ops *ops,
 }
 
 /* ===== LMAC post-init ===== */
-static void halow_post_init(struct lmac_ops *ops)
-{
+static void halow_post_init(struct lmac_ops *ops) {
     static uint8 g_mac[6] = {
-        0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
-    };
+        0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
     /* ---- basic bring-up ---- */
     ops->ioctl(ops, LMAC_IOCTL_SET_MAC_ADDR,
@@ -180,7 +177,7 @@ static void halow_post_init(struct lmac_ops *ops)
 /* ===== public API ===== */
 
 bool halow_init(uint32_t rxbuf, uint32_t rxbuf_size,
-                uint32_t tdma_buf, uint32_t tdma_buf_size){
+                uint32_t tdma_buf, uint32_t tdma_buf_size) {
     struct lmac_init_param p;
 
     memset(&p, 0, sizeof(p));
@@ -211,11 +208,11 @@ bool halow_init(uint32_t rxbuf, uint32_t rxbuf_size,
     return true;
 }
 
-void halow_set_rx_cb(halow_rx_cb cb){
+void halow_set_rx_cb(halow_rx_cb cb) {
     g_rx_cb = cb;
 }
 
-bool halow_tx(const uint8_t *data, int32_t len){
+bool halow_tx(const uint8_t *data, int32_t len) {
     if (!g_ops || !data || len <= 0) {
         return false;
     }
@@ -231,8 +228,8 @@ bool halow_tx(const uint8_t *data, int32_t len){
     g_seq++;
     hdr.seq_ctrl = (uint16_t)((g_seq & 0x0fff) << 4);
 
-    uint32_t hr = (uint32_t)g_ops->headroom;
-    uint32_t tr = (uint32_t)g_ops->tailroom;
+    uint32_t hr   = (uint32_t)g_ops->headroom;
+    uint32_t tr   = (uint32_t)g_ops->tailroom;
     uint32_t need = hr + sizeof(hdr) + (uint32_t)len + tr;
 
     struct sk_buff *skb = alloc_tx_skb(need);

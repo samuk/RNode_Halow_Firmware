@@ -10,19 +10,18 @@
 
 #define USING_TX_SQ
 #define TDMA_DEBUG
-#define RXSUBFRAME_EN       1
-#define RXSUBFRAME_PERIOD   (5)
-
+#define RXSUBFRAME_EN     1
+#define RXSUBFRAME_PERIOD (5)
 
 #define CONFIG_SLEEP
-//#define SYS_IRQ_STAT
+// #define SYS_IRQ_STAT
 
 #define SYS_FACTORY_PARAM_SIZE 2048
 
-//#define SYS_CACHE_ENABLE                1
+// #define SYS_CACHE_ENABLE                1
 
 #ifndef TDMA_BUFF_SIZE
-#define TDMA_BUFF_SIZE    (0)
+#define TDMA_BUFF_SIZE (0)
 #endif
 
 #ifndef SYS_STA_MAX
@@ -31,23 +30,23 @@
 
 #ifndef SYS_HEAP_SIZE
 #if SYS_STA_MAX <= 8
-#define SYS_HEAP_SIZE     (60*1024)
+#define SYS_HEAP_SIZE (60 * 1024)
 #else
-#define SYS_HEAP_SIZE     (60*1024+64*1024)
+#define SYS_HEAP_SIZE (60 * 1024 + 64 * 1024)
 #endif
 #endif
 
 #ifndef WIFI_RX_BUFF_SIZE
-#define WIFI_RX_BUFF_SIZE (80*1024)//(17*1024)
+#define WIFI_RX_BUFF_SIZE (80 * 1024) //(17*1024)
 #endif
 
 #define SRAM_POOL_START   (srampool_start)
 #define SRAM_POOL_SIZE    (srampool_end - srampool_start)
 #define TDMA_BUFF_ADDR    (SRAM_POOL_START)
-#define SYS_HEAP_START    (TDMA_BUFF_ADDR+TDMA_BUFF_SIZE)
-#define WIFI_RX_BUFF_ADDR (SYS_HEAP_START+SYS_HEAP_SIZE)
-#define SKB_POOL_ADDR     (WIFI_RX_BUFF_ADDR+WIFI_RX_BUFF_SIZE)
-#define SKB_POOL_SIZE     (SRAM_POOL_START+SRAM_POOL_SIZE-SKB_POOL_ADDR)
+#define SYS_HEAP_START    (TDMA_BUFF_ADDR + TDMA_BUFF_SIZE)
+#define WIFI_RX_BUFF_ADDR (SYS_HEAP_START + SYS_HEAP_SIZE)
+#define SKB_POOL_ADDR     (WIFI_RX_BUFF_ADDR + WIFI_RX_BUFF_SIZE)
+#define SKB_POOL_SIZE     (SRAM_POOL_START + SRAM_POOL_SIZE - SKB_POOL_ADDR)
 
 #ifndef K_iPA
 #define K_EXT_PA
@@ -56,8 +55,8 @@
 #define K_SWITCH_PWR_PA22
 #define K_SINGLE_PIN_SWITCH
 
-#define RF_PARA_FROM_NOR   //if open it to read parameter from nor in case efuse is not ready
-//when efuse data is ready, close it
+#define RF_PARA_FROM_NOR // if open it to read parameter from nor in case efuse is not ready
+// when efuse data is ready, close it
 
 #ifndef TRV_PILOT
 #define TRV_PILOT 1
@@ -70,31 +69,31 @@
 #endif
 
 #ifndef DEFAULT_SYS_CLK
-#define DEFAULT_SYS_CLK   96000000UL //options: 32M/48M/72M/144M, and 16*N from 64M to 128M
+#define DEFAULT_SYS_CLK 96000000UL // options: 32M/48M/72M/144M, and 16*N from 64M to 128M
 #endif
 
 #ifndef ATCMD_UARTDEV
-#define ATCMD_UARTDEV     HG_UART1_DEVID
+#define ATCMD_UARTDEV HG_UART1_DEVID
 #endif
 
 #ifndef WIFI_RTS_THRESHOLD
-#define WIFI_RTS_THRESHOLD              2304
+#define WIFI_RTS_THRESHOLD 2304
 #endif
 
 #ifndef WIFI_RTS_MAX_RETRY
-#define WIFI_RTS_MAX_RETRY              2
+#define WIFI_RTS_MAX_RETRY 2
 #endif
 
 #ifndef WIFI_TX_MAX_RETRY
-#define WIFI_TX_MAX_RETRY               7
+#define WIFI_TX_MAX_RETRY 7
 #endif
 
 #ifndef WIFI_MULICAST_RETRY
-#define WIFI_MULICAST_RETRY             0           //组播帧传输次数
+#define WIFI_MULICAST_RETRY 0 // 组播帧传输次数
 #endif
 
 #ifndef WIFI_MAX_PS_CNT
-#define WIFI_MAX_PS_CNT                 10          //底层为休眠sta缓存的帧最大数量。0代表sta休眠由umac全程管理，底层不缓存
+#define WIFI_MAX_PS_CNT 10 // 底层为休眠sta缓存的帧最大数量。0代表sta休眠由umac全程管理，底层不缓存
 #endif
 
 #ifndef GMAC_ENABLE
@@ -118,15 +117,15 @@
 #endif
 
 #ifndef WIFI_WNBAP_SUPPORT
-#define WIFI_WNBAP_SUPPORT 0 //支持私有协议的AP
+#define WIFI_WNBAP_SUPPORT 0 // 支持私有协议的AP
 #endif
 
 #ifndef WIFI_WNBSTA_SUPPORT
-#define WIFI_WNBSTA_SUPPORT 0 //支持私有协议的STA
+#define WIFI_WNBSTA_SUPPORT 0 // 支持私有协议的STA
 #endif
 
 #ifndef WNB_PSALIVE_SUPPORT
-#define WNB_PSALIVE_SUPPORT 0 //支持私有协议的psmode2
+#define WNB_PSALIVE_SUPPORT 0 // 支持私有协议的psmode2
 #endif
 
 #ifndef SYS_APP_DHCPD
@@ -209,7 +208,6 @@
 #define SYS_APP_POWER_CTRL 0
 #endif
 
-
 #ifndef SYS_SAVE_PAIRSTA
 #define SYS_SAVE_PAIRSTA 1
 #endif
@@ -232,7 +230,7 @@
 #define HG_GMAC_MDIO_PIN PA_10
 #endif
 #ifndef HG_GMAC_MDC_PIN
-#define HG_GMAC_MDC_PIN  PA_11
+#define HG_GMAC_MDC_PIN PA_11
 #endif
 
 #ifndef WIFI_PSALIVE_SUPPORT
@@ -248,7 +246,7 @@
 #endif
 
 #ifndef LWIP_RAW
-#define LWIP_RAW  1 //support at+ping
+#define LWIP_RAW 1 // support at+ping
 #endif
 
 #ifndef WIFI_REPEATER_SUPPORT
@@ -263,8 +261,6 @@
 #define WNB_TX_POWER 20
 #endif
 
-#define ANT_CTRL_PIN PB_1        //网桥用PB1来做双天线选择
-
+#define ANT_CTRL_PIN PB_1 // 网桥用PB1来做双天线选择
 
 #endif
-
