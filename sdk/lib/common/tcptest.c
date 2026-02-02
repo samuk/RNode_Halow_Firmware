@@ -31,7 +31,7 @@
 #include "lwip/tcpip.h"
 #include "netif/ethernetif.h"
 #include "syscfg.h"
-#include "pairled.h"
+//#include "pairled.h"
 
 static struct os_task tcptest_task;
 static in_addr_t tcptest_ip = 0;
