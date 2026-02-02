@@ -59,9 +59,7 @@ static void sys_save_pairsta(uint8 *mac, uint8 del)
     // STA mode only save one AP
     if (MODE_IS_STA(sys_cfgs.wifi_mode)) {
         if (del) {
-            if (MAC_EQU(sys_cfgs.pair_stas[0], mac)) { // MAC此时不相等的话，说明外面重新设置了paired_sta
-                os_memset(sys_cfgs.pair_stas[0], 0, 6);
-            }
+            os_memset(sys_cfgs.pair_stas[0], 0, 6);
         } else {
             os_memcpy(sys_cfgs.pair_stas[0], mac, 6);
         }

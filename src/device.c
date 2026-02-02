@@ -45,11 +45,11 @@
 #include "dev/timer/hgtimer_v2.h"
 #include "dev/dma/hg_m2m_dma.h"
 #include "dev/usb/hgusb11_dev_api.h"
+#include "dev/emac/hg_gmac_eva.h"
 #include "dev/spi/hgspi_dw.h"
 #include "dev/crc/hg_crc.h"
 #include "dev/sysaes/hg_sysaes.h"
 
-#include "device.h"
 #include "syscfg.h"
 
 extern const struct hgwphy_ah_cfg nphyahcfg;
@@ -58,6 +58,7 @@ extern const uint32 rx_imb_iq_normal[6];
 extern const union hgdbgpath_cfg ndbgpathcfg;
 extern const union hgrfmipi_cfg nrfmipicfg;
 extern struct dma_device *m2mdma;
+struct sys_config sys_cfgs;
 
 struct hgusb11_dev usb_dev = {
     .usb_hw = (struct hgusb11_dev_hw *)HG_USB11_DEVICE_BASE,
@@ -127,6 +128,18 @@ struct mem_dma_dev mem_dma = {
     .hw      = (struct mem_dma_hw *)M2M_DMA0_BASE,
 };
 
+struct hg_gmac_eva gmac = {
+    .hw      = (struct hg_gmac_eva_hw *)HG_GMAC_BASE,
+    .irq_num = GMAC_IRQn,
+    .tx_buf_size = 8*1024,
+    .rx_buf_size = 8*1024,
+    .modbus_devid  = HG_ETH_MDIOBUS0_DEVID,
+    .phy_devid     = HG_ETHPHY0_DEVID,
+#ifdef HG_GMAC_IO_SIMULATION
+    .mdio_pin = HG_GMAC_MDIO_PIN,
+    .mdc_pin  = HG_GMAC_MDC_PIN,
+#endif
+};
 
 struct hg_sysaes sysaes = {
     .hw = (struct hg_sysaes_hw *)SYS_AES_BASE,
@@ -195,12 +208,7 @@ __init void device_init(void)
     hguart_attach(HG_UART0_DEVID, &uart0);
     hguart_attach(HG_UART1_DEVID, &uart1);
     
-#ifdef MACBUS_SDIO
     hgsdio20_slave_attach(HG_SDIOSLAVE_DEVID, &sdioslave);
-#endif
-#ifdef MACBUS_USB
-    hgusb11_dev_attach(HG_USBDEV_DEVID, &usb_dev);
-#endif
 
 #ifndef SYS_IRQ_STAT
     hgtimer_v2_attach(HG_TIMER0_DEVID, &timer0);
@@ -211,7 +219,10 @@ __init void device_init(void)
     m2mdma = (struct dma_device *)&mem_dma;
 
     dw_dmac_attach(HG_DMAC_DEVID, &dmac);
+
+    //hgusb11_dev_attach(HG_USBDEV_DEVID, &usb_dev);
     
+
     hg_sysaes_attach(HG_HWAES0_DEVID, &sysaes);
     
     //spi_nor_master
@@ -219,14 +230,20 @@ __init void device_init(void)
     spi_nor_attach(&flash0, HG_FLASH0_DEVID);
     hg_crc_attach(HG_CRC_DEVID, &crc32_module);
 
+#if GMAC_ENABLE
+    hg_gmac_attach(HG_GMAC_DEVID, &gmac);
+    eth_mdio_bus_attach(HG_ETH_MDIOBUS0_DEVID, &mdio_bus0);
+    eth_phy_attach(HG_ETHPHY0_DEVID, &ethernet_phy0);
+#endif
+
     hgspi_dw_attach(HG_SPI1_DEVID, &spi1);
 
 //cfg print
 #ifdef MACBUS_USB
-    uart_open((struct uart_device *)&uart0, HGUART_DEFAULT_BAUDRATE);
+    uart_open((struct uart_device *)&uart0, 115200);
     console_handle = &uart0;
 #else
-    uart_open((struct uart_device *)&uart1, HGUART_DEFAULT_BAUDRATE);
+    uart_open((struct uart_device *)&uart1, 2000000);
     console_handle = &uart1;
 #endif
 }

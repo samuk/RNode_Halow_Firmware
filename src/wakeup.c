@@ -6,13 +6,14 @@
 
 void sys_wakeup_host(void)
 {
+	/*
     if (sys_cfgs.wkio_mode == 0) {
         gpio_set_val(PB_0, 1);
         os_sleep_ms(2);
         gpio_set_val(PB_0, 0);
     } else {
         gpio_set_val(PB_0, 1);
-    }
+    }*/
     os_printf(KERN_NOTICE"wakeup host ...\r\n");
 }
 
