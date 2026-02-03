@@ -66,8 +66,7 @@ __init static void sys_network_init(void) {
     sock_monitor_init();
 
     ndev = (struct netdev *)dev_get(HG_GMAC_DEVID);
-    uint8 mac[6] = {0x11, 0x22, 0x33, 0x44, 0x55, 0x66};
-    netdev_set_macaddr(ndev, &mac);
+    netdev_set_macaddr(ndev, sys_cfgs.mac);
     if (ndev) {
         lwip_netif_add(ndev, "e0", NULL, NULL, NULL);
         lwip_netif_set_default(ndev);
@@ -96,6 +95,12 @@ static int32 sys_main_loop(struct os_work *work) {
 }
 
 __init static void sys_cfg_load(void) {
+    sysctrl_efuse_mac_addr_calc(sys_cfgs.mac);
+    if (IS_ZERO_ADDR(sys_cfgs.mac)) {
+        os_random_bytes(sys_cfgs.mac, 6);
+        sys_cfgs.mac[0] &= 0xfe;
+        os_printf("use random mac "MACSTR"\r\n", MAC2STR(sys_cfgs.mac));
+    }
     if (syscfg_init(&sys_cfgs, sizeof(sys_cfgs)) == RET_OK) {
         return;
     }
