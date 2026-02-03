@@ -78,8 +78,6 @@ targets:
       - src/events.c
       - src/pairsta.c
       - sdk/lib/common/atcmd.c
-      - src/wakeup.c
-      - sdk/lib/common/tcptest.c
     toolchain: ANY_GCC
     toolchainConfigMap:
       ANY_GCC:
@@ -108,6 +106,7 @@ targets:
             signed-char: true
             warnings: unspecified
           global:
+            misc-control: -DLWIP_DEBUG
             output-debug-info: enable
           linker:
             $disableOutputTask: true

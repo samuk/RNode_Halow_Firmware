@@ -95,12 +95,6 @@ static int32 sys_main_loop(struct os_work *work) {
 }
 
 __init static void sys_cfg_load(void) {
-    sysctrl_efuse_mac_addr_calc(sys_cfgs.mac);
-    if (IS_ZERO_ADDR(sys_cfgs.mac)) {
-        os_random_bytes(sys_cfgs.mac, 6);
-        sys_cfgs.mac[0] &= 0xfe;
-        os_printf("use random mac "MACSTR"\r\n", MAC2STR(sys_cfgs.mac));
-    }
     if (syscfg_init(&sys_cfgs, sizeof(sys_cfgs)) == RET_OK) {
         return;
     }
