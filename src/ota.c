@@ -16,20 +16,10 @@
 #include "libota.h"
 #include "fw.h"
 #include "syscfg.h"
+#include "basic_include.h"
 
 extern struct sys_config sys_cfgs; // Should be removed
 extern int32_t __real_lwip_netif_hook_inputdata(struct netif* nif, uint8_t* data, uint32_t len);
-
-static inline uint16_t __be16(uint16_t v){
-    return (uint16_t)((v >> 8) | (v << 8));
-}
-
-static inline uint32_t __be32(uint32_t v){
-    return ((v & 0x000000FFU) << 24) |
-           ((v & 0x0000FF00U) <<  8) |
-           ((v & 0x00FF0000U) >>  8) |
-           ((v & 0xFF000000U) >> 24);
-}
 
 static int ota_cmd_firmware_data(struct netif* nif, uint8_t* data, uint32_t len){
     if (nif == NULL) {
@@ -132,7 +122,7 @@ static int ota_cmd_scan(struct netif* nif, uint8_t* data, uint32_t len){
     answer_hdr.status = 0;
     struct eth_ota_scan_report answer_report;
     memset(&answer_report, 0, sizeof(struct eth_ota_scan_report));
-    answer_report.app_version = 0xff00ff00; // Placeholder
+    answer_report.version = 0xff00ff00; // Placeholder
     
     uint16_t frame_len = (uint16_t)(sizeof(answer_hdr) + sizeof(answer_report));
 

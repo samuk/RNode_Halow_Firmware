@@ -7,7 +7,7 @@ import struct
 from pathlib import Path
 
 
-INI_NAME = "makecode.ini"  # фиксированное имя ini рядом со скриптом (если есть)
+INI_NAME = ""#"makecode.ini"  # фиксированное имя ini рядом со скриптом (если есть)
 
 # Минимальный валидный param-блок (как в factory BIN):
 # В 0x200 лежит u16 LE длина, дальше данные. Для твоего param.bin: 04 00 2B 1A.

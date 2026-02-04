@@ -14,6 +14,7 @@
 #define RXSUBFRAME_PERIOD (5)
 
 #define IP_SOF_BROADCAST 1
+#define LWIP_NETIF_HOSTNAME        1
 // #define SYS_IRQ_STAT
 
 #define SYS_FACTORY_PARAM_SIZE 2048

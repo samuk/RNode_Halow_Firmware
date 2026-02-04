@@ -23,6 +23,7 @@
 #include "syscfg.h"
 #include "lib/lmac/lmac_def.h"
 #include "halow.h"
+#include "kiss_task.h"
 #ifdef MULTI_WAKEUP
 #include "lib/common/sleep_api.h"
 #include "hal/gpio.h"
@@ -38,7 +39,7 @@ extern uint32_t srampool_end;
 __attribute__((used))
 struct system_status sys_status;
 
-extern void lmac_transceive_statics(uint8 en);
+//extern void lmac_transceive_statics(uint8 en);
 
 static void halow_rx_handler(struct hgic_rx_info *info,
                              const uint8 *data,
@@ -48,23 +49,15 @@ static void halow_rx_handler(struct hgic_rx_info *info,
     if (!data || len <= 0) {
         return;
     }
-
-    os_printf("RX %d bytes: ", len);
-
-    for (int32 i = 0; i < len; i++) {
-        uint8 c = data[i];
-        if (c >= 32 && c <= 126) {
-            _os_printf("%c", c);
-        } else {
-            _os_printf(".");
-        }
-    }
-
+    kiss_radio_rx(data, len);
     _os_printf("\r\n");
 }
 
 __init static void sys_network_init(void) {
     struct netdev *ndev;
+    struct netif  *nif;
+    static char hostname[sizeof("RNode-Halow-XXXXXX")];
+
     tcpip_init(NULL, NULL);
     sock_monitor_init();
 
@@ -73,6 +66,13 @@ __init static void sys_network_init(void) {
     if (ndev) {
         lwip_netif_add(ndev, "e0", NULL, NULL, NULL);
         lwip_netif_set_default(ndev);
+        
+        nif = netif_find("e0");
+        if (nif) {
+            snprintf(hostname,sizeof(hostname),"RNode-Halow-%02X%02X%02X",nif->hwaddr[3],nif->hwaddr[4],nif->hwaddr[5]);
+            nif->hostname = hostname;   // ← ВАЖНО: до DHCP
+        }
+
         lwip_netif_set_dhcp2("e0", 1);
         os_printf("add e0 interface!\r\n");
     }else{
@@ -90,7 +90,7 @@ static int32 sys_main_loop(struct os_work *work) {
     pa7_val = !pa7_val;
     gpio_set_val(PA_7, pa7_val);
 
-    int32_t len = os_snprintf(buf, sizeof(buf), "SEQ=%lu", (unsigned long)seq++);
+    //int32_t len = os_snprintf(buf, sizeof(buf), "SEQ=%lu", (unsigned long)seq++);
     //halow_tx((const uint8_t *)buf, len);
 
     os_run_work_delay(&main_wk, 300);
@@ -130,10 +130,23 @@ void assert_printf(char *msg, int line, char *file){
     for (;;) {}
 }
 
+void kiss_init(void) {
+    static const struct kiss_task_cfg cfg = {
+        .tcp_port     = 8001,
+        .kiss_port    = 0,
+        .radio_tx     = halow_tx,
+        .on_connect   = NULL,
+        .on_disconnect= NULL,
+    };
+
+    kiss_task_init(&cfg);
+}
+
 __init int main(void) {
     extern uint32 __sinit, __einit;
-    mcu_watchdog_timeout(0);
+    mcu_watchdog_timeout(5);
     sys_cfg_load();
+    sysctrl_efuse_mac_addr_calc(sys_cfgs.mac);
     syscfg_save();
 
     syscfg_check();
@@ -141,8 +154,10 @@ __init int main(void) {
     sys_event_take(0xffffffff, sys_event_hdl, 0);
 
     skbpool_init(SKB_POOL_ADDR, (uint32)SKB_POOL_SIZE, 90, 0);
-    //halow_init(WIFI_RX_BUFF_ADDR, WIFI_RX_BUFF_SIZE, TDMA_BUFF_ADDR, TDMA_BUFF_SIZE);
-    //halow_set_rx_cb(halow_rx_handler);
+    halow_init(WIFI_RX_BUFF_ADDR, WIFI_RX_BUFF_SIZE, TDMA_BUFF_ADDR, TDMA_BUFF_SIZE);
+    halow_set_rx_cb(halow_rx_handler);
+    kiss_init();
+
 
     gpio_set_dir(PA_7, GPIO_DIR_OUTPUT);
     gpio_set_val(PA_7, 0);

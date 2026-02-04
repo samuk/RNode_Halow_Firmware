@@ -19,7 +19,7 @@
 #define HALOW_TX_MCS LMAC_RATE_S1G_1_NSS_MCS0
 
 /* Power */
-#define HALOW_TX_POWER      8
+#define HALOW_TX_POWER      20
 #define HALOW_PA_PWRCTRL_EN 1
 #define HALOW_VDD13_MODE    0
 
@@ -212,7 +212,7 @@ void halow_set_rx_cb(halow_rx_cb cb) {
     g_rx_cb = cb;
 }
 
-bool halow_tx(const uint8_t *data, int32_t len) {
+int32_t halow_tx(const uint8_t *data, uint32_t len) {
     if (!g_ops || !data || len <= 0) {
         return false;
     }
@@ -244,5 +244,5 @@ bool halow_tx(const uint8_t *data, int32_t len) {
     skb->priority = 0;
     skb->tx       = 1;
 
-    return (lmac_tx(g_ops, skb) == 0);
+    return lmac_tx(g_ops, skb);
 }

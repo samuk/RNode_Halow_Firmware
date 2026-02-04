@@ -14,4 +14,4 @@ bool halow_init(uint32_t rxbuf, uint32_t rxbuf_size,
                 uint32_t tdma_buf, uint32_t tdma_buf_size);
 
 void halow_set_rx_cb(halow_rx_cb cb);
-bool halow_tx(const uint8_t *data, int32_t len);
+int32_t halow_tx(const uint8_t *data, uint32_t len);
