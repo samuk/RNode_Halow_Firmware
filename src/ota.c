@@ -13,8 +13,8 @@
 #include "lwip/netif.h"
 #include "lwip/pbuf.h"
 
-#include "libota.h"
-#include "fw.h"
+#include "lib/ota/libota.h"
+#include "lib/ota/fw.h"
 #include "syscfg.h"
 #include "basic_include.h"
 

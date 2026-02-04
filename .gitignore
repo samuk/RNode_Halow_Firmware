@@ -14,3 +14,4 @@
 *.ept
 *.eide-template
 *.map
+__pycache__
