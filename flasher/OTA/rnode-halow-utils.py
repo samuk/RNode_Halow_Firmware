@@ -167,7 +167,7 @@ def main():
 
         cmd, arg = _parse_cmd(line)
 
-        if cmd.isdigit():
+        if str(cmd).isdigit():
             try:
                 n = int(cmd, 10)
             except ValueError:
