@@ -19,9 +19,9 @@
 #define HALOW_TX_MCS            LMAC_RATE_S1G_1_NSS_MCS0
 
 /* Power */
-#define HALOW_TX_POWER          TX_POWER
-#define HALOW_PA_PWRCTRL_EN     (!DSLEEP_PAPWRCTL_DIS)
-#define HALOW_VDD13_MODE        DC_DC_1_3V
+#define HALOW_TX_POWER          20
+#define HALOW_PA_PWRCTRL_EN     1
+#define HALOW_VDD13_MODE        0
 
 /* Antenna */
 #define HALOW_DUAL_ANT_EN       0
