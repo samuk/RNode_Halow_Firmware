@@ -91,7 +91,8 @@ static int32 sys_main_loop(struct os_work *work) {
 
     //int32_t len = os_snprintf(buf, sizeof(buf), "SEQ=%lu", (unsigned long)seq++);
     //halow_tx((const uint8_t *)buf, len);
-
+    //int8_t  (int64_t sample_time_us);
+    //os_printf("%d\r\n", (int32_t)halow_lbt_noise_dbm_now(1000LL));
     os_run_work_delay(&main_wk, 300);
     return 0;
 }
@@ -165,5 +166,6 @@ __init int main(void) {
     OS_WORK_INIT(&main_wk, sys_main_loop, 0);
     os_run_work_delay(&main_wk, 1000);
     sysheap_collect_init(&sram_heap, (uint32)&__sinit, (uint32)&__einit); // delete init code from heap
+    os_printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     return 0;
 }

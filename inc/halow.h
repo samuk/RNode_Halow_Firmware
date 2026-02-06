@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __HALOW_H_
+#define __HALOW_H_
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -15,3 +16,5 @@ bool halow_init(uint32_t rxbuf, uint32_t rxbuf_size,
 
 void halow_set_rx_cb(halow_rx_cb cb);
 int32_t halow_tx(const uint8_t *data, uint32_t len);
+
+#endif //__HALOW_H_

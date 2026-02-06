@@ -9,6 +9,7 @@
 #include "lib/skb/skbuff.h"
 #include "osal/semaphore.h"
 #include "osal/string.h"
+#include "halow_lbt.h"
 
 /* ===== Wi-Fi HaLow fixed config ===== */
 
@@ -111,6 +112,7 @@ static int32_t halow_lmac_tx_status_callback(struct lmac_ops *ops, struct sk_buf
         g_tx_vacated_bytes += skb->len;
         os_sema_up(&g_tx_vacated_sem);
         kfree_skb(skb);
+        halow_lbt_tx_complete_update();
     }
     return 0;
 }
@@ -214,6 +216,7 @@ bool halow_init(uint32_t rxbuf, uint32_t rxbuf_size,
     }
 
     halow_post_init(g_ops);
+    halow_lbt_init();
     return true;
 }
 
@@ -272,5 +275,6 @@ int32_t halow_tx(const uint8_t *data, uint32_t len) {
     skb->priority = 0;
     skb->tx       = 1;
     halow_get_tx_vacanted_bytes(skb->len);
+    halow_lbt_wait();
     return lmac_tx(g_ops, skb);
 }
