@@ -23,7 +23,7 @@
 #include "syscfg.h"
 #include "lib/lmac/lmac_def.h"
 #include "halow.h"
-#include "kiss_task.h"
+#include "tcp_server.h"
 #ifdef MULTI_WAKEUP
 #include "lib/common/sleep_api.h"
 #include "hal/gpio.h"
@@ -49,7 +49,8 @@ static void halow_rx_handler(struct hgic_rx_info *info,
     if (!data || len <= 0) {
         return;
     }
-    kiss_radio_rx(data, len);
+    //os_printf("RX: %db\n", len);
+    tcp_server_send(data, len);
 }
 
 __init static void sys_network_init(void) {
@@ -125,26 +126,28 @@ sysevt_hdl_res sys_event_hdl(uint32 event_id, uint32 data, uint32 priv) {
     return SYSEVT_CONTINUE;
 }
 
+int32_t tcp_to_halow_send(const uint8_t* data, uint32_t len){
+    if(data == NULL){
+        return -100;
+    }
+    if(len == 0){
+        return -200;
+    }
+    return halow_tx(data, len);
+}
+
 void assert_printf(char *msg, int line, char *file){
     os_printf("assert %s: %d, %s", msg, line, file);
     for (;;) {}
 }
 
-void kiss_init(void) {
-    static const struct kiss_task_cfg cfg = {
-        .tcp_port     = 8001,
-        .kiss_port    = 0,
-        .radio_tx     = halow_tx,
-        .on_connect   = NULL,
-        .on_disconnect= NULL,
-    };
-
-    kiss_task_init(&cfg);
-}
-
 __init int main(void) {
     extern uint32 __sinit, __einit;
     mcu_watchdog_timeout(5);
+
+    gpio_set_dir(PA_7, GPIO_DIR_OUTPUT);
+    gpio_set_val(PA_7, 0);
+
     sys_cfg_load();
     sysctrl_efuse_mac_addr_calc(sys_cfgs.mac);
     syscfg_save();
@@ -156,16 +159,10 @@ __init int main(void) {
     skbpool_init(SKB_POOL_ADDR, (uint32)SKB_POOL_SIZE, 90, 0);
     halow_init(WIFI_RX_BUFF_ADDR, WIFI_RX_BUFF_SIZE, TDMA_BUFF_ADDR, TDMA_BUFF_SIZE);
     halow_set_rx_cb(halow_rx_handler);
-    kiss_init();
-
-
-    gpio_set_dir(PA_7, GPIO_DIR_OUTPUT);
-    gpio_set_val(PA_7, 0);
-
     sys_network_init();
+    tcp_server_init(tcp_to_halow_send);
     OS_WORK_INIT(&main_wk, sys_main_loop, 0);
     os_run_work_delay(&main_wk, 1000);
     sysheap_collect_init(&sram_heap, (uint32)&__sinit, (uint32)&__einit); // delete init code from heap
-    os_printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     return 0;
 }

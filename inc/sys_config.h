@@ -15,7 +15,16 @@
 
 #define IP_SOF_BROADCAST 1
 #define LWIP_NETIF_HOSTNAME        1
-// #define SYS_IRQ_STAT
+
+
+#define HALOW_MTU               (512)
+//#define TCP_MSS                 (HALOW_MTU)              // Smaller packets -> less latency
+#define TCP_SERVER_PORT         (8001)
+#define TCP_SERVER_MTU          (TCP_MSS)
+//#define TCP_SND_BUF             (2*TCP_MSS)         // Near realtime
+//#define TCP_SNDLOWAT            (TCP_MSS)
+//#define TCP_SNDQUEUELOWAT       2
+//#define TCP_SND_QUEUELEN        4
 
 #define SYS_FACTORY_PARAM_SIZE 2048
 

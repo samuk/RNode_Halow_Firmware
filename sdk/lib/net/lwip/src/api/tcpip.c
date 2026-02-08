@@ -262,7 +262,7 @@ tcpip_inpkt(struct pbuf *p, struct netif *inp, netif_input_fn input_fn)
     msg->msg.inp.input_fn = input_fn;
     if (sys_mbox_trypost(&tcpip_mbox, msg) != ERR_OK) {
         memp_free(MEMP_TCPIP_MSG_INPKT, msg);
-        printf("Send to mbox failed!\n");
+        //printf("Send to mbox failed!\n");
         return ERR_MEM;
     }
     return ERR_OK;
