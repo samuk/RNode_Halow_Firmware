@@ -58,7 +58,6 @@ extern const uint32 rx_imb_iq_normal[6];
 extern const union hgdbgpath_cfg ndbgpathcfg;
 extern const union hgrfmipi_cfg nrfmipicfg;
 extern struct dma_device *m2mdma;
-struct sys_config sys_cfgs;
 
 struct hgusb11_dev usb_dev = {
     .usb_hw      = (struct hgusb11_dev_hw *)HG_USB11_DEVICE_BASE,
@@ -254,33 +253,4 @@ struct gpio_device *gpio_get(uint32 pin) {
         return (struct gpio_device *)&gpiob;
     }
     return NULL;
-}
-
-int32 syscfg_info_get(struct syscfg_info *pinfo) {
-#ifdef SYSCFG_ENABLE
-    if (flash0.product_id == 0)
-        return -1;
-    pinfo->flash1 = &flash0;
-    pinfo->flash2 = &flash0;
-    pinfo->size   = pinfo->flash1->sector_size;
-    pinfo->addr1  = pinfo->flash1->size - (2 * pinfo->size);
-    pinfo->addr2  = pinfo->flash1->size - pinfo->size;
-    ASSERT((pinfo->addr1 & ~(pinfo->flash1->sector_size - 1)) == pinfo->addr1);
-    ASSERT((pinfo->addr2 & ~(pinfo->flash2->sector_size - 1)) == pinfo->addr2);
-    ASSERT((pinfo->size >= sizeof(struct sys_config)) &&
-           (pinfo->size == (pinfo->size & ~(pinfo->flash1->sector_size - 1))));
-    return 0;
-#else
-    return -1;
-#endif
-}
-
-int32 ota_fwinfo_get(struct ota_fwinfo *pinfo) {
-    if (flash0.product_id == 0)
-        return -1;
-    pinfo->flash0 = &flash0;
-    pinfo->flash1 = &flash0;
-    pinfo->addr0  = 0;
-    pinfo->addr1  = 0x00080000;
-    return 0;
 }

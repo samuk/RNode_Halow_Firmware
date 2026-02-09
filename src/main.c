@@ -40,6 +40,7 @@ static struct os_work main_wk;
 static struct fdb_kvdb g_cfg_db;
 extern uint32_t srampool_start;
 extern uint32_t srampool_end;
+uint8 g_mac[6];
 
 __attribute__((used))
 struct system_status sys_status;
@@ -66,8 +67,9 @@ __init static void sys_network_init(void) {
     tcpip_init(NULL, NULL);
     sock_monitor_init();
 
+    sysctrl_efuse_mac_addr_calc(g_mac);
     ndev = (struct netdev *)dev_get(HG_GMAC_DEVID);
-    netdev_set_macaddr(ndev, sys_cfgs.mac);
+    netdev_set_macaddr(ndev, g_mac);
     if (ndev) {
         lwip_netif_add(ndev, "e0", NULL, NULL, NULL);
         lwip_netif_set_default(ndev);
@@ -101,16 +103,6 @@ static int32 sys_main_loop(struct os_work *work) {
     //os_printf("%d\r\n", (int32_t)halow_lbt_noise_dbm_now(1000LL));
     os_run_work_delay(&main_wk, 300);
     return 0;
-}
-
-__init static void sys_cfg_load(void) {
-    if (syscfg_init(&sys_cfgs, sizeof(sys_cfgs)) == RET_OK) {
-        return;
-    }
-
-    os_printf("use default params.\r\n");
-    syscfg_set_default_val();
-    syscfg_save();
 }
 
 sysevt_hdl_res sys_event_hdl(uint32 event_id, uint32 data, uint32 priv) {
@@ -188,10 +180,6 @@ __init int main(void) {
     gpio_set_dir(PA_7, GPIO_DIR_OUTPUT);
     gpio_set_val(PA_7, 0);
 
-    sys_cfg_load();
-    sysctrl_efuse_mac_addr_calc(sys_cfgs.mac);
-    syscfg_save();
-
     storage_init();
     littlefs_init();
     boot_counter_update();
@@ -199,10 +187,10 @@ __init int main(void) {
     sys_event_take(0xffffffff, sys_event_hdl, 0);
 
     skbpool_init(SKB_POOL_ADDR, (uint32)SKB_POOL_SIZE, 90, 0);
-    //halow_init(WIFI_RX_BUFF_ADDR, WIFI_RX_BUFF_SIZE, TDMA_BUFF_ADDR, TDMA_BUFF_SIZE);
-    //halow_set_rx_cb(halow_rx_handler);
+    halow_init(WIFI_RX_BUFF_ADDR, WIFI_RX_BUFF_SIZE, TDMA_BUFF_ADDR, TDMA_BUFF_SIZE);
+    halow_set_rx_cb(halow_rx_handler);
     sys_network_init();
-    //tcp_server_init(tcp_to_halow_send);
+    tcp_server_init(tcp_to_halow_send);
     OS_WORK_INIT(&main_wk, sys_main_loop, 0);
     os_run_work_delay(&main_wk, 1000);
     sysheap_collect_init(&sram_heap, (uint32)&__sinit, (uint32)&__einit); // delete init code from heap
