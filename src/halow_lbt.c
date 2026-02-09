@@ -11,7 +11,7 @@
 #include "osal/string.h"
 #include "utils.h"
 
-#define HALOW_LBT_CHUNKS    5
+#define HALOW_LBT_CHUNKS    10
 
 static int64_t g_last_tx_us;
 static int64_t g_last_lbt_us;
@@ -19,11 +19,11 @@ static int64_t g_last_lbt_us;
 
 // TODO: make configurator
 static uint32_t halow_lbt_no_check_time_us(void){
-    return 3000U;
+    return 1000U;
 }
 
 static uint32_t halow_lbt_force_check_period_ms(void){
-    return 250U;
+    return 20U;
 }
 
 static uint32_t halow_lbt_window_min_time_us(void){
@@ -31,15 +31,15 @@ static uint32_t halow_lbt_window_min_time_us(void){
 }
 
 static uint32_t halow_lbt_window_max_time_us(void){
-    return 10000U;
+    return 15000U;
 }
 
 static uint32_t halow_lbt_window_refresh_ms(void){
-    return 250U;
+    return 100U;
 }
 
 static uint32_t halow_lbt_max_wait_time_ms(void){
-    return 1000U;
+    return 3000U;
 }
 
 static int8_t halow_lbt_get_threshold_bknoise(void){
@@ -86,9 +86,9 @@ int8_t halow_lbt_noise_dbm_now (int64_t sample_time_us){
     ah_rfdigicali_bknoise_valid_pd_clr();
     lmac_bknoise_calc_en();
 
-    ah_tdma_start();
-    os_sleep_us(32);
-    ah_tdma_abort();
+    //ah_tdma_start();
+    //os_sleep_us(32);
+    //ah_tdma_abort();
 
 
     int64_t acc = 0;
@@ -140,8 +140,8 @@ int32_t halow_lbt_wait ( void ){
     int64_t time_start_us = get_time_us();
     int64_t time_from_last_tx_us = time_start_us - g_last_tx_us;
     int64_t time_from_last_lbt_us = time_start_us - g_last_lbt_us;
-    if( (time_from_last_tx_us    < (int64_t)halow_lbt_no_check_time_us()) &&
-        (time_from_last_lbt_us   < (int64_t)halow_lbt_force_check_period_ms()*1000LL)){
+    if( (time_from_last_tx_us    < (int64_t)halow_lbt_no_check_time_us()) ||
+        (time_from_last_lbt_us   > ((int64_t)halow_lbt_force_check_period_ms()*1000LL))){
         return 0;
     }
 
@@ -154,11 +154,11 @@ int32_t halow_lbt_wait ( void ){
 
     int64_t time_update_window_us = time_start_us;
 
+    // Timeout
+    int64_t max_wait_us = (int64_t)halow_lbt_max_wait_time_ms() * 1000LL;
     while (1) {
         int64_t now_us = get_time_us();
         
-        // Timeout
-        int64_t max_wait_us = (int64_t)halow_lbt_max_wait_time_ms() * 1000LL;
         if ((now_us - time_start_us) >= max_wait_us) { 
             return -1; 
         }

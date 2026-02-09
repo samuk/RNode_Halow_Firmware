@@ -9,11 +9,7 @@ struct syscfg_info {
     uint32 size;
 };
 
-int32 syscfg_init(void *cfg, uint32 size);
-int32 syscfg_read(void *cfg, uint32 size);
-int32 syscfg_write(void *cfg, uint32 size);
 int32 syscfg_info_get(struct syscfg_info *pinfo);
-void syscfg_loaddef(void);
 int32 syscfg_save(void);
 
 #endif

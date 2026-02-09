@@ -24,6 +24,9 @@
 #include "lib/lmac/lmac_def.h"
 #include "halow.h"
 #include "tcp_server.h"
+#include "hal/spi_nor.h"
+#include <lib/fal/fal.h>
+#include <lib/flashdb/flashdb.h>
 #ifdef MULTI_WAKEUP
 #include "lib/common/sleep_api.h"
 #include "hal/gpio.h"
@@ -33,6 +36,7 @@
 // #include "atcmd.c"
 
 static struct os_work main_wk;
+static struct fdb_kvdb g_cfg_db;
 extern uint32_t srampool_start;
 extern uint32_t srampool_end;
 
@@ -141,6 +145,41 @@ void assert_printf(char *msg, int line, char *file){
     for (;;) {}
 }
 
+static void boot_counter_update(void){
+    uint32_t cnt = 0;
+
+    struct fdb_blob blob;
+    memset(&blob, 0, sizeof(blob));
+    blob.buf  = &cnt;
+    blob.size = sizeof(cnt);
+    size_t rd = fdb_kv_get_blob(&g_cfg_db, "sys.boot_cnt", &blob);
+    if (rd != sizeof(cnt)) {
+        cnt = 0;
+    }
+
+    cnt++;
+
+    memset(&blob, 0, sizeof(blob));
+    blob.buf  = &cnt;
+    blob.size = sizeof(cnt);
+
+    (void)fdb_kv_set_blob(&g_cfg_db, "sys.boot_cnt", &blob);
+
+    printf("Boot counter = %lu\n", (unsigned long)cnt);
+}
+
+void storage_init(void){
+    int rc = fal_init();
+    if (rc <= 0) {
+        return;
+    }
+
+    fdb_err_t err = fdb_kvdb_init(&g_cfg_db, "cfg", "fdb_kvdb1", NULL, 0);
+    if (err != FDB_NO_ERR) {
+        return;
+    }
+}
+
 __init int main(void) {
     extern uint32 __sinit, __einit;
     mcu_watchdog_timeout(5);
@@ -152,15 +191,16 @@ __init int main(void) {
     sysctrl_efuse_mac_addr_calc(sys_cfgs.mac);
     syscfg_save();
 
-    syscfg_check();
+    storage_init();
+    boot_counter_update();
     sys_event_init(32);
     sys_event_take(0xffffffff, sys_event_hdl, 0);
 
     skbpool_init(SKB_POOL_ADDR, (uint32)SKB_POOL_SIZE, 90, 0);
-    halow_init(WIFI_RX_BUFF_ADDR, WIFI_RX_BUFF_SIZE, TDMA_BUFF_ADDR, TDMA_BUFF_SIZE);
-    halow_set_rx_cb(halow_rx_handler);
+    //halow_init(WIFI_RX_BUFF_ADDR, WIFI_RX_BUFF_SIZE, TDMA_BUFF_ADDR, TDMA_BUFF_SIZE);
+    //halow_set_rx_cb(halow_rx_handler);
     sys_network_init();
-    tcp_server_init(tcp_to_halow_send);
+    //tcp_server_init(tcp_to_halow_send);
     OS_WORK_INIT(&main_wk, sys_main_loop, 0);
     os_run_work_delay(&main_wk, 1000);
     sysheap_collect_init(&sram_heap, (uint32)&__sinit, (uint32)&__einit); // delete init code from heap

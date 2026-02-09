@@ -207,7 +207,7 @@ __init void pre_main(void)
     VERSION_SHOW();
     module_version_show();
     lvd_detect();
-    os_workqueue_init(&main_wkq, "MAIN", OS_TASK_PRIORITY_NORMAL, 2048);
+    os_workqueue_init(&main_wkq, "MAIN", OS_TASK_PRIORITY_NORMAL, 16000);
     mainwkq_monitor_init();
     os_run_func((os_run_func_t)main, 0, 0, 0);
     csi_kernel_start();
