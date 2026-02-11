@@ -7,6 +7,7 @@
 #define LWIP_NETIF_HOSTNAME        1
 #define HALOW_MTU               (512)
 //#define TCP_MSS                 (HALOW_MTU)              // Smaller packets -> less latency
+#define CFG_SERVER_PORT         (8002)
 #define TCP_SERVER_PORT         (8001)
 #define TCP_SERVER_MTU          (TCP_MSS)
 //#define TCP_SND_BUF             (2*TCP_MSS)         // Near realtime

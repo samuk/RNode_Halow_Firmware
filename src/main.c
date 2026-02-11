@@ -29,6 +29,7 @@
 #include <lib/flashdb/flashdb.h>
 #include "littelfs_port.h"
 #include "configdb.h"
+#include "config_page.h"
 #ifdef MULTI_WAKEUP
 #include "lib/common/sleep_api.h"
 #include "hal/gpio.h"
@@ -77,7 +78,7 @@ __init static void sys_network_init(void) {
         nif = netif_find("e0");
         if (nif) {
             snprintf(hostname,sizeof(hostname),"RNode-Halow-%02X%02X%02X",nif->hwaddr[3],nif->hwaddr[4],nif->hwaddr[5]);
-            nif->hostname = hostname;   // ← ВАЖНО: до DHCP
+            nif->hostname = hostname;
         }
 
         lwip_netif_set_dhcp2("e0", 1);
@@ -140,16 +141,11 @@ void assert_printf(char *msg, int line, char *file){
 
 
 static void boot_counter_update(void){
-    configdb_param_int32_t pwr_on_cnt_param;
-    if(configdb_get_param_i32("pwr_on_cnt", &pwr_on_cnt_param) != 0){
-        pwr_on_cnt_param.val = 0;
-        pwr_on_cnt_param.def_val = 0;
-        pwr_on_cnt_param.min_val = 0;
-        pwr_on_cnt_param.max_val = INT32_MAX;
-    }
-    pwr_on_cnt_param.val++;
-    configdb_set_param_i32("pwr_on_cnt", &pwr_on_cnt_param);
-    printf("Boot counter = %d\n", pwr_on_cnt_param.val);
+    int32_t pwr_on_cnt = 0;
+    configdb_get_i32("pwr_on_cnt", &pwr_on_cnt);
+    pwr_on_cnt++;
+    configdb_set_i32("pwr_on_cnt", &pwr_on_cnt);
+    printf("Boot counter = %d\n", pwr_on_cnt);
 }
 
 __init int main(void) {
@@ -169,6 +165,7 @@ __init int main(void) {
     halow_init(WIFI_RX_BUFF_ADDR, WIFI_RX_BUFF_SIZE, TDMA_BUFF_ADDR, TDMA_BUFF_SIZE);
     halow_set_rx_cb(halow_rx_handler);
     sys_network_init();
+    config_page_init();
     tcp_server_init(tcp_to_halow_send);
     OS_WORK_INIT(&main_wk, sys_main_loop, 0);
     os_run_work_delay(&main_wk, 1000);

@@ -10,18 +10,26 @@
 #include "osal/semaphore.h"
 #include "osal/string.h"
 #include "halow_lbt.h"
+#include "configdb.h"
+
+#define HALOW_CONFIG_PREFIX             CONFIGDB_ADD_MODULE("halow")
+#define HALOW_CONFIG_ADD_CONFIG(name)   HALOW_CONFIG_PREFIX "." name
+
+#define HALOW_CONFIG_CENTRAL_FREQ_NAME  HALOW_CONFIG_ADD_CONFIG("freq")
+#define HALOW_CONFIG_POWER_NAME         HALOW_CONFIG_ADD_CONFIG("pwr")
+#define HALOW_CONFIG_BANDWIDTH_NAME     HALOW_CONFIG_ADD_CONFIG("band")
+#define HALOW_CONFIG_MCS_NAME           HALOW_CONFIG_ADD_CONFIG("mcs")
+#define HALOW_CONFIG_SPOWER_EN_NAME     HALOW_CONFIG_ADD_CONFIG("spwr")
+
+#define HALOW_CONFIG_CENTRAL_FREQ_DEF   (8665)
+#define HALOW_CONFIG_POWER_DEF          (17)
+#define HALOW_CONFIG_BANDWIDTH_DEF      (1)
+#define HALOW_CONFIG_MCS_DEF            (0)
+#define HALOW_CONFIG_SPOWER_EN_DEF      (false)
 
 /* ===== Wi-Fi HaLow fixed config ===== */
 
-/* Channel / RF */
-#define HALOW_FREQ_KHZ          8665        /* sys_cfgs.chan_list[0] */
-#define HALOW_BSS_BW            1           /* 1 MHz */
-
-/* PHY / rate */
-#define HALOW_TX_MCS            LMAC_RATE_S1G_1_NSS_MCS0
-
 /* Power */
-#define HALOW_TX_POWER          20
 #define HALOW_PA_PWRCTRL_EN     1
 #define HALOW_VDD13_MODE        0
 
@@ -70,6 +78,22 @@ static uint16_t g_seq;
 static uint32_t g_tx_vacated_bytes = TX_BUFFER_SIZE;
 static struct os_semaphore g_tx_vacated_sem;
 
+typedef struct{
+    uint16_t    central_freq;
+    uint8_t     bandwidth;
+    uint8_t     mcs;
+    uint8_t     rf_power;
+    uint8_t     rf_super_power;
+} halow_config_t;
+
+static halow_config_t g_halow_cfg = {
+    .central_freq   = HALOW_CONFIG_CENTRAL_FREQ_DEF,
+    .bandwidth      = HALOW_CONFIG_BANDWIDTH_DEF,
+    .mcs            = HALOW_CONFIG_MCS_DEF,
+    .rf_power       = HALOW_CONFIG_POWER_DEF,
+    .rf_super_power = HALOW_CONFIG_SPOWER_EN_DEF
+};
+
 // Disable broadcast
 int32_t __wrap_lmac_send_bss_announcement(void){
     return 0;
@@ -117,39 +141,73 @@ static int32_t halow_lmac_tx_status_callback(struct lmac_ops *ops, struct sk_buf
     return 0;
 }
 
-/* ===== LMAC post-init ===== */
-static void halow_post_init(struct lmac_ops *ops)
-{
+int32_t get_mcs_val(uint8_t mcs){
+    if((mcs <= 7) || (mcs == 10)){
+        return LMAC_RATE_DEF(LMAC_PHY_S1G, 1, mcs, 0);
+    }
+    return 0;
+}
+
+static void halow_config_load(void){
+    configdb_get_set_i8 (HALOW_CONFIG_BANDWIDTH_NAME,       (int8_t*)   &g_halow_cfg.bandwidth);
+    configdb_get_set_i8 (HALOW_CONFIG_SPOWER_EN_NAME,       (int8_t*)   &g_halow_cfg.rf_super_power);
+    configdb_get_set_i8 (HALOW_CONFIG_POWER_NAME,           (int8_t*)   &g_halow_cfg.rf_power);
+    configdb_get_set_i8 (HALOW_CONFIG_MCS_NAME,             (int8_t*)   &g_halow_cfg.mcs);
+    configdb_get_set_i16(HALOW_CONFIG_CENTRAL_FREQ_NAME,    (int16_t*)  &g_halow_cfg.central_freq);
+}
+
+static void halow_cfg_sanitize( void ){
+    if (g_halow_cfg.rf_power < 1)  g_halow_cfg.rf_power = 1;
+    if (g_halow_cfg.rf_power > 20) g_halow_cfg.rf_power = 20;
+
+    if ((g_halow_cfg.rf_super_power != 0) &&
+        (g_halow_cfg.rf_super_power != 1)) {
+        g_halow_cfg.rf_super_power = 0;
+    }
+
+    if ((g_halow_cfg.mcs > 7) && (g_halow_cfg.mcs != 10)) {
+        g_halow_cfg.mcs = 0;
+    }
+
+    if (g_halow_cfg.central_freq < 7500) {
+        g_halow_cfg.central_freq = 7500;
+    }
+    if (g_halow_cfg.central_freq > 9500) {
+        g_halow_cfg.central_freq = 9500;
+    }
+
+    if((g_halow_cfg.bandwidth != 1) &&
+       (g_halow_cfg.bandwidth != 2) &&
+       (g_halow_cfg.bandwidth != 4) &&
+       (g_halow_cfg.bandwidth != 8)
+    ){
+        g_halow_cfg.bandwidth = 1;
+    }
+}
+
+static void halow_post_init(struct lmac_ops *ops){
+    halow_cfg_sanitize();
     static uint8 g_mac[6] = {
         0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
     };
 
     /* ---- basic bring-up ---- */
-    ops->ioctl(ops, LMAC_IOCTL_SET_MAC_ADDR,
-               (uint32)(uintptr_t)g_mac, 0);
-
-    //ops->ioctl(ops, LMAC_IOCTL_SET_ANT_DUAL_EN,
-    //           HALOW_DUAL_ANT_EN, 0);
-
-    //ops->ioctl(ops, LMAC_IOCTL_SET_ANT_SEL,
-    //           HALOW_ANT_SEL, 0);
-
-    //ops->ioctl(ops, LMAC_IOCTL_SET_RADIO_ONOFF, 1, 0);
+    ops->ioctl(ops, LMAC_IOCTL_SET_MAC_ADDR, (uint32)(uintptr_t)g_mac, 0);
 
     /* ---- RF / channel ---- */
-    lmac_set_freq(ops, HALOW_FREQ_KHZ);
-    lmac_set_bss_bw(ops, HALOW_BSS_BW);
+    lmac_set_freq(ops, (uint32_t)g_halow_cfg.central_freq);
+    lmac_set_bss_bw(ops, (uint32_t)g_halow_cfg.bandwidth);
 
     /* ---- PHY rate control ---- */
-    lmac_set_tx_mcs(ops, HALOW_TX_MCS);
-    lmac_set_fix_tx_rate(ops, HALOW_TX_MCS);
-    lmac_set_fallback_mcs(ops, HALOW_TX_MCS);
-    lmac_set_mcast_txmcs(ops, HALOW_TX_MCS);
+    lmac_set_tx_mcs(ops, get_mcs_val(g_halow_cfg.mcs));
+    lmac_set_fix_tx_rate(ops, get_mcs_val(g_halow_cfg.mcs));
+    lmac_set_fallback_mcs(ops, get_mcs_val(g_halow_cfg.mcs));
+    lmac_set_mcast_txmcs(ops, get_mcs_val(g_halow_cfg.mcs));
 	
     /* ---- power ---- */
-    lmac_set_txpower(ops, HALOW_TX_POWER);
+    lmac_set_txpower(ops, g_halow_cfg.rf_power);
     //SUPER POWER (200 mA device consumption, 20-22 dBm expected)
-    lmac_set_super_pwr(ops, 1);
+    lmac_set_super_pwr(ops, g_halow_cfg.rf_super_power);
     //lmac_set_pa_pwr_ctrl(ops, HALOW_PA_PWRCTRL_EN);
 
     /* ---- aggregation ---- */
@@ -214,7 +272,7 @@ bool halow_init(uint32_t rxbuf, uint32_t rxbuf_size,
     if (lmac_open(g_ops) != 0) {
         return false;
     }
-
+    halow_config_load();
     halow_post_init(g_ops);
     halow_lbt_init();
     return true;

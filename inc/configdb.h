@@ -4,15 +4,21 @@
 #include "lib/flashdb/fdb_def.h"
 #include <stdint.h>
 
-typedef struct{
-    int32_t val;
-    int32_t def_val;
-    int32_t min_val;
-    int32_t max_val;
-} configdb_param_int32_t;
+#define CONFIGDB_PREFIX                 "cfg"
+#define CONFIGDB_ADD_MODULE(name)       CONFIGDB_PREFIX "." name
 
-int32_t configdb_get_param_i32(const char* key, configdb_param_int32_t* paramp);
-int32_t configdb_set_param_i32(const char* key, configdb_param_int32_t* paramp);
+int32_t configdb_get_i32(const char* key, int32_t* paramp);
+int32_t configdb_set_i32(const char* key, int32_t* paramp);
+int32_t configdb_get_set_i32(const char* key, int32_t* paramp);
+
+int32_t configdb_get_i16(const char *key, int16_t *paramp);
+int32_t configdb_set_i16(const char *key, const int16_t *paramp);
+int32_t configdb_get_set_i16(const char *key, int16_t *paramp);
+
+int32_t configdb_get_i8(const char *key, int8_t *paramp);
+int32_t configdb_set_i8(const char *key, const int8_t *paramp);
+int32_t configdb_get_set_i8(const char *key, int8_t *paramp);
+
 int32_t configdb_init(void);
 
 #endif // __CONFIGDB_H__
