@@ -6,39 +6,74 @@
 
 #include "mongoose_glue.h"
 #include "halow.h"
+#include "net_ip.h"
 #include "configdb.h"
 
 void glue_get_api_halow_cfg(struct api_halow_cfg *data) {
-  halow_config_t halow_cfg;
-  if (data == NULL) { return; }
+    halow_config_t halow_cfg;
+    if (data == NULL) { return; }
 
-  halow_config_load(&halow_cfg);
+    halow_config_load(&halow_cfg);
 
-  snprintf(data->bandwidth, 6, "%d MHz", halow_cfg.bandwidth);
-  snprintf(data->mcs_index, 6, "MCS%d", halow_cfg.mcs);
+    snprintf(data->bandwidth, 6, "%d MHz", halow_cfg.bandwidth);
+    snprintf(data->mcs_index, 6, "MCS%d", halow_cfg.mcs);
 
-  data->super_power  = (halow_cfg.rf_super_power != 0) ? true : false;
-  data->power_dbm    = halow_cfg.rf_power;
-  data->central_freq = ((double)halow_cfg.central_freq) / 10.0;
+    data->super_power  = (halow_cfg.rf_super_power != 0) ? true : false;
+    data->power_dbm    = halow_cfg.rf_power;
+    data->central_freq = ((double)halow_cfg.central_freq) / 10.0;
 }
 
 
 void glue_set_api_halow_cfg(struct api_halow_cfg *data) {
-  halow_config_t halow_cfg;
-  os_printf("SET_CFG\r\n");
-  if (data == NULL) { return; }
+    halow_config_t halow_cfg;
+    os_printf("SET_CFG\r\n");
+    if (data == NULL) { return; }
 
-  halow_cfg.bandwidth = (int8_t)atoi(data->bandwidth);
-  int32_t m = 0;
-  sscanf(data->mcs_index, "MCS%d", &m);
-  halow_cfg.mcs = (int8_t)m;
-  halow_cfg.rf_super_power = data->super_power ? 1 : 0;
-  halow_cfg.rf_power       = (int8_t)data->power_dbm;
-  halow_cfg.central_freq = (uint16_t)((float)data->central_freq * 10.0f + 0.5f);
-  halow_config_apply(&halow_cfg);
-  halow_config_save(&halow_cfg);
+    halow_cfg.bandwidth = (int8_t)atoi(data->bandwidth);
+    int32_t m = 0;
+    sscanf(data->mcs_index, "MCS%d", &m);
+    halow_cfg.mcs = (int8_t)m;
+    halow_cfg.rf_super_power = data->super_power ? 1 : 0;
+    halow_cfg.rf_power       = (int8_t)data->power_dbm;
+    halow_cfg.central_freq = (uint16_t)((float)data->central_freq * 10.0f + 0.5f);
+    halow_config_apply(&halow_cfg);
+    halow_config_save(&halow_cfg);
 }
 
+
+void glue_get_api_net_cfg(struct api_net_cfg *data){
+    net_ip_config_t cfg;
+
+    if (data == NULL) {
+        return;
+    }
+
+    net_ip_config_load(&cfg);
+
+    data->dhcp = (cfg.mode == NET_IP_MODE_DHCP) ? true : false;
+
+    ip4addr_ntoa_r(&cfg.ip,   data->ip_address, sizeof(data->ip_address));
+    ip4addr_ntoa_r(&cfg.gw,   data->gw_address, sizeof(data->gw_address));
+    ip4addr_ntoa_r(&cfg.mask, data->netmask,    sizeof(data->netmask));
+}
+
+void glue_set_api_net_cfg(struct api_net_cfg *data){
+    net_ip_config_t cfg;
+
+    if (data == NULL) {
+        return;
+    }
+
+    cfg.mode = data->dhcp ? NET_IP_MODE_DHCP : NET_IP_MODE_STATIC;
+
+    if (cfg.mode == NET_IP_MODE_STATIC) {
+        if (!ip4addr_aton(data->ip_address, &cfg.ip)) return;
+        if (!ip4addr_aton(data->netmask,    &cfg.mask)) return;
+        if (!ip4addr_aton(data->gw_address, &cfg.gw)) return;
+    }
+    net_ip_config_apply(&cfg);
+    net_ip_config_save(&cfg);
+}
 
 void *glue_ota_begin_firmware_update(char *file_name, size_t total_size) {
   bool ok = mg_ota_begin(total_size);
@@ -106,14 +141,5 @@ bool glue_ota_end_api_firmware_update(void *context) {
 bool glue_ota_write_api_firmware_update(void *context, void *buf, size_t len) {
   MG_DEBUG(("ctx: %p %p/%lu", context, buf, len));
   return mg_ota_write(buf, len);
-}
-
-static struct api_net_cfg s_api_net_cfg = {"0.0.0.0", "0.0.0.0", "0.0.0.0", true};
-void glue_get_api_net_cfg(struct api_net_cfg *data) {
-  *data = s_api_net_cfg;  // Sync with your device
-}
-
-void glue_set_api_net_cfg(struct api_net_cfg *data) {
-  s_api_net_cfg = *data; // Sync with your device
 }
 

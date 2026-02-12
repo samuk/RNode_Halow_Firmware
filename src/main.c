@@ -29,6 +29,7 @@
 #include <lib/flashdb/flashdb.h>
 #include "littelfs_port.h"
 #include "configdb.h"
+#include "tftp_server.h"
 #include "config_page.h"
 #ifdef MULTI_WAKEUP
 #include "lib/common/sleep_api.h"

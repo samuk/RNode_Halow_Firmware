@@ -165,7 +165,7 @@ static void halow_cfg_sanitize(halow_config_t *cfg){
     }
 }
 
-void halow_config_save(halow_config_t *cfg){
+void halow_config_save(const halow_config_t *cfg){
     if (cfg == NULL) { 
         return; 
     }
@@ -188,28 +188,31 @@ void halow_config_load(halow_config_t *cfg){
     configdb_get_set_i16(HALOW_CONFIG_CENTRAL_FREQ_NAME, (int16_t*)&cfg->central_freq);
 }
 
-void halow_config_apply(halow_config_t *cfg){
+void halow_config_apply(const halow_config_t *cfg){
+    halow_config_t halow_cfg;
     if (cfg == NULL) { 
         return; 
     }
     if(g_ops == NULL){
         return;
     }
-    halow_cfg_sanitize(cfg);
-    lmac_set_freq(g_ops, cfg->central_freq);
-    lmac_set_bss_bw(g_ops, cfg->bandwidth);
+    
+    halow_cfg = *cfg;
+    halow_cfg_sanitize(&halow_cfg);
+    lmac_set_freq(g_ops, halow_cfg.central_freq);
+    lmac_set_bss_bw(g_ops, halow_cfg.bandwidth);
 
     /* ---- PHY rate control ---- */
-    int32_t mcs_val = get_mcs_val(cfg->mcs);
+    int32_t mcs_val = get_mcs_val(halow_cfg.mcs);
     lmac_set_tx_mcs(g_ops, mcs_val);
     lmac_set_fix_tx_rate(g_ops, mcs_val);
     lmac_set_fallback_mcs(g_ops, mcs_val);
     lmac_set_mcast_txmcs(g_ops, mcs_val);
 	
     /* ---- power ---- */
-    lmac_set_txpower(g_ops, cfg->rf_power);
+    lmac_set_txpower(g_ops, halow_cfg.rf_power);
     //SUPER POWER (200 mA device consumption, 20-22 dBm expected)
-    lmac_set_super_pwr(g_ops, cfg->rf_super_power);
+    lmac_set_super_pwr(g_ops, halow_cfg.rf_super_power);
     
 }
 
