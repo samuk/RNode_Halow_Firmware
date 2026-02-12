@@ -11,10 +11,21 @@ typedef void (*halow_rx_cb)(
     const uint8_t *data,
     int32_t len);
 
+typedef struct{
+    uint16_t    central_freq;
+    uint8_t     bandwidth;
+    uint8_t     mcs;
+    uint8_t     rf_power;
+    uint8_t     rf_super_power;
+} halow_config_t;
+
 bool halow_init(uint32_t rxbuf, uint32_t rxbuf_size,
                 uint32_t tdma_buf, uint32_t tdma_buf_size);
 
 void halow_set_rx_cb(halow_rx_cb cb);
 int32_t halow_tx(const uint8_t *data, uint32_t len);
+void halow_config_load(halow_config_t *cfg);
+void halow_config_save(halow_config_t *cfg);
+void halow_config_apply(halow_config_t *cfg);
 
 #endif //__HALOW_H_

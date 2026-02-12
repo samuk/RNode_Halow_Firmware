@@ -78,22 +78,6 @@ static uint16_t g_seq;
 static uint32_t g_tx_vacated_bytes = TX_BUFFER_SIZE;
 static struct os_semaphore g_tx_vacated_sem;
 
-typedef struct{
-    uint16_t    central_freq;
-    uint8_t     bandwidth;
-    uint8_t     mcs;
-    uint8_t     rf_power;
-    uint8_t     rf_super_power;
-} halow_config_t;
-
-static halow_config_t g_halow_cfg = {
-    .central_freq   = HALOW_CONFIG_CENTRAL_FREQ_DEF,
-    .bandwidth      = HALOW_CONFIG_BANDWIDTH_DEF,
-    .mcs            = HALOW_CONFIG_MCS_DEF,
-    .rf_power       = HALOW_CONFIG_POWER_DEF,
-    .rf_super_power = HALOW_CONFIG_SPOWER_EN_DEF
-};
-
 // Disable broadcast
 int32_t __wrap_lmac_send_bss_announcement(void){
     return 0;
@@ -148,100 +132,144 @@ int32_t get_mcs_val(uint8_t mcs){
     return 0;
 }
 
-static void halow_config_load(void){
-    configdb_get_set_i8 (HALOW_CONFIG_BANDWIDTH_NAME,       (int8_t*)   &g_halow_cfg.bandwidth);
-    configdb_get_set_i8 (HALOW_CONFIG_SPOWER_EN_NAME,       (int8_t*)   &g_halow_cfg.rf_super_power);
-    configdb_get_set_i8 (HALOW_CONFIG_POWER_NAME,           (int8_t*)   &g_halow_cfg.rf_power);
-    configdb_get_set_i8 (HALOW_CONFIG_MCS_NAME,             (int8_t*)   &g_halow_cfg.mcs);
-    configdb_get_set_i16(HALOW_CONFIG_CENTRAL_FREQ_NAME,    (int16_t*)  &g_halow_cfg.central_freq);
-}
-
-static void halow_cfg_sanitize( void ){
-    if (g_halow_cfg.rf_power < 1)  g_halow_cfg.rf_power = 1;
-    if (g_halow_cfg.rf_power > 20) g_halow_cfg.rf_power = 20;
-
-    if ((g_halow_cfg.rf_super_power != 0) &&
-        (g_halow_cfg.rf_super_power != 1)) {
-        g_halow_cfg.rf_super_power = 0;
+static void halow_cfg_sanitize(halow_config_t *cfg){
+    if(cfg == NULL){
+        return;
     }
 
-    if ((g_halow_cfg.mcs > 7) && (g_halow_cfg.mcs != 10)) {
-        g_halow_cfg.mcs = 0;
+    if (cfg->rf_power < 1)  cfg->rf_power = 1;
+    if (cfg->rf_power > 20) cfg->rf_power = 20;
+
+    if ((cfg->rf_super_power != 0) &&
+        (cfg->rf_super_power != 1)) {
+        cfg->rf_super_power = 0;
     }
 
-    if (g_halow_cfg.central_freq < 7500) {
-        g_halow_cfg.central_freq = 7500;
-    }
-    if (g_halow_cfg.central_freq > 9500) {
-        g_halow_cfg.central_freq = 9500;
+    if ((cfg->mcs > 7) && (cfg->mcs != 10)) {
+        cfg->mcs = 0;
     }
 
-    if((g_halow_cfg.bandwidth != 1) &&
-       (g_halow_cfg.bandwidth != 2) &&
-       (g_halow_cfg.bandwidth != 4) &&
-       (g_halow_cfg.bandwidth != 8)
+    if (cfg->central_freq < 7500) {
+        cfg->central_freq = 7500;
+    }
+    if (cfg->central_freq > 9500) {
+        cfg->central_freq = 9500;
+    }
+
+    if((cfg->bandwidth != 1) &&
+       (cfg->bandwidth != 2) &&
+       (cfg->bandwidth != 4) &&
+       (cfg->bandwidth != 8)
     ){
-        g_halow_cfg.bandwidth = 1;
+        cfg->bandwidth = 1;
     }
 }
 
-static void halow_post_init(struct lmac_ops *ops){
-    halow_cfg_sanitize();
+void halow_config_save(halow_config_t *cfg){
+    if (cfg == NULL) { 
+        return; 
+    }
+    halow_config_apply(cfg);
+    configdb_set_i8(HALOW_CONFIG_BANDWIDTH_NAME, (int8_t*)&cfg->bandwidth);
+    configdb_set_i8(HALOW_CONFIG_SPOWER_EN_NAME, (int8_t*)&cfg->rf_super_power);
+    configdb_set_i8(HALOW_CONFIG_POWER_NAME, (int8_t*)&cfg->rf_power);
+    configdb_set_i8(HALOW_CONFIG_MCS_NAME, (int8_t*)&cfg->mcs);
+    configdb_set_i16(HALOW_CONFIG_CENTRAL_FREQ_NAME, (int16_t*)&cfg->central_freq);
+}
+
+void halow_config_load(halow_config_t *cfg){
+    if (cfg == NULL) { 
+        return; 
+    }
+    configdb_get_set_i8(HALOW_CONFIG_BANDWIDTH_NAME, (int8_t*)&cfg->bandwidth);
+    configdb_get_set_i8(HALOW_CONFIG_SPOWER_EN_NAME, (int8_t*)&cfg->rf_super_power);
+    configdb_get_set_i8(HALOW_CONFIG_POWER_NAME, (int8_t*)&cfg->rf_power);
+    configdb_get_set_i8(HALOW_CONFIG_MCS_NAME, (int8_t*)&cfg->mcs);
+    configdb_get_set_i16(HALOW_CONFIG_CENTRAL_FREQ_NAME, (int16_t*)&cfg->central_freq);
+}
+
+void halow_config_apply(halow_config_t *cfg){
+    if (cfg == NULL) { 
+        return; 
+    }
+    if(g_ops == NULL){
+        return;
+    }
+    halow_cfg_sanitize(cfg);
+    lmac_set_freq(g_ops, cfg->central_freq);
+    lmac_set_bss_bw(g_ops, cfg->bandwidth);
+
+    /* ---- PHY rate control ---- */
+    int32_t mcs_val = get_mcs_val(cfg->mcs);
+    lmac_set_tx_mcs(g_ops, mcs_val);
+    lmac_set_fix_tx_rate(g_ops, mcs_val);
+    lmac_set_fallback_mcs(g_ops, mcs_val);
+    lmac_set_mcast_txmcs(g_ops, mcs_val);
+	
+    /* ---- power ---- */
+    lmac_set_txpower(g_ops, cfg->rf_power);
+    //SUPER POWER (200 mA device consumption, 20-22 dBm expected)
+    lmac_set_super_pwr(g_ops, cfg->rf_super_power);
+    
+}
+
+static void halow_config_set_default(void){
     static uint8 g_mac[6] = {
         0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
     };
 
     /* ---- basic bring-up ---- */
-    ops->ioctl(ops, LMAC_IOCTL_SET_MAC_ADDR, (uint32)(uintptr_t)g_mac, 0);
+    g_ops->ioctl(g_ops, LMAC_IOCTL_SET_MAC_ADDR, (uint32)(uintptr_t)g_mac, 0);
 
     /* ---- RF / channel ---- */
-    lmac_set_freq(ops, (uint32_t)g_halow_cfg.central_freq);
-    lmac_set_bss_bw(ops, (uint32_t)g_halow_cfg.bandwidth);
+    lmac_set_freq(g_ops, HALOW_CONFIG_CENTRAL_FREQ_DEF);
+    lmac_set_bss_bw(g_ops, HALOW_CONFIG_BANDWIDTH_DEF);
 
     /* ---- PHY rate control ---- */
-    lmac_set_tx_mcs(ops, get_mcs_val(g_halow_cfg.mcs));
-    lmac_set_fix_tx_rate(ops, get_mcs_val(g_halow_cfg.mcs));
-    lmac_set_fallback_mcs(ops, get_mcs_val(g_halow_cfg.mcs));
-    lmac_set_mcast_txmcs(ops, get_mcs_val(g_halow_cfg.mcs));
+    int32_t mcs_val = get_mcs_val(HALOW_CONFIG_MCS_DEF);
+    lmac_set_tx_mcs(g_ops, mcs_val);
+    lmac_set_fix_tx_rate(g_ops, mcs_val);
+    lmac_set_fallback_mcs(g_ops, mcs_val);
+    lmac_set_mcast_txmcs(g_ops, mcs_val);
 	
     /* ---- power ---- */
-    lmac_set_txpower(ops, g_halow_cfg.rf_power);
+    lmac_set_txpower(g_ops, HALOW_CONFIG_POWER_DEF);
     //SUPER POWER (200 mA device consumption, 20-22 dBm expected)
-    lmac_set_super_pwr(ops, g_halow_cfg.rf_super_power);
-    //lmac_set_pa_pwr_ctrl(ops, HALOW_PA_PWRCTRL_EN);
+    lmac_set_super_pwr(g_ops, HALOW_CONFIG_SPOWER_EN_DEF);
+    //lmac_set_pa_pwr_ctrl(g_ops, HALOW_PA_PWRCTRL_EN);
 
     /* ---- aggregation ---- */
-    lmac_set_aggcnt(ops, HALOW_TX_AGGCNT);
-    lmac_set_rx_aggcnt(ops, HALOW_RX_AGGCNT);
+    lmac_set_aggcnt(g_ops, HALOW_TX_AGGCNT);
+    lmac_set_rx_aggcnt(g_ops, HALOW_RX_AGGCNT);
 
     /* ---- channel switching ---- */
-    lmac_set_auto_chan_switch(ops, 0);
+    lmac_set_auto_chan_switch(g_ops, 0);
 
     /* ---- wakeup ---- */
-    lmac_set_wakeup_io(ops, HALOW_WAKEUP_IO, HALOW_WAKEUP_EDGE);
+    lmac_set_wakeup_io(g_ops, HALOW_WAKEUP_IO, HALOW_WAKEUP_EDGE);
 
     /* ---- power save ---- */
-    lmac_set_ps_mode(ops, HALOW_PS_MODE);
-    lmac_set_wait_psmode(ops, HALOW_WAIT_PSMODE);
-    lmac_set_psconnect_period(ops, HALOW_PSCONNECT_PERIOD);
-    lmac_set_ap_psmode_en(ops, 0);
+    lmac_set_ps_mode(g_ops, HALOW_PS_MODE);
+    lmac_set_wait_psmode(g_ops, HALOW_WAIT_PSMODE);
+    lmac_set_psconnect_period(g_ops, HALOW_PSCONNECT_PERIOD);
+    lmac_set_ap_psmode_en(g_ops, 0);
 
     /* ---- standby ---- */
-    lmac_set_standby(ops,
+    lmac_set_standby(g_ops,
                      HALOW_STANDBY_CH - 1,
                      HALOW_STANDBY_PERIOD_MS * 1000);
 
     /* ---- CCA / retry / RTS ---- */
-    lmac_set_cca_for_ce(ops, HALOW_CCA_FOR_CE);
-    lmac_set_retry_cnt(ops,
+    lmac_set_cca_for_ce(g_ops, HALOW_CCA_FOR_CE);
+    lmac_set_retry_cnt(g_ops,
                        HALOW_RETRY_FRM_MAX,
                        HALOW_RETRY_RTS_MAX);
-    lmac_set_retry_fallback_cnt(ops, HALOW_RETRY_FB_CNT);
-    lmac_set_rts(ops, HALOW_RTS_THRESH);
+    lmac_set_retry_fallback_cnt(g_ops, HALOW_RETRY_FB_CNT);
+    lmac_set_rts(g_ops, HALOW_RTS_THRESH);
 
     /* ---- misc ---- */
-    lmac_set_ack_timeout_extra(ops, HALOW_ACK_TMO_EXTRA);
-    lmac_set_dbg_levle(ops, HALOW_DBG_LEVEL);
+    lmac_set_ack_timeout_extra(g_ops, HALOW_ACK_TMO_EXTRA);
+    lmac_set_dbg_levle(g_ops, HALOW_DBG_LEVEL);
 }
 
 bool halow_init(uint32_t rxbuf, uint32_t rxbuf_size,
@@ -272,8 +300,11 @@ bool halow_init(uint32_t rxbuf, uint32_t rxbuf_size,
     if (lmac_open(g_ops) != 0) {
         return false;
     }
-    halow_config_load();
-    halow_post_init(g_ops);
+    halow_config_set_default();
+    halow_config_t config;
+    halow_config_load(&config);
+    halow_config_apply(&config);
+    halow_config_save(&config); // Incorrect values should be removed from DB
     halow_lbt_init();
     return true;
 }

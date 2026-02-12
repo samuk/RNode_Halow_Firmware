@@ -166,61 +166,18 @@ struct mg_fs mg_fs_littlefs = {
     .mkd = mg_lfs_mkd,
 };
 
-static void ev_handler(struct mg_connection *c, int ev, void *ev_data){
-    switch (ev) {
-
-    case MG_EV_HTTP_MSG: {
-        struct mg_http_message *hm = (struct mg_http_message *) ev_data;
-        if (mg_match(hm->uri, mg_str("/api/#"), NULL)) {
-            if (mg_match(hm->method, mg_str("GET"), NULL)) {
-                if (!cfgp_api_get_callback(c, hm)) {
-                    mg_http_reply(c, 404, "", "not found\n");
-                }
-                return;
-            }
-
-            if (mg_match(hm->method, mg_str("POST"), NULL)) {
-                if (!cfgp_api_post_callback(c, hm)) {
-                    mg_http_reply(c, 404, "", "not found\n");
-                }
-                return;
-            }
-
-            mg_http_reply(c, 405, "", "method not allowed\n");
-            return;
-        }
-
-        struct mg_http_serve_opts opts = {
-            .root_dir = CFGP_WWW_DIR,
-            .fs       = &mg_fs_littlefs
-        };
-
-        mg_http_serve_dir(c, hm, &opts);
-        break;
-    }
-
-    case MG_EV_CLOSE:
-        break;
-
-    case MG_EV_ERROR:
-        break;
-
-    default:
-        break;
-    }
-}
-
-
 static int32 cfgp_loop(struct os_work *work) {
-    mg_mgr_poll(&mgr, 0); // I dont know why poll time work wrong
+    //mg_mgr_poll(&mgr, 0); // I dont know why poll time work wrong
+    mongoose_poll();
     os_run_work_delay(&cfgp_work, 5);
     return 0;
 }
 
 int32_t config_page_init( void ){
     lfs_mkdir(&g_lfs, CFGP_WWW_DIR);
-    mg_mgr_init(&mgr);
-    mg_http_listen(&mgr, "http://0.0.0.0:80", ev_handler, NULL);
+    mongoose_init();
+    //mg_mgr_init(&mgr);
+    //mg_http_listen(&mgr, "http://0.0.0.0:80", ev_handler, NULL);
     OS_WORK_INIT(&cfgp_work, cfgp_loop, 0);
     os_run_work_delay(&cfgp_work, 1000);
     return 0;
