@@ -149,30 +149,66 @@ struct custom_api_handler {
 };
 static struct custom_api_handler *s_custom_handlers;
 
-struct attribute s_halow_cfg_attributes[] = {
-  {"bandwidth", "string", NULL, offsetof(struct halow_cfg, bandwidth), 6, false},
-  {"central_freq", "double", "%.1f", offsetof(struct halow_cfg, central_freq), 0, false},
-  {"super_power", "bool", NULL, offsetof(struct halow_cfg, super_power), 0, false},
-  {"power_dbm", "int", NULL, offsetof(struct halow_cfg, power_dbm), 0, false},
-  {"mcs_index", "string", NULL, offsetof(struct halow_cfg, mcs_index), 6, false},
+struct attribute s_api_lbt_cfg_attributes[] = {
+  {"enable", "bool", NULL, offsetof(struct api_lbt_cfg, enable), 0, false},
+  {"max_airtime_perc", "int", NULL, offsetof(struct api_lbt_cfg, max_airtime_perc), 0, false},
   {NULL, NULL, NULL, 0, 0, false}
 };
-struct attribute s_network_settings_attributes[] = {
-  {"ip_address", "string", NULL, offsetof(struct network_settings, ip_address), 20, false},
-  {"gw_address", "string", NULL, offsetof(struct network_settings, gw_address), 20, false},
-  {"netmask", "string", NULL, offsetof(struct network_settings, netmask), 20, false},
-  {"dhcp", "bool", NULL, offsetof(struct network_settings, dhcp), 0, false},
+struct attribute s_api_dev_stat_attributes[] = {
+  {"uptime", "string", NULL, offsetof(struct api_dev_stat, uptime), 25, false},
+  {NULL, NULL, NULL, 0, 0, false}
+};
+struct attribute s_api_radio_stat_attributes[] = {
+  {"ch_util", "string", NULL, offsetof(struct api_radio_stat, ch_util), 10, false},
+  {"bg_pwr_dbm", "string", NULL, offsetof(struct api_radio_stat, bg_pwr_dbm), 10, false},
+  {"airtime_1h", "string", NULL, offsetof(struct api_radio_stat, airtime_1h), 10, false},
+  {"tx_speed", "string", NULL, offsetof(struct api_radio_stat, tx_speed), 20, false},
+  {"rx_speed", "string", NULL, offsetof(struct api_radio_stat, rx_speed), 20, false},
+  {"rx_bytes", "int", NULL, offsetof(struct api_radio_stat, rx_bytes), 0, false},
+  {"tx_bytes", "int", NULL, offsetof(struct api_radio_stat, tx_bytes), 0, false},
+  {"rx_packets", "int", NULL, offsetof(struct api_radio_stat, rx_packets), 0, false},
+  {"tx_packets", "int", NULL, offsetof(struct api_radio_stat, tx_packets), 0, false},
+  {NULL, NULL, NULL, 0, 0, false}
+};
+struct attribute s_api_tcp_server_cfg_attributes[] = {
+  {"whitelist", "string", NULL, offsetof(struct api_tcp_server_cfg, whitelist), 22, false},
+  {"connected", "string", NULL, offsetof(struct api_tcp_server_cfg, connected), 22, false},
+  {"enable", "bool", NULL, offsetof(struct api_tcp_server_cfg, enable), 0, false},
+  {"port", "int", NULL, offsetof(struct api_tcp_server_cfg, port), 0, false},
+  {NULL, NULL, NULL, 0, 0, false}
+};
+struct attribute s_api_halow_cfg_attributes[] = {
+  {"bandwidth", "string", NULL, offsetof(struct api_halow_cfg, bandwidth), 6, false},
+  {"central_freq", "double", "%.1f", offsetof(struct api_halow_cfg, central_freq), 0, false},
+  {"super_power", "bool", NULL, offsetof(struct api_halow_cfg, super_power), 0, false},
+  {"power_dbm", "int", NULL, offsetof(struct api_halow_cfg, power_dbm), 0, false},
+  {"mcs_index", "string", NULL, offsetof(struct api_halow_cfg, mcs_index), 6, false},
+  {NULL, NULL, NULL, 0, 0, false}
+};
+struct attribute s_api_net_cfg_attributes[] = {
+  {"ip_address", "string", NULL, offsetof(struct api_net_cfg, ip_address), 16, false},
+  {"gw_address", "string", NULL, offsetof(struct api_net_cfg, gw_address), 16, false},
+  {"netmask", "string", NULL, offsetof(struct api_net_cfg, netmask), 16, false},
+  {"dhcp", "bool", NULL, offsetof(struct api_net_cfg, dhcp), 0, false},
   {NULL, NULL, NULL, 0, 0, false}
 };
 
-struct apihandler_data s_apihandler_halow_cfg = {{"halow_cfg", "data", false, 0, 0, 0UL}, s_halow_cfg_attributes, sizeof(struct halow_cfg), (void (*)(void *)) glue_get_halow_cfg, (void (*)(void *)) glue_set_halow_cfg};
-struct apihandler_ota s_apihandler_firmware_update = {{"firmware_update", "ota", false, 0, 0, 0UL}, glue_ota_begin_firmware_update, glue_ota_end_firmware_update, glue_ota_write_firmware_update};
-struct apihandler_data s_apihandler_network_settings = {{"network_settings", "data", false, 0, 0, 0UL}, s_network_settings_attributes, sizeof(struct network_settings), (void (*)(void *)) glue_get_network_settings, (void (*)(void *)) glue_set_network_settings};
+struct apihandler_data s_apihandler_api_lbt_cfg = {{"api_lbt_cfg", "data", false, 0, 0, 0UL}, s_api_lbt_cfg_attributes, sizeof(struct api_lbt_cfg), (void (*)(void *)) glue_get_api_lbt_cfg, (void (*)(void *)) glue_set_api_lbt_cfg};
+struct apihandler_data s_apihandler_api_dev_stat = {{"api_dev_stat", "data", false, 0, 0, 0UL}, s_api_dev_stat_attributes, sizeof(struct api_dev_stat), (void (*)(void *)) glue_get_api_dev_stat, (void (*)(void *)) glue_set_api_dev_stat};
+struct apihandler_data s_apihandler_api_radio_stat = {{"api_radio_stat", "data", false, 0, 0, 0UL}, s_api_radio_stat_attributes, sizeof(struct api_radio_stat), (void (*)(void *)) glue_get_api_radio_stat, (void (*)(void *)) glue_set_api_radio_stat};
+struct apihandler_data s_apihandler_api_tcp_server_cfg = {{"api_tcp_server_cfg", "data", false, 0, 0, 0UL}, s_api_tcp_server_cfg_attributes, sizeof(struct api_tcp_server_cfg), (void (*)(void *)) glue_get_api_tcp_server_cfg, (void (*)(void *)) glue_set_api_tcp_server_cfg};
+struct apihandler_data s_apihandler_api_halow_cfg = {{"api_halow_cfg", "data", false, 0, 0, 0UL}, s_api_halow_cfg_attributes, sizeof(struct api_halow_cfg), (void (*)(void *)) glue_get_api_halow_cfg, (void (*)(void *)) glue_set_api_halow_cfg};
+struct apihandler_ota s_apihandler_api_firmware_update = {{"api_firmware_update", "ota", false, 0, 0, 0UL}, glue_ota_begin_api_firmware_update, glue_ota_end_api_firmware_update, glue_ota_write_api_firmware_update};
+struct apihandler_data s_apihandler_api_net_cfg = {{"api_net_cfg", "data", false, 0, 0, 0UL}, s_api_net_cfg_attributes, sizeof(struct api_net_cfg), (void (*)(void *)) glue_get_api_net_cfg, (void (*)(void *)) glue_set_api_net_cfg};
 
 static struct apihandler *s_apihandlers[] = {
-  (struct apihandler *) &s_apihandler_halow_cfg,
-  (struct apihandler *) &s_apihandler_firmware_update,
-  (struct apihandler *) &s_apihandler_network_settings
+  (struct apihandler *) &s_apihandler_api_lbt_cfg,
+  (struct apihandler *) &s_apihandler_api_dev_stat,
+  (struct apihandler *) &s_apihandler_api_radio_stat,
+  (struct apihandler *) &s_apihandler_api_tcp_server_cfg,
+  (struct apihandler *) &s_apihandler_api_halow_cfg,
+  (struct apihandler *) &s_apihandler_api_firmware_update,
+  (struct apihandler *) &s_apihandler_api_net_cfg
 };
 
 static struct apihandler *get_api_handler(struct mg_str name) {
@@ -1180,7 +1216,7 @@ void mongoose_init(void) {
 
 void mongoose_poll(void) {
   glue_lock();
-  mg_mgr_poll(&g_mgr, 0);
+  mg_mgr_poll(&g_mgr, 10);
 #if WIZARD_ENABLE_WEBSOCKET
   send_websocket_data();
 #endif

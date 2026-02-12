@@ -109,28 +109,64 @@ void glue_update_state(void);
 
 // Firmware Glue
 
-struct halow_cfg {
+struct api_lbt_cfg {
+  bool enable;
+  int max_airtime_perc;
+};
+void glue_get_api_lbt_cfg(struct api_lbt_cfg *);
+void glue_set_api_lbt_cfg(struct api_lbt_cfg *);
+
+struct api_dev_stat {
+  char uptime[25];
+};
+void glue_get_api_dev_stat(struct api_dev_stat *);
+void glue_set_api_dev_stat(struct api_dev_stat *);
+
+struct api_radio_stat {
+  char ch_util[10];
+  char bg_pwr_dbm[10];
+  char airtime_1h[10];
+  char tx_speed[20];
+  char rx_speed[20];
+  int rx_bytes;
+  int tx_bytes;
+  int rx_packets;
+  int tx_packets;
+};
+void glue_get_api_radio_stat(struct api_radio_stat *);
+void glue_set_api_radio_stat(struct api_radio_stat *);
+
+struct api_tcp_server_cfg {
+  char whitelist[22];
+  char connected[22];
+  bool enable;
+  int port;
+};
+void glue_get_api_tcp_server_cfg(struct api_tcp_server_cfg *);
+void glue_set_api_tcp_server_cfg(struct api_tcp_server_cfg *);
+
+struct api_halow_cfg {
   char bandwidth[6];
   double central_freq;
   bool super_power;
   int power_dbm;
   char mcs_index[6];
 };
-void glue_get_halow_cfg(struct halow_cfg *);
-void glue_set_halow_cfg(struct halow_cfg *);
+void glue_get_api_halow_cfg(struct api_halow_cfg *);
+void glue_set_api_halow_cfg(struct api_halow_cfg *);
 
-void *glue_ota_begin_firmware_update(char *file_name, size_t total_size);
-bool glue_ota_end_firmware_update(void *context);
-bool glue_ota_write_firmware_update(void *context, void *buf, size_t len);
+void *glue_ota_begin_api_firmware_update(char *file_name, size_t total_size);
+bool glue_ota_end_api_firmware_update(void *context);
+bool glue_ota_write_api_firmware_update(void *context, void *buf, size_t len);
 
-struct network_settings {
-  char ip_address[20];
-  char gw_address[20];
-  char netmask[20];
+struct api_net_cfg {
+  char ip_address[16];
+  char gw_address[16];
+  char netmask[16];
   bool dhcp;
 };
-void glue_get_network_settings(struct network_settings *);
-void glue_set_network_settings(struct network_settings *);
+void glue_get_api_net_cfg(struct api_net_cfg *);
+void glue_set_api_net_cfg(struct api_net_cfg *);
 
 
 

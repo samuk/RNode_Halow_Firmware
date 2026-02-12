@@ -81,7 +81,7 @@ __init static void sys_network_init(void) {
             nif->hostname = hostname;
         }
 
-        lwip_netif_set_dhcp2("e0", 1);
+        //lwip_netif_set_dhcp2("e0", 1);
         os_printf("add e0 interface!\r\n");
     }else{
         os_printf("Ethernet GMAC not found!");

@@ -11024,9 +11024,9 @@ void mg_mgr_poll(struct mg_mgr *mgr, int ms) {
   struct mg_connection *c, *tmp;
   uint64_t now;
 
-  //mg_iotest(mgr, ms);
-  //now = mg_millis();
-  //mg_timer_poll(&mgr->timers, now);
+  mg_iotest(mgr, ms);
+  now = mg_millis();
+  mg_timer_poll(&mgr->timers, now);
 
   for (c = mgr->conns; c != NULL; c = tmp) {
     bool is_resp = c->is_resp;
