@@ -29,43 +29,42 @@ extern "C" {
 #include <stdint.h>
 #include <drv_common.h>
 
-
 /// definition for rsa handle.
 typedef void *rsa_handle_t;
 
 /****** RSA specific error codes *****/
 typedef enum {
-    RSA_ERROR_DATA_BITS = (DRV_ERROR_SPECIFIC + 1),    ///< Specified number of Data bits not supported
-    RSA_ERROR_ENDIAN                              ///< Specified endian not supported
+    RSA_ERROR_DATA_BITS = (DRV_ERROR_SPECIFIC + 1), ///< Specified number of Data bits not supported
+    RSA_ERROR_ENDIAN                                ///< Specified endian not supported
 } rsa_error_e;
 
 /*----- RSA Control Codes: Mode Parameters: Data Bits -----*/
 typedef enum {
-    RSA_DATA_BITS_192             = 0,  ///< 192 Data bits
-    RSA_DATA_BITS_256,                  ///< 256 Data bits
-    RSA_DATA_BITS_512,                  ///< 512 Data bits
-    RSA_DATA_BITS_1024,                 ///< 1024 Data bits
-    RSA_DATA_BITS_2048,                 ///< 2048 Data bits
-    RSA_DATA_BITS_3072                  ///< 3072 Data bits
+    RSA_DATA_BITS_192 = 0, ///< 192 Data bits
+    RSA_DATA_BITS_256,     ///< 256 Data bits
+    RSA_DATA_BITS_512,     ///< 512 Data bits
+    RSA_DATA_BITS_1024,    ///< 1024 Data bits
+    RSA_DATA_BITS_2048,    ///< 2048 Data bits
+    RSA_DATA_BITS_3072     ///< 3072 Data bits
 } rsa_data_bits_e;
 
 /*----- RSA Control Codes: Mode Parameters: Endian -----*/
 typedef enum {
-    RSA_ENDIAN_MODE_LITTLE        = 0,  ///< RSA Little Endian Mode
-    RSA_ENDIAN_MODE_BIG                 ///< RSA Big Endian Mode
+    RSA_ENDIAN_MODE_LITTLE = 0, ///< RSA Little Endian Mode
+    RSA_ENDIAN_MODE_BIG         ///< RSA Big Endian Mode
 } rsa_endian_mode_e;
 
 typedef enum {
-    RSA_PADDING_MODE_PKCS1        = 1, ///< RSA PKCS1 Padding Mode
-    RSA_PADDING_MODE_NO,               ///< RSA NO Padding Mode
-    RSA_PADDING_MODE_SSLV23,           ///< RSA SSLV23 Padding Mode
-    RSA_PADDING_MODE_PKCS1_OAEP,       ///< RSA PKCS1 OAEP Padding Mode
-    RSA_PADDING_MODE_X931,             ///< RSA X931 Padding Mode
-    RSA_PADDING_MODE_PSS               ///< RSA PSS Padding Mode
+    RSA_PADDING_MODE_PKCS1 = 1,  ///< RSA PKCS1 Padding Mode
+    RSA_PADDING_MODE_NO,         ///< RSA NO Padding Mode
+    RSA_PADDING_MODE_SSLV23,     ///< RSA SSLV23 Padding Mode
+    RSA_PADDING_MODE_PKCS1_OAEP, ///< RSA PKCS1 OAEP Padding Mode
+    RSA_PADDING_MODE_X931,       ///< RSA X931 Padding Mode
+    RSA_PADDING_MODE_PSS         ///< RSA PSS Padding Mode
 } rsa_padding_type_e;
 
 typedef enum {
-    RSA_HASH_TYPE_MD5            = 0,
+    RSA_HASH_TYPE_MD5 = 0,
     RSA_HASH_TYPE_SHA1,
     RSA_HASH_TYPE_SHA224,
     RSA_HASH_TYPE_SHA256,
@@ -76,39 +75,37 @@ typedef enum {
 /*----- RSA Control Codes: Mode Parameters: Padding mode -----*/
 typedef struct {
     rsa_padding_type_e padding_type;
-    rsa_hash_type_e    hash_type;
+    rsa_hash_type_e hash_type;
 } rsa_padding_t;
 
 /**
 \brief RSA Status
 */
 typedef struct {
-    uint32_t busy             : 1;        ///< Calculate busy flag
+    uint32_t busy : 1; ///< Calculate busy flag
 } rsa_status_t;
 
 /****** RSA Event *****/
 typedef enum {
-    RSA_EVENT_ENCRYPT_COMPLETE    = 0,   ///< Encrypt completed
-    RSA_EVENT_DECRYPT_COMPLETE,          ///< Decrypt completed
-    RSA_EVENT_SIGN_COMPLETE,             ///< Sign completed
-    RSA_EVENT_VERIFY_COMPLETE,           ///< Verify completed
+    RSA_EVENT_ENCRYPT_COMPLETE = 0, ///< Encrypt completed
+    RSA_EVENT_DECRYPT_COMPLETE,     ///< Decrypt completed
+    RSA_EVENT_SIGN_COMPLETE,        ///< Sign completed
+    RSA_EVENT_VERIFY_COMPLETE,      ///< Verify completed
 } rsa_event_e;
 
-typedef void (*rsa_event_cb_t)(int32_t idx, rsa_event_e event);   ///< Pointer to \ref rsa_event_cb_t : RSA Event call back.
-
+typedef void (*rsa_event_cb_t)(int32_t idx, rsa_event_e event); ///< Pointer to \ref rsa_event_cb_t : RSA Event call back.
 
 /**
 \brief RSA Device Driver Capabilities.
 */
 typedef struct {
-    uint32_t bits_192            : 1;      ///< supports 192bits modular length
-    uint32_t bits_256            : 1;      ///< supports 256bits modular length
-    uint32_t bits_512            : 1;      ///< supports 512bits modular length
-    uint32_t bits_1024           : 1;      ///< supports 1024bits modular length
-    uint32_t bits_2048           : 1;      ///< supports 2048bits modular length
-    uint32_t bits_3072           : 1;      ///< supports 30728bits modular length
+    uint32_t bits_192 : 1;  ///< supports 192bits modular length
+    uint32_t bits_256 : 1;  ///< supports 256bits modular length
+    uint32_t bits_512 : 1;  ///< supports 512bits modular length
+    uint32_t bits_1024 : 1; ///< supports 1024bits modular length
+    uint32_t bits_2048 : 1; ///< supports 2048bits modular length
+    uint32_t bits_3072 : 1; ///< supports 30728bits modular length
 } rsa_capabilities_t;
-
 
 // Function documentation
 
@@ -153,8 +150,7 @@ rsa_capabilities_t csi_rsa_get_capabilities(int32_t idx);
 int32_t csi_rsa_config(rsa_handle_t handle,
                        rsa_data_bits_e data_bits,
                        rsa_endian_mode_e endian,
-                       void *arg
-                      );
+                       void *arg);
 
 /**
   \brief       encrypt
@@ -169,7 +165,6 @@ int32_t csi_rsa_config(rsa_handle_t handle,
   \return      error code
 */
 int32_t csi_rsa_encrypt(rsa_handle_t handle, void *n, void *e, void *src, uint32_t src_size, void *out, uint32_t *out_size, rsa_padding_t padding);
-
 
 /**
   \brief       decrypt
@@ -219,7 +214,6 @@ int32_t csi_rsa_verify(rsa_handle_t handle, void *n, void *e, void *src, uint32_
   \return      RSA status \ref rsa_status_t
 */
 rsa_status_t csi_rsa_get_status(rsa_handle_t handle);
-
 
 #ifdef __cplusplus
 }

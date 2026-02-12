@@ -31,77 +31,74 @@ extern "C" {
 #include <drv_common.h>
 #include <drv_errno.h>
 
-
 /// definition for aes handle.
 typedef void *aes_handle_t;
 
 /****** AES specific error codes *****/
 typedef enum {
-    AES_ERROR_MODE  = (DRV_ERROR_SPECIFIC + 1),        ///< Specified Mode not supported
-    AES_ERROR_DATA_BITS,                               ///< Specified number of Data bits not supported
-    AES_ERROR_ENDIAN                                   ///< Specified endian not supported
+    AES_ERROR_MODE = (DRV_ERROR_SPECIFIC + 1), ///< Specified Mode not supported
+    AES_ERROR_DATA_BITS,                       ///< Specified number of Data bits not supported
+    AES_ERROR_ENDIAN                           ///< Specified endian not supported
 } aes_error_e;
 
 /*----- AES Control Codes: Mode -----*/
 typedef enum {
-    AES_MODE_ECB                  = 0,   ///< ECB Mode
-    AES_MODE_CBC,                        ///< CBC Mode
-    AES_MODE_CFB1,                       ///< CFB1 Mode
-    AES_MODE_CFB8,                       ///< CFB8 Mode
-    AES_MODE_CFB128,                     ///< CFB128 Mode
-    AES_MODE_OFB,                        ///< OFB Mode
-    AES_MODE_CTR                         ///< CTR Mode
+    AES_MODE_ECB = 0, ///< ECB Mode
+    AES_MODE_CBC,     ///< CBC Mode
+    AES_MODE_CFB1,    ///< CFB1 Mode
+    AES_MODE_CFB8,    ///< CFB8 Mode
+    AES_MODE_CFB128,  ///< CFB128 Mode
+    AES_MODE_OFB,     ///< OFB Mode
+    AES_MODE_CTR      ///< CTR Mode
 } aes_mode_e;
 
 /*----- AES Control Codes: Crypto Mode -----*/
 typedef enum {
-    AES_CRYPTO_MODE_ENCRYPT                  = 0,   ///< encrypt Mode
-    AES_CRYPTO_MODE_DECRYPT,                        ///< decrypt Mode
+    AES_CRYPTO_MODE_ENCRYPT = 0, ///< encrypt Mode
+    AES_CRYPTO_MODE_DECRYPT,     ///< decrypt Mode
 } aes_crypto_mode_e;
 
 /*----- AES Control Codes: Mode Parameters: Key length -----*/
 typedef enum {
-    AES_KEY_LEN_BITS_128        = 0,      ///< 128 Data bits
-    AES_KEY_LEN_BITS_192,                 ///< 192 Data bits
-    AES_KEY_LEN_BITS_256                  ///< 256 Data bits
+    AES_KEY_LEN_BITS_128 = 0, ///< 128 Data bits
+    AES_KEY_LEN_BITS_192,     ///< 192 Data bits
+    AES_KEY_LEN_BITS_256      ///< 256 Data bits
 } aes_key_len_bits_e;
 
 /*----- AES Control Codes: Mode Parameters: Endian -----*/
 typedef enum {
-    AES_ENDIAN_LITTLE          = 0,       ///< Little Endian
-    AES_ENDIAN_BIG                        ///< Big Endian
+    AES_ENDIAN_LITTLE = 0, ///< Little Endian
+    AES_ENDIAN_BIG         ///< Big Endian
 } aes_endian_mode_e;
 
 /**
 \brief AES Status
 */
 typedef struct {
-    uint32_t busy             : 1;        ///< busy flag
+    uint32_t busy : 1; ///< busy flag
 } aes_status_t;
 
 /****** AES Event *****/
 typedef enum {
-    AES_EVENT_CRYPTO_COMPLETE    = 0   ///< Encrypt completed
+    AES_EVENT_CRYPTO_COMPLETE = 0 ///< Encrypt completed
 } aes_event_e;
-typedef void (*aes_event_cb_t)(int32_t idx, aes_event_e event);   ///< Pointer to \ref aes_event_cb_t : AES Event call back.
-
+typedef void (*aes_event_cb_t)(int32_t idx, aes_event_e event); ///< Pointer to \ref aes_event_cb_t : AES Event call back.
 
 /**
 \brief AES Device Driver Capabilities.
 */
 typedef struct {
-    uint32_t ecb_mode           : 1;      ///< supports ECB mode
-    uint32_t cbc_mode           : 1;      ///< supports CBC mode
-    uint32_t cfb1_mode          : 1;      ///< supports CFB1 mode
-    uint32_t cfb8_mode          : 1;      ///< supports CFB8 mode
-    uint32_t cfb128_mode        : 1;      ///< supports CFB128 mode
-    uint32_t ofb_mode           : 1;      ///< supports OFB mode
-    uint32_t ctr_mode           : 1;      ///< supports CTR mode
-    uint32_t bits_128           : 1;      ///< supports 128bits key length
-    uint32_t bits_192           : 1;      ///< supports 192bits key length
-    uint32_t bits_256           : 1;      ///< supports 256bits key length
+    uint32_t ecb_mode : 1;    ///< supports ECB mode
+    uint32_t cbc_mode : 1;    ///< supports CBC mode
+    uint32_t cfb1_mode : 1;   ///< supports CFB1 mode
+    uint32_t cfb8_mode : 1;   ///< supports CFB8 mode
+    uint32_t cfb128_mode : 1; ///< supports CFB128 mode
+    uint32_t ofb_mode : 1;    ///< supports OFB mode
+    uint32_t ctr_mode : 1;    ///< supports CTR mode
+    uint32_t bits_128 : 1;    ///< supports 128bits key length
+    uint32_t bits_192 : 1;    ///< supports 192bits key length
+    uint32_t bits_256 : 1;    ///< supports 256bits key length
 } aes_capabilities_t;
-
 
 // Function documentation
 
@@ -146,8 +143,7 @@ aes_capabilities_t csi_aes_get_capabilities(int32_t idx);
 int32_t csi_aes_config(aes_handle_t handle,
                        aes_mode_e mode,
                        aes_key_len_bits_e keylen_bits,
-                       aes_endian_mode_e endian
-                      );
+                       aes_endian_mode_e endian);
 
 /**
   \brief       set crypto key.
@@ -193,7 +189,7 @@ int32_t csi_aes_cbc_crypto(aes_handle_t handle, void *context, void *in, void *o
   \param[in]   iv   Pointer to initialization vector
   \return      error code
 */
-int32_t csi_aes_cfb1_crypto(aes_handle_t handle, void *context, void *in, void *out,  uint32_t len, uint8_t iv[16]);
+int32_t csi_aes_cfb1_crypto(aes_handle_t handle, void *context, void *in, void *out, uint32_t len, uint8_t iv[16]);
 
 /**
   \brief       aes cfb8 encrypt or decrypt

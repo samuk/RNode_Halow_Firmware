@@ -24,18 +24,16 @@
 #ifndef _CSI_KERNEL_
 #define _CSI_KERNEL_
 
-
 #include <stdint.h>
 #include <errno.h>
 
-#ifdef  __cplusplus
-extern "C"
-{
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 typedef struct osTimespec {
-    long    tv_sec;
-    long    tv_msec;
+    long tv_sec;
+    long tv_msec;
 } osTimespec_t;
 
 /* =================================================================================== */
@@ -47,97 +45,97 @@ typedef int32_t k_status_t;
 
 /// Kernel scheduler state.
 typedef enum {
-    KSCHED_ST_INACTIVE         =  0,         ///< Inactive: The kernel is not ready yet. csi_kernel_init needs to be executed successfully.
-    KSCHED_ST_READY            =  1,         ///< Ready: The kernel is not yet running. csi_kernel_start transfers the kernel to the running state.
-    KSCHED_ST_RUNNING          =  2,         ///< Running: The kernel is initialized and running.
-    KSCHED_ST_LOCKED           =  3,         ///< Locked: The kernel was locked with csi_kernel_sched_lock. The functions csi_kernel_sched_unlock or csi_kernel_sched_restore_lock unlocks it.
-    KSCHED_ST_SUSPEND          =  4,         ///< Suspended: The kernel was suspended using csi_kernel_sched_suspend. The function csi_kernel_sched_resume returns to normal operation
-    KSCHED_ST_ERROR            =  5          ///< Error: An error occurred.
+    KSCHED_ST_INACTIVE = 0, ///< Inactive: The kernel is not ready yet. csi_kernel_init needs to be executed successfully.
+    KSCHED_ST_READY    = 1, ///< Ready: The kernel is not yet running. csi_kernel_start transfers the kernel to the running state.
+    KSCHED_ST_RUNNING  = 2, ///< Running: The kernel is initialized and running.
+    KSCHED_ST_LOCKED   = 3, ///< Locked: The kernel was locked with csi_kernel_sched_lock. The functions csi_kernel_sched_unlock or csi_kernel_sched_restore_lock unlocks it.
+    KSCHED_ST_SUSPEND  = 4, ///< Suspended: The kernel was suspended using csi_kernel_sched_suspend. The function csi_kernel_sched_resume returns to normal operation
+    KSCHED_ST_ERROR    = 5  ///< Error: An error occurred.
 } k_sched_stat_t;
 
 /// task state.
 typedef enum {
-    KTASK_ST_INACTIVE          =  0,         ///< Inactive.
-    KTASK_ST_READY             =  1,         ///< Ready.
-    KTASK_ST_RUNNING           =  2,         ///< Running.
-    KTASK_ST_BLOCKED           =  3,         ///< Blocked.
-    KTASK_ST_TERMINATED        =  4,         ///< Terminated.
-    KTASK_ST_ERROR             =  5          ///< Error: An error occurred.
+    KTASK_ST_INACTIVE   = 0, ///< Inactive.
+    KTASK_ST_READY      = 1, ///< Ready.
+    KTASK_ST_RUNNING    = 2, ///< Running.
+    KTASK_ST_BLOCKED    = 3, ///< Blocked.
+    KTASK_ST_TERMINATED = 4, ///< Terminated.
+    KTASK_ST_ERROR      = 5  ///< Error: An error occurred.
 } k_task_stat_t;
 
 /// timer state.
 typedef enum {
-    KTIMER_ST_INACTIVE       = 0,          ///< not running
-    KTIMER_ST_ACTIVE         = 1,          ///< running
+    KTIMER_ST_INACTIVE = 0, ///< not running
+    KTIMER_ST_ACTIVE   = 1, ///< running
 } k_timer_stat_t;
 
 /// Timer type.
 typedef enum {
-    KTIMER_TYPE_ONCE         = 0,          ///< One-shot timer.
-    KTIMER_TYPE_PERIODIC     = 1           ///< Repeating timer.
+    KTIMER_TYPE_ONCE     = 0, ///< One-shot timer.
+    KTIMER_TYPE_PERIODIC = 1  ///< Repeating timer.
 } k_timer_type_t;
 
 /// event option.
 typedef enum {
-    KEVENT_OPT_SET_ANY       = 0,          ///< Check any bit in flags to be 1.
-    KEVENT_OPT_SET_ALL       = 1,          ///< Check all bits in flags to be 1.
-    KEVENT_OPT_CLR_ANY       = 2,          ///< Check any bit in flags to be 0.
-    KEVENT_OPT_CLR_ALL       = 3           ///< Check all bits in flags to be 0.
+    KEVENT_OPT_SET_ANY = 0, ///< Check any bit in flags to be 1.
+    KEVENT_OPT_SET_ALL = 1, ///< Check all bits in flags to be 1.
+    KEVENT_OPT_CLR_ANY = 2, ///< Check any bit in flags to be 0.
+    KEVENT_OPT_CLR_ALL = 3  ///< Check all bits in flags to be 0.
 } k_event_opt_t;
 
 /// Priority definition.
-typedef enum  {
-    KPRIO_IDLE            = 0,          ///< priority: idle (lowest)
-    KPRIO_LOW0               ,          ///< priority: low
-    KPRIO_LOW1               ,          ///< priority: low + 1
-    KPRIO_LOW2               ,          ///< priority: low + 2
-    KPRIO_LOW3               ,          ///< priority: low + 3
-    KPRIO_LOW4               ,          ///< priority: low + 4
-    KPRIO_LOW5               ,          ///< priority: low + 5
-    KPRIO_LOW6               ,          ///< priority: low + 6
-    KPRIO_LOW7               ,          ///< priority: low + 7
-    KPRIO_NORMAL_BELOW0      ,          ///< priority: below normal
-    KPRIO_NORMAL_BELOW1      ,          ///< priority: below normal + 1
-    KPRIO_NORMAL_BELOW2      ,          ///< priority: below normal + 2
-    KPRIO_NORMAL_BELOW3      ,          ///< priority: below normal + 3
-    KPRIO_NORMAL_BELOW4      ,          ///< priority: below normal + 4
-    KPRIO_NORMAL_BELOW5      ,          ///< priority: below normal + 5
-    KPRIO_NORMAL_BELOW6      ,          ///< priority: below normal + 6
-    KPRIO_NORMAL_BELOW7      ,          ///< priority: below normal + 7
-    KPRIO_NORMAL             ,          ///< priority: normal (default)
-    KPRIO_NORMAL1            ,          ///< priority: normal + 1
-    KPRIO_NORMAL2            ,          ///< priority: normal + 2
-    KPRIO_NORMAL3            ,          ///< priority: normal + 3
-    KPRIO_NORMAL4            ,          ///< priority: normal + 4
-    KPRIO_NORMAL5            ,          ///< priority: normal + 5
-    KPRIO_NORMAL6            ,          ///< priority: normal + 6
-    KPRIO_NORMAL7            ,          ///< priority: normal + 7
-    KPRIO_NORMAL_ABOVE0      ,          ///< priority: above normal + 1
-    KPRIO_NORMAL_ABOVE1      ,          ///< priority: above normal + 2
-    KPRIO_NORMAL_ABOVE2      ,          ///< priority: above normal + 3
-    KPRIO_NORMAL_ABOVE3      ,          ///< priority: above normal + 4
-    KPRIO_NORMAL_ABOVE4      ,          ///< priority: above normal + 5
-    KPRIO_NORMAL_ABOVE5      ,          ///< priority: above normal + 6
-    KPRIO_NORMAL_ABOVE6      ,          ///< priority: above normal + 7
-    KPRIO_NORMAL_ABOVE7      ,          ///< priority: above normal + 8
-    KPRIO_HIGH0              ,          ///< priority: high
-    KPRIO_HIGH1              ,          ///< priority: high + 1
-    KPRIO_HIGH2              ,          ///< priority: high + 2
-    KPRIO_HIGH3              ,          ///< priority: high + 3
-    KPRIO_HIGH4              ,          ///< priority: high + 4
-    KPRIO_HIGH5              ,          ///< priority: high + 5
-    KPRIO_HIGH6              ,          ///< priority: high + 6
-    KPRIO_HIGH7              ,          ///< priority: high + 7
-    KPRIO_REALTIME0          ,          ///< priority: realtime + 1
-    KPRIO_REALTIME1          ,          ///< priority: realtime + 2
-    KPRIO_REALTIME2          ,          ///< priority: realtime + 3
-    KPRIO_REALTIME3          ,          ///< priority: realtime + 4
-    KPRIO_REALTIME4          ,          ///< priority: realtime + 5
-    KPRIO_REALTIME5          ,          ///< priority: realtime + 6
-    KPRIO_REALTIME6          ,          ///< priority: realtime + 7
-    KPRIO_REALTIME7          ,          ///< priority: realtime + 8
-    KPRIO_ISR                ,          ///< priority: Reserved for ISR deferred thread
-    KPRIO_ERROR                         ///< Illegal priority
+typedef enum {
+    KPRIO_IDLE = 0,      ///< priority: idle (lowest)
+    KPRIO_LOW0,          ///< priority: low
+    KPRIO_LOW1,          ///< priority: low + 1
+    KPRIO_LOW2,          ///< priority: low + 2
+    KPRIO_LOW3,          ///< priority: low + 3
+    KPRIO_LOW4,          ///< priority: low + 4
+    KPRIO_LOW5,          ///< priority: low + 5
+    KPRIO_LOW6,          ///< priority: low + 6
+    KPRIO_LOW7,          ///< priority: low + 7
+    KPRIO_NORMAL_BELOW0, ///< priority: below normal
+    KPRIO_NORMAL_BELOW1, ///< priority: below normal + 1
+    KPRIO_NORMAL_BELOW2, ///< priority: below normal + 2
+    KPRIO_NORMAL_BELOW3, ///< priority: below normal + 3
+    KPRIO_NORMAL_BELOW4, ///< priority: below normal + 4
+    KPRIO_NORMAL_BELOW5, ///< priority: below normal + 5
+    KPRIO_NORMAL_BELOW6, ///< priority: below normal + 6
+    KPRIO_NORMAL_BELOW7, ///< priority: below normal + 7
+    KPRIO_NORMAL,        ///< priority: normal (default)
+    KPRIO_NORMAL1,       ///< priority: normal + 1
+    KPRIO_NORMAL2,       ///< priority: normal + 2
+    KPRIO_NORMAL3,       ///< priority: normal + 3
+    KPRIO_NORMAL4,       ///< priority: normal + 4
+    KPRIO_NORMAL5,       ///< priority: normal + 5
+    KPRIO_NORMAL6,       ///< priority: normal + 6
+    KPRIO_NORMAL7,       ///< priority: normal + 7
+    KPRIO_NORMAL_ABOVE0, ///< priority: above normal + 1
+    KPRIO_NORMAL_ABOVE1, ///< priority: above normal + 2
+    KPRIO_NORMAL_ABOVE2, ///< priority: above normal + 3
+    KPRIO_NORMAL_ABOVE3, ///< priority: above normal + 4
+    KPRIO_NORMAL_ABOVE4, ///< priority: above normal + 5
+    KPRIO_NORMAL_ABOVE5, ///< priority: above normal + 6
+    KPRIO_NORMAL_ABOVE6, ///< priority: above normal + 7
+    KPRIO_NORMAL_ABOVE7, ///< priority: above normal + 8
+    KPRIO_HIGH0,         ///< priority: high
+    KPRIO_HIGH1,         ///< priority: high + 1
+    KPRIO_HIGH2,         ///< priority: high + 2
+    KPRIO_HIGH3,         ///< priority: high + 3
+    KPRIO_HIGH4,         ///< priority: high + 4
+    KPRIO_HIGH5,         ///< priority: high + 5
+    KPRIO_HIGH6,         ///< priority: high + 6
+    KPRIO_HIGH7,         ///< priority: high + 7
+    KPRIO_REALTIME0,     ///< priority: realtime + 1
+    KPRIO_REALTIME1,     ///< priority: realtime + 2
+    KPRIO_REALTIME2,     ///< priority: realtime + 3
+    KPRIO_REALTIME3,     ///< priority: realtime + 4
+    KPRIO_REALTIME4,     ///< priority: realtime + 5
+    KPRIO_REALTIME5,     ///< priority: realtime + 6
+    KPRIO_REALTIME6,     ///< priority: realtime + 7
+    KPRIO_REALTIME7,     ///< priority: realtime + 8
+    KPRIO_ISR,           ///< priority: Reserved for ISR deferred thread
+    KPRIO_ERROR          ///< Illegal priority
 } k_priority_t;
 
 /// Entry point of a task.
@@ -167,8 +165,6 @@ typedef void *k_mpool_handle_t;
 /// \details Message Queue handle identifies the message queue.
 typedef void *k_msgq_handle_t;
 
-
-
 /* =================================================================================== */
 /*                          Kernel Management Functions                                */
 /* =================================================================================== */
@@ -184,7 +180,6 @@ k_status_t csi_kernel_start(void);
 /// Get the current kernel state.
 /// \return current kernel state \ref k_sched_stat_t .
 k_sched_stat_t csi_kernel_get_stat(void);
-
 
 /* =================================================================================== */
 /*                         scheduler Management Functions                              */
@@ -211,7 +206,6 @@ uint32_t csi_kernel_sched_suspend(void);
 /// \param[in]     sleep_ticks   time in ticks for how long the system was in sleep or power-down mode.
 void csi_kernel_sched_resume(uint32_t sleep_ticks);
 
-
 /* =================================================================================== */
 /*                             Task Management Functions                               */
 /* =================================================================================== */
@@ -227,8 +221,8 @@ void csi_kernel_sched_resume(uint32_t sleep_ticks);
 /// \param[in]     task_handle   reference to a task handle.
 /// \return execution status code. \ref k_status_t
 k_status_t csi_kernel_task_new(k_task_entry_t task, const char *name, void *arg,
-                      k_priority_t prio, uint32_t time_quanta,
-                      void *stack, uint32_t stack_size, k_task_handle_t *task_handle);
+                               k_priority_t prio, uint32_t time_quanta,
+                               void *stack, uint32_t stack_size, k_task_handle_t *task_handle);
 
 /// Delete a task.
 /// \param[in]     task_handle      task handle to operate.
@@ -384,7 +378,6 @@ k_status_t csi_kernel_timer_stop(k_timer_handle_t timer_handle);
 /// \return \ref k_timer_stat_t.
 k_timer_stat_t csi_kernel_timer_get_stat(k_timer_handle_t timer_handle);
 
-
 /* =================================================================================== */
 /*                              Event Management Functions                             */
 /* =================================================================================== */
@@ -427,9 +420,8 @@ k_status_t csi_kernel_event_get(k_event_handle_t ev_handle, uint32_t *ret_flags)
 /// \param[in]     timeout       time out value in ticks if > 0, 0 in case of no time-out, negative in case of wait forever
 /// \return execution status code. \ref k_status_t
 k_status_t csi_kernel_event_wait(k_event_handle_t ev_handle, uint32_t flags,
-                        k_event_opt_t options, uint8_t clr_on_exit,
-                        uint32_t *actl_flags, int32_t timeout);
-
+                                 k_event_opt_t options, uint8_t clr_on_exit,
+                                 uint32_t *actl_flags, int32_t timeout);
 
 /* =================================================================================== */
 /*                              Mutex Management Functions                             */
@@ -490,7 +482,6 @@ k_status_t csi_kernel_sem_post(k_sem_handle_t sem_handle);
 /// \param[in]     sem_handle  semaphore handle to operate.
 /// \return number of tokens available. negative indicates error code.
 int32_t csi_kernel_sem_get_count(k_sem_handle_t sem_handle);
-
 
 /* =================================================================================== */
 /*                          Memory Pool Management Functions                           */
@@ -585,7 +576,6 @@ uint32_t csi_kernel_msgq_get_msg_size(k_msgq_handle_t mq_handle);
 /// \return execution status code. \ref k_status_t
 k_status_t csi_kernel_msgq_flush(k_msgq_handle_t mq_handle);
 
-
 /* =================================================================================== */
 /*                          Heap Management Functions                                  */
 /* =================================================================================== */
@@ -622,8 +612,8 @@ k_status_t csi_kernel_get_mminfo(int32_t *total, int32_t *used, int32_t *free, i
 /// \return execution status code. \ref k_status_t.
 k_status_t csi_kernel_mm_dump(void);
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 }
 #endif
 
-#endif  // _CSI_KERNEL_
+#endif // _CSI_KERNEL_

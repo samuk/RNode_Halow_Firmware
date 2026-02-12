@@ -29,15 +29,13 @@ extern "C" {
 #include <stdint.h>
 #include <drv_common.h>
 
-
 /// definition for pwm handle.
 typedef void *pwm_handle_t;
 
 /****** PWM specific error codes *****/
 typedef enum {
-    EDRV_PWM_MODE  = (DRV_ERROR_SPECIFIC + 1),     ///< Specified Mode not supported
+    EDRV_PWM_MODE = (DRV_ERROR_SPECIFIC + 1), ///< Specified Mode not supported
 } csi_pwm_error_e;
-
 
 /**
   \brief       Initialize PWM Interface. 1. Initializes the resources needed for the PWM interface 2.registers event callback function

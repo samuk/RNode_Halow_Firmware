@@ -9,15 +9,14 @@
 #if (RHINO_CONFIG_MM_BLK > 0)
 kstat_t krhino_mblk_pool_init(mblk_pool_t *pool, const name_t *name,
                               void *pool_start,
-                              size_t blk_size, size_t pool_size)
-{
+                              size_t blk_size, size_t pool_size) {
     CPSR_ALLOC();
 
-    uint32_t blks;            /* max blocks mem pool offers */
-    uint8_t *blk_cur;         /* block pointer for traversing */
-    uint8_t *blk_next;        /* next block pointe for traversing */
-    uint8_t *pool_end;        /* mem pool end */
-    uint8_t  addr_align_mask; /* address alignment */
+    uint32_t blks;           /* max blocks mem pool offers */
+    uint8_t *blk_cur;        /* block pointer for traversing */
+    uint8_t *blk_next;       /* next block pointe for traversing */
+    uint8_t *pool_end;       /* mem pool end */
+    uint8_t addr_align_mask; /* address alignment */
 
     NULL_PARA_CHK(pool);
     NULL_PARA_CHK(name);
@@ -81,11 +80,10 @@ kstat_t krhino_mblk_pool_init(mblk_pool_t *pool, const name_t *name,
     return RHINO_SUCCESS;
 }
 
-kstat_t krhino_mblk_alloc(mblk_pool_t *pool, void **blk)
-{
+kstat_t krhino_mblk_alloc(mblk_pool_t *pool, void **blk) {
     CPSR_ALLOC();
 
-    kstat_t  status;
+    kstat_t status;
     uint8_t *avail_blk;
 
     NULL_PARA_CHK(pool);
@@ -101,12 +99,12 @@ kstat_t krhino_mblk_alloc(mblk_pool_t *pool, void **blk)
         avail_blk          = pool->avail_list;
         *((uint8_t **)blk) = avail_blk;
         /* the first 4 byte is the pointer for next block */
-        pool->avail_list   = *(uint8_t **)(avail_blk);
+        pool->avail_list = *(uint8_t **)(avail_blk);
         pool->blk_avail--;
         status = RHINO_SUCCESS;
     } else {
         *((uint8_t **)blk) = NULL;
-        status = RHINO_NO_MEM;
+        status             = RHINO_NO_MEM;
     }
 
     RHINO_CRITICAL_EXIT();
@@ -114,8 +112,7 @@ kstat_t krhino_mblk_alloc(mblk_pool_t *pool, void **blk)
     return status;
 }
 
-kstat_t krhino_mblk_free(mblk_pool_t *pool, void *blk)
-{
+kstat_t krhino_mblk_free(mblk_pool_t *pool, void *blk) {
     CPSR_ALLOC();
 
     NULL_PARA_CHK(pool);
@@ -138,4 +135,3 @@ kstat_t krhino_mblk_free(mblk_pool_t *pool, void *blk)
 }
 #endif /* RHINO_CONFIG_MM_BLK */
 #endif
-

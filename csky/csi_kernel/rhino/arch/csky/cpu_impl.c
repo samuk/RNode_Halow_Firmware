@@ -18,37 +18,33 @@
 #include <k_config.h>
 
 #if (RHINO_CONFIG_STACK_OVF_CHECK_HW != 0)
-void cpu_intrpt_stack_protect(void)
-{
+void cpu_intrpt_stack_protect(void) {
 }
 
-void task_stack_crash_warning(void)
-{
+void task_stack_crash_warning(void) {
     printf("****The task stack base has been broken !!!****\n");
 }
 
-void cpu_task_stack_protect(cpu_stack_t *base, size_t size)
-{
+void cpu_task_stack_protect(cpu_stack_t *base, size_t size) {
     uint32_t base_addr = (uint32_t)base;
 
     int num_return = wp_register(base_addr, AWATCH, task_stack_crash_warning);
     if (num_return == 1) {
         wp_enable(1);
     } else if (num_return == 2 || num_return == -1) {
-          wp_unregister(1);
-          int number_tmp = wp_register(base_addr, AWATCH, task_stack_crash_warning);
-          if (number_tmp == 1){
-              wp_enable(1);
-          }
-      }
+        wp_unregister(1);
+        int number_tmp = wp_register(base_addr, AWATCH, task_stack_crash_warning);
+        if (number_tmp == 1) {
+            wp_enable(1);
+        }
+    }
 }
 #endif
 
 #ifdef CONFIG_STACK_GUARD
 
-void csky_set_stackbound(void)
-{
-    uint32_t     size;
+void csky_set_stackbound(void) {
+    uint32_t size;
     cpu_stack_t *base;
 
     ktask_t *get_task = (ktask_t *)g_active_task;
@@ -63,12 +59,11 @@ void csky_set_stackbound(void)
         "mtcr    %0, cr<2, 4>\n\r"
         "lsli    %1, %1, 2\n\r"
         "add     %0, %0, %1\n\r"
-        "mtcr    %0, cr<1, 4>\n\r"
-        ::"r"(base), "r"(size):"r9");
+        "mtcr    %0, cr<1, 4>\n\r" ::"r"(base),
+        "r"(size) : "r9");
 }
 
-int stack_guard_save(void)
-{
+int stack_guard_save(void) {
     int value;
 
     asm volatile(
@@ -76,18 +71,14 @@ int stack_guard_save(void)
         "mov     r0, %0\n\t"
         "bclri   r0, 0\n\t"
         "mtcr    r0, cr<0, 4>\n\t"
-        :"=r"(value)
-        ::"r0");
+        : "=r"(value)::"r0");
 
     return value;
 }
 
-void stack_guard_restore(int value)
-{
+void stack_guard_restore(int value) {
     asm volatile(
-        "mtcr    %0, cr<0, 4>\n\t"
-        ::"r"(value):
-    );
+        "mtcr    %0, cr<0, 4>\n\t" ::"r"(value) :);
 }
 
 #endif

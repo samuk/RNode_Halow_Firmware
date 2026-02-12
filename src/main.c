@@ -20,7 +20,6 @@
 #include "lwip/tcpip.h"
 #include "netif/ethernetif.h"
 #include "lib/net/skmonitor/skmonitor.h"
-#include "syscfg.h"
 #include "lib/lmac/lmac_def.h"
 #include "halow.h"
 #include "tcp_server.h"
@@ -31,6 +30,7 @@
 #include "configdb.h"
 #include "tftp_server.h"
 #include "config_page.h"
+#include "ota.h"
 #ifdef MULTI_WAKEUP
 #include "lib/common/sleep_api.h"
 #include "hal/gpio.h"

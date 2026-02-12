@@ -45,12 +45,20 @@
  * Pre-processor Definitions
  ****************************************************************************/
 
-#define sq_init(q) do { (q)->head = NULL; (q)->tail = NULL; } while (0)
-#define dq_init(q) do { (q)->head = NULL; (q)->tail = NULL; } while (0)
+#define sq_init(q)        \
+    do {                  \
+        (q)->head = NULL; \
+        (q)->tail = NULL; \
+    } while (0)
+#define dq_init(q)        \
+    do {                  \
+        (q)->head = NULL; \
+        (q)->tail = NULL; \
+    } while (0)
 
-#define sq_next(p) ((p)->flink)
-#define dq_next(p) ((p)->flink)
-#define dq_prev(p) ((p)->blink)
+#define sq_next(p)  ((p)->flink)
+#define dq_next(p)  ((p)->flink)
+#define dq_prev(p)  ((p)->blink)
 
 #define sq_empty(q) ((q)->head == NULL)
 #define dq_empty(q) ((q)->head == NULL)
@@ -62,30 +70,26 @@
  * Public Type Definitions
  ****************************************************************************/
 
-struct sq_entry_s
-{
-  struct sq_entry_s *flink;
+struct sq_entry_s {
+    struct sq_entry_s *flink;
 };
 typedef struct sq_entry_s sq_entry_t;
 
-struct dq_entry_s
-{
-  struct dq_entry_s *flink;
-  struct dq_entry_s *blink;
+struct dq_entry_s {
+    struct dq_entry_s *flink;
+    struct dq_entry_s *blink;
 };
 typedef struct dq_entry_s dq_entry_t;
 
-struct sq_queue_s
-{
-  sq_entry_t *head;
-  sq_entry_t *tail;
+struct sq_queue_s {
+    sq_entry_t *head;
+    sq_entry_t *tail;
 };
-typedef struct sq_queue_s  sq_queue_t;
+typedef struct sq_queue_s sq_queue_t;
 
-struct dq_queue_s
-{
-  dq_entry_t *head;
-  dq_entry_t *tail;
+struct dq_queue_s {
+    dq_entry_t *head;
+    dq_entry_t *tail;
 };
 typedef struct dq_queue_s dq_queue_t;
 
@@ -95,8 +99,7 @@ typedef struct dq_queue_s dq_queue_t;
 
 #ifdef __cplusplus
 #define EXTERN extern "C"
-extern "C"
-{
+extern "C" {
 #else
 #define EXTERN extern
 #endif

@@ -6,17 +6,17 @@
 #define K_SOC_H
 
 #if (RHINO_CONFIG_HW_COUNT > 0)
-void       soc_hw_timer_init(void);
+void soc_hw_timer_init(void);
 hr_timer_t soc_hr_hw_cnt_get(void);
 lr_timer_t soc_lr_hw_cnt_get(void);
 #define HR_COUNT_GET() soc_hr_hw_cnt_get()
-#else  /* RHINO_CONFIG_HW_COUNT */
+#else /* RHINO_CONFIG_HW_COUNT */
 #define HR_COUNT_GET() 0u
 #endif /* RHINO_CONFIG_HW_COUNT */
 
 #if (RHINO_CONFIG_TASK_SCHED_STATS > 0)
 #define LR_COUNT_GET() soc_lr_hw_cnt_get()
-#else  /* RHINO_CONFIG_TASK_SCHED_STATS */
+#else /* RHINO_CONFIG_TASK_SCHED_STATS */
 #define LR_COUNT_GET() 0u
 #endif /* RHINO_CONFIG_TASK_SCHED_STATS */
 
@@ -37,4 +37,3 @@ void soc_err_proc(kstat_t err);
 size_t soc_get_cur_sp(void);
 
 #endif /* K_SOC_H */
-

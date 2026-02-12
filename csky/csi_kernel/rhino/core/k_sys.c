@@ -5,8 +5,7 @@
 #include <k_api.h>
 #include <csi_gcc.h>
 
-__init RHINO_INLINE void rhino_stack_check_init(void)
-{
+__init RHINO_INLINE void rhino_stack_check_init(void) {
 #if (RHINO_CONFIG_INTRPT_STACK_OVF_CHECK > 0)
 #if (RHINO_CONFIG_CPU_STACK_DOWN > 0)
     *g_intrpt_stack_bottom = RHINO_INTRPT_STACK_OVF_MAGIC;
@@ -20,8 +19,7 @@ __init RHINO_INLINE void rhino_stack_check_init(void)
 #endif
 }
 
-__init kstat_t krhino_init(void)
-{
+__init kstat_t krhino_init(void) {
     g_sys_stat = RHINO_STOPPED;
 
     krhino_spin_init(&g_sys_lock);
@@ -39,7 +37,7 @@ __init kstat_t krhino_init(void)
 #endif
 
 #if (RHINO_CONFIG_MM_TLF > 0)
-    //k_mm_init();
+    // k_mm_init();
 #endif
 
 #if (RHINO_CONFIG_KOBJ_DYN_ALLOC > 0)
@@ -77,13 +75,12 @@ __init kstat_t krhino_init(void)
     return RHINO_SUCCESS;
 }
 
-__init kstat_t krhino_start(void)
-{
+__init kstat_t krhino_start(void) {
     if (g_sys_stat == RHINO_STOPPED) {
 #if (RHINO_CONFIG_CPU_NUM > 1)
         for (uint8_t i = 0; i < RHINO_CONFIG_CPU_NUM; i++) {
             preferred_cpu_ready_task_get(&g_ready_queue, i);
-            g_active_task[i] = g_preferred_ready_task[i];
+            g_active_task[i]          = g_preferred_ready_task[i];
             g_active_task[i]->cur_exc = 1;
         }
 #else
@@ -105,18 +102,15 @@ __init kstat_t krhino_start(void)
     return RHINO_RUNNING;
 }
 
-
 #if (RHINO_CONFIG_INTRPT_STACK_OVF_CHECK > 0)
 #if (RHINO_CONFIG_CPU_STACK_DOWN > 0)
-void krhino_intrpt_stack_ovf_check(void)
-{
+void krhino_intrpt_stack_ovf_check(void) {
     if (*g_intrpt_stack_bottom != RHINO_INTRPT_STACK_OVF_MAGIC) {
         k_err_proc(RHINO_INTRPT_STACK_OVF);
     }
 }
 #else
-void krhino_intrpt_stack_ovf_check(void)
-{
+void krhino_intrpt_stack_ovf_check(void) {
     if (*g_intrpt_stack_top != RHINO_INTRPT_STACK_OVF_MAGIC) {
         k_err_proc(RHINO_INTRPT_STACK_OVF);
     }
@@ -124,8 +118,7 @@ void krhino_intrpt_stack_ovf_check(void)
 #endif
 #endif /* RHINO_CONFIG_INTRPT_STACK_OVF_CHECK */
 
-kstat_t krhino_intrpt_enter(void)
-{
+kstat_t krhino_intrpt_enter(void) {
     CPSR_ALLOC();
 
 #if (RHINO_CONFIG_INTRPT_STACK_OVF_CHECK > 0)
@@ -153,8 +146,7 @@ kstat_t krhino_intrpt_enter(void)
     return RHINO_SUCCESS;
 }
 
-void krhino_intrpt_exit(void)
-{
+void krhino_intrpt_exit(void) {
     CPSR_ALLOC();
     uint8_t cur_cpu_num;
 
@@ -201,19 +193,13 @@ void krhino_intrpt_exit(void)
     RHINO_CPU_INTRPT_ENABLE();
 }
 
-size_t krhino_global_space_get(void)
-{
+size_t krhino_global_space_get(void) {
     size_t mem;
 
-    mem = sizeof(g_sys_stat) + sizeof(g_idle_task_spawned) + sizeof(g_ready_queue)
-          + sizeof(g_sched_lock) + sizeof(g_intrpt_nested_level) + sizeof(g_preferred_ready_task)
-          + sizeof(g_active_task) + sizeof(g_idle_task) + sizeof(g_idle_task_stack)
-          + sizeof(g_tick_head) + sizeof(g_tick_count) + sizeof(g_idle_count);
+    mem = sizeof(g_sys_stat) + sizeof(g_idle_task_spawned) + sizeof(g_ready_queue) + sizeof(g_sched_lock) + sizeof(g_intrpt_nested_level) + sizeof(g_preferred_ready_task) + sizeof(g_active_task) + sizeof(g_idle_task) + sizeof(g_idle_task_stack) + sizeof(g_tick_head) + sizeof(g_tick_count) + sizeof(g_idle_count);
 
 #if (RHINO_CONFIG_TIMER > 0)
-    mem += sizeof(g_timer_head) + sizeof(g_timer_count)
-           + sizeof(g_timer_task) + sizeof(g_timer_task_stack)
-           + sizeof(g_timer_queue) + sizeof(timer_queue_cb);
+    mem += sizeof(g_timer_head) + sizeof(g_timer_count) + sizeof(g_timer_task) + sizeof(g_timer_task_stack) + sizeof(g_timer_queue) + sizeof(timer_queue_cb);
 #endif
 
 #if (RHINO_CONFIG_SYSTEM_STATS > 0)
@@ -225,8 +211,6 @@ size_t krhino_global_space_get(void)
     return mem;
 }
 
-uint32_t krhino_version_get(void)
-{
+uint32_t krhino_version_get(void) {
     return RHINO_VERSION;
 }
-

@@ -27,19 +27,19 @@
 #include <stdlib.h>
 
 #ifndef __ASM
-#define __ASM                   __asm    /*!< asm keyword for GNU Compiler */
+#define __ASM __asm /*!< asm keyword for GNU Compiler */
 #endif
 
 #ifndef __INLINE
-#define __INLINE                inline   /*!< inline keyword for GNU Compiler */
+#define __INLINE inline /*!< inline keyword for GNU Compiler */
 #endif
 
 #ifndef __ALWAYS_STATIC_INLINE
-#define __ALWAYS_STATIC_INLINE  __attribute__((always_inline)) static inline
+#define __ALWAYS_STATIC_INLINE __attribute__((always_inline)) static inline
 #endif
 
 #ifndef __STATIC_INLINE
-#define __STATIC_INLINE         static inline
+#define __STATIC_INLINE static inline
 #endif
 
 /* ###########################  Core Function Access  ########################### */
@@ -52,20 +52,16 @@
   \details Enables IRQ interrupts by setting the IE-bit in the PSR.
            Can only be executed in Privileged modes.
  */
-__ALWAYS_STATIC_INLINE void __enable_irq(void)
-{
+__ALWAYS_STATIC_INLINE void __enable_irq(void) {
     __ASM volatile("psrset ie");
 }
-
-
 
 /**
   \brief   Disable IRQ Interrupts
   \details Disables IRQ interrupts by clearing the IE-bit in the PSR.
   Can only be executed in Privileged modes.
  */
-__ALWAYS_STATIC_INLINE uint32_t __disable_irq(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __disable_irq(void) {
     uint32_t result;
     __ASM volatile("mfcr %0, psr" : "=r"(result));
     __ASM volatile("psrclr ie");
@@ -75,12 +71,11 @@ __ALWAYS_STATIC_INLINE uint32_t __disable_irq(void)
 /**
   \brief   check if current context is in interrupt
  */
-__ALWAYS_STATIC_INLINE uint32_t __in_interrupt(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __in_interrupt(void) {
     uint32_t result;
 
     __ASM volatile("mfcr %0, psr" : "=r"(result));
-    return (result&0x00ff0000);
+    return (result & 0x00ff0000);
 }
 
 /**
@@ -88,8 +83,7 @@ __ALWAYS_STATIC_INLINE uint32_t __in_interrupt(void)
   \details Returns the content of the PSR Register.
   \return               PSR Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_PSR(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_PSR(void) {
     uint32_t result;
 
     __ASM volatile("mfcr %0, psr" : "=r"(result));
@@ -101,8 +95,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_PSR(void)
   \details Writes the given value to the PSR Register.
   \param [in]    psr  PSR Register value to set
  */
-__ALWAYS_STATIC_INLINE void __set_PSR(uint32_t psr)
-{
+__ALWAYS_STATIC_INLINE void __set_PSR(uint32_t psr) {
     __ASM volatile("mtcr %0, psr" : : "r"(psr));
 }
 
@@ -111,8 +104,7 @@ __ALWAYS_STATIC_INLINE void __set_PSR(uint32_t psr)
   \details Returns the content of the SP Register.
   \return               SP Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_SP(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_SP(void) {
     uint32_t result;
 
     __ASM volatile("mov %0, sp" : "=r"(result));
@@ -124,9 +116,8 @@ __ALWAYS_STATIC_INLINE uint32_t __get_SP(void)
   \details Writes the given value to the SP Register.
   \param [in]    sp  SP Register value to set
  */
-__ALWAYS_STATIC_INLINE void __set_SP(uint32_t sp)
-{
-    __ASM volatile("mov sp, %0" : : "r"(sp): "sp");
+__ALWAYS_STATIC_INLINE void __set_SP(uint32_t sp) {
+    __ASM volatile("mov sp, %0" : : "r"(sp) : "sp");
 }
 
 /**
@@ -134,8 +125,7 @@ __ALWAYS_STATIC_INLINE void __set_SP(uint32_t sp)
   \details Returns the content of the Int SP Register.
   \return               Int SP Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_Int_SP(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_Int_SP(void) {
     uint32_t result;
 
     __ASM volatile("mfcr %0, cr<15, 1>" : "=r"(result));
@@ -147,8 +137,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_Int_SP(void)
   \details Writes the given value to the Int SP Register.
   \param [in]    sp  Int SP Register value to set
  */
-__ALWAYS_STATIC_INLINE void __set_Int_SP(uint32_t sp)
-{
+__ALWAYS_STATIC_INLINE void __set_Int_SP(uint32_t sp) {
     __ASM volatile("mtcr %0, cr<15, 1>" : : "r"(sp));
 }
 
@@ -157,8 +146,7 @@ __ALWAYS_STATIC_INLINE void __set_Int_SP(uint32_t sp)
   \details Returns the content of the VBR Register.
   \return               VBR Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_VBR(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_VBR(void) {
     uint32_t result;
 
     __ASM volatile("mfcr %0, vbr" : "=r"(result));
@@ -170,8 +158,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_VBR(void)
   \details Writes the given value to the VBR Register.
   \param [in]    vbr  VBR Register value to set
  */
-__ALWAYS_STATIC_INLINE void __set_VBR(uint32_t vbr)
-{
+__ALWAYS_STATIC_INLINE void __set_VBR(uint32_t vbr) {
     __ASM volatile("mtcr %0, vbr" : : "r"(vbr));
 }
 
@@ -180,8 +167,7 @@ __ALWAYS_STATIC_INLINE void __set_VBR(uint32_t vbr)
   \details Returns the content of the EPC Register.
   \return               EPC Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_EPC(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_EPC(void) {
     uint32_t result;
 
     __ASM volatile("mfcr %0, epc" : "=r"(result));
@@ -193,8 +179,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_EPC(void)
   \details Writes the given value to the EPC Register.
   \param [in]    epc  EPC Register value to set
  */
-__ALWAYS_STATIC_INLINE void __set_EPC(uint32_t epc)
-{
+__ALWAYS_STATIC_INLINE void __set_EPC(uint32_t epc) {
     __ASM volatile("mtcr %0, epc" : : "r"(epc));
 }
 
@@ -203,8 +188,7 @@ __ALWAYS_STATIC_INLINE void __set_EPC(uint32_t epc)
   \details Returns the content of the EPSR Register.
   \return               EPSR Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_EPSR(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_EPSR(void) {
     uint32_t result;
 
     __ASM volatile("mfcr %0, epsr" : "=r"(result));
@@ -216,8 +200,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_EPSR(void)
   \details Writes the given value to the EPSR Register.
   \param [in]    epsr  EPSR Register value to set
  */
-__ALWAYS_STATIC_INLINE void __set_EPSR(uint32_t epsr)
-{
+__ALWAYS_STATIC_INLINE void __set_EPSR(uint32_t epsr) {
     __ASM volatile("mtcr %0, epsr" : : "r"(epsr));
 }
 
@@ -226,8 +209,7 @@ __ALWAYS_STATIC_INLINE void __set_EPSR(uint32_t epsr)
   \details Returns the content of the CPUID Register.
   \return               CPUID Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_CPUID(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_CPUID(void) {
     uint32_t result;
 
 #ifdef __CK610
@@ -243,26 +225,23 @@ __ALWAYS_STATIC_INLINE uint32_t __get_CPUID(void)
   \details Returns the current value of the CCR.
   \return               CCR Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_CCR(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_CCR(void) {
     register uint32_t result;
 
 #ifdef __CK610
-    __ASM volatile("mfcr %0, cr18\n"  : "=r"(result));
+    __ASM volatile("mfcr %0, cr18\n" : "=r"(result));
 #else
-    __ASM volatile("mfcr %0, cr<18, 0>\n"  : "=r"(result));
+    __ASM volatile("mfcr %0, cr<18, 0>\n" : "=r"(result));
 #endif
     return (result);
 }
-
 
 /**
   \brief   Set CCR
   \details Assigns the given value to the CCR.
   \param [in]    ccr  CCR value to set
  */
-__ALWAYS_STATIC_INLINE void __set_CCR(uint32_t ccr)
-{
+__ALWAYS_STATIC_INLINE void __set_CCR(uint32_t ccr) {
 #ifdef __CK610
     __ASM volatile("mtcr %0, cr18\n" : : "r"(ccr));
 #else
@@ -270,14 +249,12 @@ __ALWAYS_STATIC_INLINE void __set_CCR(uint32_t ccr)
 #endif
 }
 
-
 /**
   \brief   Get DCSR
   \details Returns the content of the DCSR Register.
   \return               DCSR Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_DCSR(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_DCSR(void) {
     uint32_t result;
 #ifdef __CK610
     __ASM volatile("mfcr %0, cr14" : "=r"(result));
@@ -287,14 +264,12 @@ __ALWAYS_STATIC_INLINE uint32_t __get_DCSR(void)
     return (result);
 }
 
-
 /**
   \brief   Set DCSR
   \details Writes the given value to the DCSR Register.
   \param [in]    dcsr  DCSR Register value to set
  */
-__ALWAYS_STATIC_INLINE void __set_DCSR(uint32_t dcsr)
-{
+__ALWAYS_STATIC_INLINE void __set_DCSR(uint32_t dcsr) {
 #ifdef __CK610
     __ASM volatile("mtcr %0, cr14" : : "r"(dcsr));
 #else
@@ -302,14 +277,12 @@ __ALWAYS_STATIC_INLINE void __set_DCSR(uint32_t dcsr)
 #endif
 }
 
-
 /**
   \brief   Get CFR
   \details Returns the content of the CFR Register.
   \return               CFR Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_CFR(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_CFR(void) {
     uint32_t result;
 #ifdef __CK610
     __ASM volatile("mfcr %0, cr17" : "=r"(result));
@@ -320,14 +293,12 @@ __ALWAYS_STATIC_INLINE uint32_t __get_CFR(void)
     return (result);
 }
 
-
 /**
   \brief   Set CFR
   \details Writes the given value to the CFR Register.
   \param [in]    cfr  CFR Register value to set
  */
-__ALWAYS_STATIC_INLINE void __set_CFR(uint32_t cfr)
-{
+__ALWAYS_STATIC_INLINE void __set_CFR(uint32_t cfr) {
 #ifdef __CK610
     __ASM volatile("mtcr %0, cr17" : : "r"(cfr));
 #else
@@ -335,14 +306,12 @@ __ALWAYS_STATIC_INLINE void __set_CFR(uint32_t cfr)
 #endif
 }
 
-
 /**
   \brief   Get CIR
   \details Returns the content of the CIR Register.
   \return               CIR Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_CIR(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_CIR(void) {
     uint32_t result;
 #ifdef __CK610
     __ASM volatile("mfcr %0, cr22" : "=r"(result));
@@ -352,14 +321,12 @@ __ALWAYS_STATIC_INLINE uint32_t __get_CIR(void)
     return (result);
 }
 
-
 /**
   \brief   Set CIR
   \details Writes the given value to the CIR Register.
   \param [in]    cir  CIR Register value to set
  */
-__ALWAYS_STATIC_INLINE void __set_CIR(uint32_t cir)
-{
+__ALWAYS_STATIC_INLINE void __set_CIR(uint32_t cir) {
 #ifdef __CK610
     __ASM volatile("mtcr %0, cr22" : : "r"(cir));
 #else
@@ -367,14 +334,12 @@ __ALWAYS_STATIC_INLINE void __set_CIR(uint32_t cir)
 #endif
 }
 
-
 /**
   \brief   Get CAPR
   \details Returns the current value of the CAPR.
   \return               CAPR Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_CAPR(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_CAPR(void) {
     register uint32_t result;
 
 #ifdef __CK610
@@ -390,8 +355,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_CAPR(void)
   \details Assigns the given value to the CAPR.
   \param [in]    capr  CAPR value to set
  */
-__ALWAYS_STATIC_INLINE void __set_CAPR(uint32_t capr)
-{
+__ALWAYS_STATIC_INLINE void __set_CAPR(uint32_t capr) {
 #ifdef __CK610
     __ASM volatile("mtcr %0, cr19\n" : : "r"(capr));
 #else
@@ -399,15 +363,13 @@ __ALWAYS_STATIC_INLINE void __set_CAPR(uint32_t capr)
 #endif
 }
 
-
 /**
   \brief   Set PACR
   \details Assigns the given value to the PACR.
 
     \param [in]    pacr  PACR value to set
  */
-__ALWAYS_STATIC_INLINE void __set_PACR(uint32_t pacr)
-{
+__ALWAYS_STATIC_INLINE void __set_PACR(uint32_t pacr) {
 #ifdef __CK610
     __ASM volatile("mtcr %0, cr20\n" : : "r"(pacr));
 #else
@@ -415,14 +377,12 @@ __ALWAYS_STATIC_INLINE void __set_PACR(uint32_t pacr)
 #endif
 }
 
-
 /**
   \brief   Get PACR
   \details Returns the current value of PACR.
   \return               PACR value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_PACR(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_PACR(void) {
     uint32_t result;
 
 #ifdef __CK610
@@ -439,8 +399,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_PACR(void)
 
     \param [in]    prsr  PRSR value to set
  */
-__ALWAYS_STATIC_INLINE void __set_PRSR(uint32_t prsr)
-{
+__ALWAYS_STATIC_INLINE void __set_PRSR(uint32_t prsr) {
 #ifdef __CK610
     __ASM volatile("mtcr %0, cr21\n" : : "r"(prsr));
 #else
@@ -453,8 +412,7 @@ __ALWAYS_STATIC_INLINE void __set_PRSR(uint32_t prsr)
   \details Returns the current value of PRSR.
   \return               PRSR value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_PRSR(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_PRSR(void) {
     uint32_t result;
 
 #ifdef __CK610
@@ -470,8 +428,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_PRSR(void)
   \details Returns the current value of user r14.
   \return               UR14 value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_UR14(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_UR14(void) {
     uint32_t result;
 
 #ifdef __CK610
@@ -487,11 +444,10 @@ __ALWAYS_STATIC_INLINE uint32_t __get_UR14(void)
   \details Returns the content of the CHR Register.
   \return               CHR Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_CHR(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_CHR(void) {
     uint32_t result;
 
-    __ASM volatile("mfcr %0, cr<31, 0>\n" :"=r"(result));
+    __ASM volatile("mfcr %0, cr<31, 0>\n" : "=r"(result));
     return (result);
 }
 
@@ -500,8 +456,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_CHR(void)
   \details Assigns the given value to the CHR.
   \param [in]    chr  CHR value to set
  */
-__ALWAYS_STATIC_INLINE void __set_CHR(uint32_t chr)
-{
+__ALWAYS_STATIC_INLINE void __set_CHR(uint32_t chr) {
     __ASM volatile("mtcr %0, cr<31, 0>\n" : : "r"(chr));
 }
 
@@ -510,8 +465,7 @@ __ALWAYS_STATIC_INLINE void __set_CHR(uint32_t chr)
   \details Returns the content of the HINT Register.
   \return               HINT Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_HINT(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_HINT(void) {
     uint32_t result;
 #ifdef __CK610
     __ASM volatile("mfcr %0, cr<30, 0>" : "=r"(result));
@@ -526,8 +480,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_HINT(void)
   \details Writes the given value to the HINT Register.
   \param [in]    hint  HINT Register value to set
  */
-__ALWAYS_STATIC_INLINE void __set_HINT(uint32_t hint)
-{
+__ALWAYS_STATIC_INLINE void __set_HINT(uint32_t hint) {
 #ifdef __CK610
     __ASM volatile("mtcr %0, cr<30, 0>" : "=r"(hint));
 #else
@@ -540,8 +493,7 @@ __ALWAYS_STATIC_INLINE void __set_HINT(uint32_t hint)
   \details Returns the content of the MIR Register.
   \return               MIR Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_MIR(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_MIR(void) {
     uint32_t result;
 #ifdef __CK610
     __ASM volatile("cpseti 15");
@@ -557,8 +509,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_MIR(void)
   \details Writes the given value to the MIR Register.
   \param [in]    mir  MIR Register value to set
  */
-__ALWAYS_STATIC_INLINE void __set_MIR(uint32_t mir)
-{
+__ALWAYS_STATIC_INLINE void __set_MIR(uint32_t mir) {
 #ifdef __CK610
     __ASM volatile("cpseti 15");
     __ASM volatile("cpwcr %0, cpcr0" : : "r"(mir));
@@ -567,14 +518,12 @@ __ALWAYS_STATIC_INLINE void __set_MIR(uint32_t mir)
 #endif
 }
 
-
 /**
   \brief   Get MEL0
   \details Returns the content of the MEL0 Register.
   \return               MEL0 Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_MEL0(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_MEL0(void) {
     uint32_t result;
 #ifdef __CK610
     __ASM volatile("cpseti 15");
@@ -590,8 +539,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_MEL0(void)
   \details Writes the given value to the MEL0 Register.
   \param [in]    mel0  MEL0 Register value to set
  */
-__ALWAYS_STATIC_INLINE void __set_MEL0(uint32_t mel0)
-{
+__ALWAYS_STATIC_INLINE void __set_MEL0(uint32_t mel0) {
 #ifdef __CK610
     __ASM volatile("cpseti 15");
     __ASM volatile("cpwcr %0, cpcr2" : : "r"(mel0));
@@ -600,14 +548,12 @@ __ALWAYS_STATIC_INLINE void __set_MEL0(uint32_t mel0)
 #endif
 }
 
-
 /**
   \brief   Get MEL1
   \details Returns the content of the MEL1 Register.
   \return               MEL1 Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_MEL1(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_MEL1(void) {
     uint32_t result;
 #ifdef __CK610
     __ASM volatile("cpseti 15");
@@ -623,8 +569,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_MEL1(void)
   \details Writes the given value to the MEL1 Register.
   \param [in]    mel1  MEL1 Register value to set
  */
-__ALWAYS_STATIC_INLINE void __set_MEL1(uint32_t mel1)
-{
+__ALWAYS_STATIC_INLINE void __set_MEL1(uint32_t mel1) {
 #ifdef __CK610
     __ASM volatile("cpseti 15");
     __ASM volatile("cpwcr %0, cpcr3" : : "r"(mel1));
@@ -633,14 +578,12 @@ __ALWAYS_STATIC_INLINE void __set_MEL1(uint32_t mel1)
 #endif
 }
 
-
 /**
   \brief   Get MEH
   \details Returns the content of the MEH Register.
   \return               MEH Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_MEH(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_MEH(void) {
     uint32_t result;
 #ifdef __CK610
     __ASM volatile("cpseti 15");
@@ -656,8 +599,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_MEH(void)
   \details Writes the given value to the MEH Register.
   \param [in]    meh  MEH Register value to set
  */
-__ALWAYS_STATIC_INLINE void __set_MEH(uint32_t meh)
-{
+__ALWAYS_STATIC_INLINE void __set_MEH(uint32_t meh) {
 #ifdef __CK610
     __ASM volatile("cpseti 15");
     __ASM volatile("cpwcr %0, cpcr4" : : "b"(meh));
@@ -666,14 +608,12 @@ __ALWAYS_STATIC_INLINE void __set_MEH(uint32_t meh)
 #endif
 }
 
-
 /**
   \brief   Get MPR
   \details Returns the content of the MPR Register.
   \return               MPR Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_MPR(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_MPR(void) {
     uint32_t result;
 #ifdef __CK610
     __ASM volatile("cpseti 15");
@@ -689,8 +629,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_MPR(void)
   \details Writes the given value to the MPR Register.
   \param [in]    mpr  MPR Register value to set
  */
-__ALWAYS_STATIC_INLINE void __set_MPR(uint32_t mpr)
-{
+__ALWAYS_STATIC_INLINE void __set_MPR(uint32_t mpr) {
 #ifdef __CK610
     __ASM volatile("cpseti 15");
     __ASM volatile("cpwcr %0, cpcr6" : : "r"(mpr));
@@ -699,14 +638,12 @@ __ALWAYS_STATIC_INLINE void __set_MPR(uint32_t mpr)
 #endif
 }
 
-
 /**
   \brief   Get MCIR
   \details Returns the content of the MCIR Register.
   \return               MCIR Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_MCIR(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_MCIR(void) {
     uint32_t result;
 #ifdef __CK610
     __ASM volatile("cpseti 15");
@@ -722,8 +659,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_MCIR(void)
   \details Writes the given value to the MCIR Register.
   \param [in]    mcir  MCIR Register value to set
  */
-__ALWAYS_STATIC_INLINE void __set_MCIR(uint32_t mcir)
-{
+__ALWAYS_STATIC_INLINE void __set_MCIR(uint32_t mcir) {
 #ifdef __CK610
     __ASM volatile("cpseti 15");
     __ASM volatile("cpwcr %0, cpcr8" : : "r"(mcir));
@@ -732,14 +668,12 @@ __ALWAYS_STATIC_INLINE void __set_MCIR(uint32_t mcir)
 #endif
 }
 
-
 /**
   \brief   Get MPGD
   \details Returns the content of the MPGD Register.
   \return               MPGD Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_MPGD(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_MPGD(void) {
     uint32_t result;
 #ifdef __CK610
     __ASM volatile("cpseti 15");
@@ -755,8 +689,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_MPGD(void)
   \details Writes the given value to the MPGD Register.
   \param [in]    mpgd  MPGD Register value to set
  */
-__ALWAYS_STATIC_INLINE void __set_MPGD(uint32_t mpgd)
-{
+__ALWAYS_STATIC_INLINE void __set_MPGD(uint32_t mpgd) {
 #ifdef __CK610
     __ASM volatile("cpseti 15");
     __ASM volatile("cpwcr %0, cpcr29" : : "r"(mpgd));
@@ -765,14 +698,12 @@ __ALWAYS_STATIC_INLINE void __set_MPGD(uint32_t mpgd)
 #endif
 }
 
-
 /**
   \brief   Get MSA0
   \details Returns the content of the MSA0 Register.
   \return               MSA0 Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_MSA0(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_MSA0(void) {
     uint32_t result;
 #ifdef __CK610
     __ASM volatile("cpseti 15");
@@ -788,8 +719,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_MSA0(void)
   \details Writes the given value to the MSA0 Register.
   \param [in]    msa0  MSA0 Register value to set
  */
-__ALWAYS_STATIC_INLINE void __set_MSA0(uint32_t msa0)
-{
+__ALWAYS_STATIC_INLINE void __set_MSA0(uint32_t msa0) {
 #ifdef __CK610
     __ASM volatile("cpseti 15");
     __ASM volatile("cpwcr %0, cpcr30" : : "r"(msa0));
@@ -798,14 +728,12 @@ __ALWAYS_STATIC_INLINE void __set_MSA0(uint32_t msa0)
 #endif
 }
 
-
 /**
   \brief   Get MSA1
   \details Returns the content of the MSA1 Register.
   \return               MSA1 Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_MSA1(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_MSA1(void) {
     uint32_t result;
 
 #ifdef __CK610
@@ -822,8 +750,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_MSA1(void)
   \details Writes the given value to the MSA1 Register.
   \param [in]    msa1  MSA1 Register value to set
  */
-__ALWAYS_STATIC_INLINE void __set_MSA1(uint32_t msa1)
-{
+__ALWAYS_STATIC_INLINE void __set_MSA1(uint32_t msa1) {
 #ifdef __CK610
     __ASM volatile("cpseti 15");
     __ASM volatile("cpwcr %0, cpcr31" : : "r"(msa1));
@@ -832,25 +759,21 @@ __ALWAYS_STATIC_INLINE void __set_MSA1(uint32_t msa1)
 #endif
 }
 
-
 /**
   \brief   Enable interrupts and exceptions
   \details Enables interrupts and exceptions by setting the IE-bit and EE-bit in the PSR.
            Can only be executed in Privileged modes.
  */
-__ALWAYS_STATIC_INLINE void __enable_excp_irq(void)
-{
+__ALWAYS_STATIC_INLINE void __enable_excp_irq(void) {
     __ASM volatile("psrset ee, ie");
 }
-
 
 /**
   \brief   Disable interrupts and exceptions
   \details Disables interrupts and exceptions by clearing the IE-bit and EE-bit in the PSR.
            Can only be executed in Privileged modes.
  */
-__ALWAYS_STATIC_INLINE void __disable_excp_irq(void)
-{
+__ALWAYS_STATIC_INLINE void __disable_excp_irq(void) {
     __ASM volatile("psrclr ee, ie");
 }
 
@@ -859,8 +782,7 @@ __ALWAYS_STATIC_INLINE void __disable_excp_irq(void)
   \details Returns the content of the GSR Register.
   \return               GSR Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_GSR(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_GSR(void) {
     uint32_t result;
 
 #ifdef __CK610
@@ -876,8 +798,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_GSR(void)
   \details Returns the content of the GCR Register.
   \return               GCR Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_GCR(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_GCR(void) {
     uint32_t result;
 
 #ifdef __CK610
@@ -893,8 +814,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_GCR(void)
   \details Writes the given value to the GCR Register.
   \param [in]    gcr  GCR Register value to set
  */
-__ALWAYS_STATIC_INLINE void __set_GCR(uint32_t gcr)
-{
+__ALWAYS_STATIC_INLINE void __set_GCR(uint32_t gcr) {
 #ifdef __CK610
     __ASM volatile("mtcr %0, cr11" : : "r"(gcr));
 #else
@@ -907,8 +827,7 @@ __ALWAYS_STATIC_INLINE void __set_GCR(uint32_t gcr)
   \details Returns the content of the WSSR Register, must be accessed in TEE
   \return               WSSR Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_WSSR(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_WSSR(void) {
     uint32_t result;
 
     __ASM volatile("mfcr %0, cr<0, 3>" : "=r"(result));
@@ -920,8 +839,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_WSSR(void)
   \details Returns the content of the WRCR Register, must be accessed in TEE
   \return               WRCR Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_WRCR(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_WRCR(void) {
     uint32_t result;
 
     __ASM volatile("mfcr %0, cr<1, 3>" : "=r"(result));
@@ -933,8 +851,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_WRCR(void)
   \details Writes the given value to the WRCR Register, must be accessed in TEE
   \param [in]    wrcr  WRCR Register value to set
  */
-__ALWAYS_STATIC_INLINE void __set_WRCR(uint32_t wrcr)
-{
+__ALWAYS_STATIC_INLINE void __set_WRCR(uint32_t wrcr) {
     __ASM volatile("mtcr %0, cr<1, 3>" : : "r"(wrcr));
 }
 
@@ -943,8 +860,7 @@ __ALWAYS_STATIC_INLINE void __set_WRCR(uint32_t wrcr)
   \details Returns the content of the DCR Register, must be accessed in TEE
   \return               DCR Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_DCR(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_DCR(void) {
     uint32_t result;
 
     __ASM volatile("mfcr %0, cr<8, 3>" : "=r"(result));
@@ -956,8 +872,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_DCR(void)
   \details Writes the given value to the DCR Register, must be accessed in TEE
   \param [in]    dcr  DCR Register value to set
  */
-__ALWAYS_STATIC_INLINE void __set_DCR(uint32_t dcr)
-{
+__ALWAYS_STATIC_INLINE void __set_DCR(uint32_t dcr) {
     __ASM volatile("mtcr %0, cr<8, 3>" : : "r"(dcr));
 }
 
@@ -966,8 +881,7 @@ __ALWAYS_STATIC_INLINE void __set_DCR(uint32_t dcr)
   \details Returns the content of the PCR Register, must be accessed in TEE
   \return               PCR Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_PCR(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_PCR(void) {
     uint32_t result;
 
     __ASM volatile("mfcr %0, cr<9, 3>" : "=r"(result));
@@ -979,8 +893,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_PCR(void)
   \details Writes the given value to the PCR Register, must be accessed in TEE
   \param [in]    pcr  PCR Register value to set
  */
-__ALWAYS_STATIC_INLINE void __set_PCR(uint32_t pcr)
-{
+__ALWAYS_STATIC_INLINE void __set_PCR(uint32_t pcr) {
     __ASM volatile("mtcr %0, cr<9, 3>" : : "r"(pcr));
 }
 
@@ -989,8 +902,7 @@ __ALWAYS_STATIC_INLINE void __set_PCR(uint32_t pcr)
   \details Returns the content of the EBR Register.
   \return               EBR Register value
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_EBR(void)
-{
+__ALWAYS_STATIC_INLINE uint32_t __get_EBR(void) {
     uint32_t result;
 
     __ASM volatile("mfcr %0, cr<1, 1>" : "=r"(result));
@@ -1002,8 +914,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_EBR(void)
   \details Writes the given value to the EBR Register.
   \param [in]    ebr  EBR Register value to set
  */
-__ALWAYS_STATIC_INLINE void __set_EBR(uint32_t ebr)
-{
+__ALWAYS_STATIC_INLINE void __set_EBR(uint32_t ebr) {
     __ASM volatile("mtcr %0, cr<1, 1>" : : "r"(ebr));
 }
 
@@ -1015,25 +926,22 @@ __ALWAYS_STATIC_INLINE void __set_EBR(uint32_t ebr)
   @{
 */
 
-#define __CSI_GCC_OUT_REG(r) "=r" (r)
-#define __CSI_GCC_USE_REG(r) "r" (r)
+#define __CSI_GCC_OUT_REG(r) "=r"(r)
+#define __CSI_GCC_USE_REG(r) "r"(r)
 
 /**
   \brief   No Operation
   \details No Operation does nothing. This instruction can be used for code alignment purposes.
  */
-__ALWAYS_STATIC_INLINE void __NOP(void)
-{
+__ALWAYS_STATIC_INLINE void __NOP(void) {
     __ASM volatile("nop");
 }
-
 
 /**
   \brief   Wait For Interrupt
   \details Wait For Interrupt is a hint instruction that suspends execution until one of a number of events occurs.
  */
-__ALWAYS_STATIC_INLINE void __WFI(void)
-{
+__ALWAYS_STATIC_INLINE void __WFI(void) {
     __ASM volatile("wait");
 }
 
@@ -1041,8 +949,7 @@ __ALWAYS_STATIC_INLINE void __WFI(void)
   \brief   Wait For Interrupt
   \details Wait For Interrupt is a hint instruction that suspends execution until one interrupt occurs.
  */
-__ALWAYS_STATIC_INLINE void __WAIT(void)
-{
+__ALWAYS_STATIC_INLINE void __WAIT(void) {
     __ASM volatile("wait");
 }
 
@@ -1050,8 +957,7 @@ __ALWAYS_STATIC_INLINE void __WAIT(void)
   \brief   Doze For Interrupt
   \details Doze For Interrupt is a hint instruction that suspends execution until one interrupt occurs.
  */
-__ALWAYS_STATIC_INLINE void __DOZE(void)
-{
+__ALWAYS_STATIC_INLINE void __DOZE(void) {
     __ASM volatile("doze");
 }
 
@@ -1059,8 +965,7 @@ __ALWAYS_STATIC_INLINE void __DOZE(void)
   \brief   Stop For Interrupt
   \details Stop For Interrupt is a hint instruction that suspends execution until one interrupt occurs.
  */
-__ALWAYS_STATIC_INLINE void __STOP(void)
-{
+__ALWAYS_STATIC_INLINE void __STOP(void) {
     __ASM volatile("stop");
 }
 
@@ -1070,31 +975,26 @@ __ALWAYS_STATIC_INLINE void __STOP(void)
            so that all instructions following the ISB are fetched from cache or memory,
            after the instruction has been completed.
  */
-__ALWAYS_STATIC_INLINE void __ISB(void)
-{
-    __ASM volatile("sync"::: "memory");
+__ALWAYS_STATIC_INLINE void __ISB(void) {
+    __ASM volatile("sync" ::: "memory");
 }
-
 
 /**
   \brief   Data Synchronization Barrier
   \details Acts as a special kind of Data Memory Barrier.
            It completes when all explicit memory accesses before this instruction complete.
  */
-__ALWAYS_STATIC_INLINE void __DSB(void)
-{
-    __ASM volatile("sync"::: "memory");
+__ALWAYS_STATIC_INLINE void __DSB(void) {
+    __ASM volatile("sync" ::: "memory");
 }
-
 
 /**
   \brief   Data Memory Barrier
   \details Ensures the apparent order of the explicit memory operations before
            and after the instruction, without ensuring their completion.
  */
-__ALWAYS_STATIC_INLINE void __DMB(void)
-{
-    __ASM volatile("sync"::: "memory");
+__ALWAYS_STATIC_INLINE void __DMB(void) {
+    __ASM volatile("sync" ::: "memory");
 }
 
 /**
@@ -1103,8 +1003,7 @@ __ALWAYS_STATIC_INLINE void __DMB(void)
   \return               if the highest bit' value is 1,  return 0, and if lowest bit's value is 1, return 31, otherwise return 32.
  */
 #if !defined(__CK610) || !(__CK80X == 1)
-__ALWAYS_STATIC_INLINE uint32_t __FF0(uint32_t value)
-{
+__ALWAYS_STATIC_INLINE uint32_t __FF0(uint32_t value) {
     uint32_t ret;
 
     __ASM volatile("ff0 %0, %1" : "=r"(ret) : "r"(value));
@@ -1118,14 +1017,13 @@ __ALWAYS_STATIC_INLINE uint32_t __FF0(uint32_t value)
   \return               if the highest bit' value is 0,  return 0, and if lowest bit's value is 0, return 31, otherwise return 32.
  */
 #if !(__CK80X == 1)
-__ALWAYS_STATIC_INLINE uint32_t __FF1(uint32_t value)
-{
+__ALWAYS_STATIC_INLINE uint32_t __FF1(uint32_t value) {
     uint32_t ret;
-#if !defined (__CK610)
+#if !defined(__CK610)
     __ASM volatile("ff1 %0, %1" : "=r"(ret) : "r"(value));
 #else
     ret = value;
-    __ASM volatile("ff1 %0" : "=r"(ret):);
+    __ASM volatile("ff1 %0" : "=r"(ret) :);
 #endif
     return ret;
 }
@@ -1137,11 +1035,9 @@ __ALWAYS_STATIC_INLINE uint32_t __FF1(uint32_t value)
   \param [in]    value  Value to reverse
   \return               Reversed value
  */
-__ALWAYS_STATIC_INLINE uint32_t __REV(uint32_t value)
-{
+__ALWAYS_STATIC_INLINE uint32_t __REV(uint32_t value) {
     return __builtin_bswap32(value);
 }
-
 
 /**
   \brief   Reverse byte order (16 bit)
@@ -1149,8 +1045,7 @@ __ALWAYS_STATIC_INLINE uint32_t __REV(uint32_t value)
   \param [in]    value  Value to reverse
   \return               Reversed value
  */
-__ALWAYS_STATIC_INLINE uint32_t __REV16(uint32_t value)
-{
+__ALWAYS_STATIC_INLINE uint32_t __REV16(uint32_t value) {
     uint32_t result;
 #if (__CK80X >= 2)
     __ASM volatile("revh %0, %1" : __CSI_GCC_OUT_REG(result) : __CSI_GCC_USE_REG(value));
@@ -1161,18 +1056,15 @@ __ALWAYS_STATIC_INLINE uint32_t __REV16(uint32_t value)
     return (result);
 }
 
-
 /**
   \brief   Reverse byte order in signed short value
   \details Reverses the byte order in a signed short value with sign extension to integer.
   \param [in]    value  Value to reverse
   \return               Reversed value
  */
-__ALWAYS_STATIC_INLINE int32_t __REVSH(int32_t value)
-{
+__ALWAYS_STATIC_INLINE int32_t __REVSH(int32_t value) {
     return (short)(((value & 0xFF00) >> 8) | ((value & 0x00FF) << 8));
 }
-
 
 /**
   \brief   Rotate Right in unsigned value (32 bit)
@@ -1181,19 +1073,16 @@ __ALWAYS_STATIC_INLINE int32_t __REVSH(int32_t value)
   \param [in]    op2  Number of Bits to rotate
   \return               Rotated value
  */
-__ALWAYS_STATIC_INLINE uint32_t __ROR(uint32_t op1, uint32_t op2)
-{
+__ALWAYS_STATIC_INLINE uint32_t __ROR(uint32_t op1, uint32_t op2) {
     return (op1 >> op2) | (op1 << (32U - op2));
 }
-
 
 /**
   \brief   Breakpoint
   \details Causes the processor to enter Debug state
            Debug tools can use this to investigate system state when the instruction at a particular address is reached.
  */
-__ALWAYS_STATIC_INLINE void __BKPT(void)
-{
+__ALWAYS_STATIC_INLINE void __BKPT(void) {
     __ASM volatile("bkpt");
 }
 
@@ -1203,8 +1092,7 @@ __ALWAYS_STATIC_INLINE void __BKPT(void)
   \param [in]    value  Value to reverse
   \return               Reversed value
  */
-__ALWAYS_STATIC_INLINE uint32_t __RBIT(uint32_t value)
-{
+__ALWAYS_STATIC_INLINE uint32_t __RBIT(uint32_t value) {
     uint32_t result;
 
 #if (__CK80X >= 0x03U)
@@ -1212,7 +1100,7 @@ __ALWAYS_STATIC_INLINE uint32_t __RBIT(uint32_t value)
 #else
     int32_t s = 4 /*sizeof(v)*/ * 8 - 1; /* extra shift needed at end */
 
-    result = value;                      /* r will be reversed bits of v; first get LSB of v */
+    result = value; /* r will be reversed bits of v; first get LSB of v */
 
     for (value >>= 1U; value; value >>= 1U) {
         result <<= 1U;
@@ -1220,11 +1108,10 @@ __ALWAYS_STATIC_INLINE uint32_t __RBIT(uint32_t value)
         s--;
     }
 
-    result <<= s;                        /* shift when v's highest bits are zero */
+    result <<= s; /* shift when v's highest bits are zero */
 #endif
     return (result);
 }
-
 
 /**
   \brief   Count leading zeros
@@ -1232,15 +1119,14 @@ __ALWAYS_STATIC_INLINE uint32_t __RBIT(uint32_t value)
   \param [in]  value  Value to count the leading zeros
   \return             number of leading zeros in value
  */
-#define __CLZ             __builtin_clz
+#define __CLZ __builtin_clz
 /**
   \details This function saturates a signed value.
   \param [in]    x   Value to be saturated
   \param [in]    y   Bit position to saturate to [1..32]
   \return            Saturated value.
  */
-__ALWAYS_STATIC_INLINE int32_t __SSAT(int32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE int32_t __SSAT(int32_t x, uint32_t y) {
     int32_t posMax, negMin;
     uint32_t i;
 
@@ -1257,7 +1143,7 @@ __ALWAYS_STATIC_INLINE int32_t __SSAT(int32_t x, uint32_t y)
             x = posMax;
         }
 
-//    x &= (posMax * 2 + 1);
+        //    x &= (posMax * 2 + 1);
     } else {
         negMin = -posMax;
 
@@ -1265,7 +1151,7 @@ __ALWAYS_STATIC_INLINE int32_t __SSAT(int32_t x, uint32_t y)
             x = negMin;
         }
 
-//    x &= (posMax * 2 - 1);
+        //    x &= (posMax * 2 - 1);
     }
 
     return (x);
@@ -1278,8 +1164,7 @@ __ALWAYS_STATIC_INLINE int32_t __SSAT(int32_t x, uint32_t y)
   \param [in]    sat  Bit position to saturate to (0..31)
   \return             Saturated value
  */
-__ALWAYS_STATIC_INLINE uint32_t __USAT(uint32_t value, uint32_t sat)
-{
+__ALWAYS_STATIC_INLINE uint32_t __USAT(uint32_t value, uint32_t sat) {
     uint32_t result;
 
     if ((((0xFFFFFFFF >> sat) << sat) & value) != 0) {
@@ -1298,8 +1183,7 @@ __ALWAYS_STATIC_INLINE uint32_t __USAT(uint32_t value, uint32_t sat)
   \param [in]    sat  Bit position to saturate to (0..31)
   \return             Saturated value
  */
-__ALWAYS_STATIC_INLINE uint32_t __IUSAT(uint32_t value, uint32_t sat)
-{
+__ALWAYS_STATIC_INLINE uint32_t __IUSAT(uint32_t value, uint32_t sat) {
     uint32_t result;
 
     if (value & 0x80000000) { /* only overflow set bit-31 */
@@ -1321,15 +1205,14 @@ __ALWAYS_STATIC_INLINE uint32_t __IUSAT(uint32_t value, uint32_t sat)
   \param [in]    op1  Value to rotate
   \return               Rotated value
  */
-__ALWAYS_STATIC_INLINE uint32_t __RRX(uint32_t op1)
-{
+__ALWAYS_STATIC_INLINE uint32_t __RRX(uint32_t op1) {
 #if (__CK80X >= 2)
     uint32_t res = 0;
     __ASM volatile("bgeni    t0, 31\n\t"
                    "lsri     %0, 1\n\t"
                    "movt     %1, t0\n\t"
                    "or       %1, %1, %0\n\t"
-               : "=r"(op1), "=r"(res): "0"(op1), "1"(res): "t0");
+                   : "=r"(op1), "=r"(res) : "0"(op1), "1"(res) : "t0");
     return res;
 #else
     uint32_t res = 0;
@@ -1340,7 +1223,7 @@ __ALWAYS_STATIC_INLINE uint32_t __RRX(uint32_t op1)
                    "mov     %1, r7\n\t"
                    "1:\n\t"
                    "or       %1, %1, %0\n\t"
-               : "=r"(op1), "=r"(res): "0"(op1), "1"(res): "r7");
+                   : "=r"(op1), "=r"(res) : "0"(op1), "1"(res) : "r7");
     return res;
 #endif
 }
@@ -1351,14 +1234,12 @@ __ALWAYS_STATIC_INLINE uint32_t __RRX(uint32_t op1)
   \param [in]    addr  Pointer to location
   \return             value of type uint8_t at (*ptr)
  */
-__ALWAYS_STATIC_INLINE uint8_t __LDRBT(volatile uint8_t *addr)
-{
+__ALWAYS_STATIC_INLINE uint8_t __LDRBT(volatile uint8_t *addr) {
     uint32_t result;
-//#warning "__LDRBT"
+    // #warning "__LDRBT"
     __ASM volatile("ldb %0, (%1, 0)" : "=r"(result) : "r"(addr));
-    return ((uint8_t) result);    /* Add explicit type cast here */
+    return ((uint8_t)result); /* Add explicit type cast here */
 }
-
 
 /**
   \brief   LDRT Unprivileged (16 bit)
@@ -1366,15 +1247,13 @@ __ALWAYS_STATIC_INLINE uint8_t __LDRBT(volatile uint8_t *addr)
   \param [in]    addr  Pointer to location
   \return        value of type uint16_t at (*ptr)
  */
-__ALWAYS_STATIC_INLINE uint16_t __LDRHT(volatile uint16_t *addr)
-{
+__ALWAYS_STATIC_INLINE uint16_t __LDRHT(volatile uint16_t *addr) {
     uint32_t result;
 
-//#warning "__LDRHT"
+    // #warning "__LDRHT"
     __ASM volatile("ldh %0, (%1, 0)" : "=r"(result) : "r"(addr));
-    return ((uint16_t) result);    /* Add explicit type cast here */
+    return ((uint16_t)result); /* Add explicit type cast here */
 }
-
 
 /**
   \brief   LDRT Unprivileged (32 bit)
@@ -1382,15 +1261,13 @@ __ALWAYS_STATIC_INLINE uint16_t __LDRHT(volatile uint16_t *addr)
   \param [in]    addr  Pointer to location
   \return        value of type uint32_t at (*ptr)
  */
-__ALWAYS_STATIC_INLINE uint32_t __LDRT(volatile uint32_t *addr)
-{
+__ALWAYS_STATIC_INLINE uint32_t __LDRT(volatile uint32_t *addr) {
     uint32_t result;
 
-//#warning "__LDRT"
+    // #warning "__LDRT"
     __ASM volatile("ldw %0, (%1, 0)" : "=r"(result) : "r"(addr));
     return (result);
 }
-
 
 /**
   \brief   STRT Unprivileged (8 bit)
@@ -1398,12 +1275,10 @@ __ALWAYS_STATIC_INLINE uint32_t __LDRT(volatile uint32_t *addr)
   \param [in]  value  Value to store
   \param [in]    addr  Pointer to location
  */
-__ALWAYS_STATIC_INLINE void __STRBT(uint8_t value, volatile uint8_t *addr)
-{
-//#warning "__STRBT"
-    __ASM volatile("stb %1, (%0, 0)" :: "r"(addr), "r"((uint32_t)value) : "memory");
+__ALWAYS_STATIC_INLINE void __STRBT(uint8_t value, volatile uint8_t *addr) {
+    // #warning "__STRBT"
+    __ASM volatile("stb %1, (%0, 0)" ::"r"(addr), "r"((uint32_t)value) : "memory");
 }
-
 
 /**
   \brief   STRT Unprivileged (16 bit)
@@ -1411,12 +1286,10 @@ __ALWAYS_STATIC_INLINE void __STRBT(uint8_t value, volatile uint8_t *addr)
   \param [in]  value  Value to store
   \param [in]    addr  Pointer to location
  */
-__ALWAYS_STATIC_INLINE void __STRHT(uint16_t value, volatile uint16_t *addr)
-{
-//#warning "__STRHT"
-    __ASM volatile("sth %1, (%0, 0)" :: "r"(addr), "r"((uint32_t)value) : "memory");
+__ALWAYS_STATIC_INLINE void __STRHT(uint16_t value, volatile uint16_t *addr) {
+    // #warning "__STRHT"
+    __ASM volatile("sth %1, (%0, 0)" ::"r"(addr), "r"((uint32_t)value) : "memory");
 }
-
 
 /**
   \brief   STRT Unprivileged (32 bit)
@@ -1424,14 +1297,12 @@ __ALWAYS_STATIC_INLINE void __STRHT(uint16_t value, volatile uint16_t *addr)
   \param [in]  value  Value to store
   \param [in]    addr  Pointer to location
  */
-__ALWAYS_STATIC_INLINE void __STRT(uint32_t value, volatile uint32_t *addr)
-{
-//#warning "__STRT"
-    __ASM volatile("stw %1, (%0, 0)" :: "r"(addr), "r"(value) : "memory");
+__ALWAYS_STATIC_INLINE void __STRT(uint32_t value, volatile uint32_t *addr) {
+    // #warning "__STRT"
+    __ASM volatile("stw %1, (%0, 0)" ::"r"(addr), "r"(value) : "memory");
 }
 
 /*@}*/ /* end of group CSI_Core_InstructionInterface */
-
 
 /* ##########################  FPU functions  #################################### */
 /**
@@ -1449,9 +1320,8 @@ __ALWAYS_STATIC_INLINE void __STRT(uint32_t value, volatile uint32_t *addr)
    - \b  1: Single precision FPU
    - \b  2: Double + Single precision FPU
  */
-__ALWAYS_STATIC_INLINE uint32_t __get_FPUType(void)
-{
-//FIXME:
+__ALWAYS_STATIC_INLINE uint32_t __get_FPUType(void) {
+    // FIXME:
     return 0;
 }
 
@@ -1478,8 +1348,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_FPUType(void)
                  res[15:0]  = val1[15:0]              \n
                  res[31:16] = val2[31:16] << val3
  */
-__ALWAYS_STATIC_INLINE uint32_t __PKHBT(uint32_t val1, uint32_t val2, uint32_t val3)
-{
+__ALWAYS_STATIC_INLINE uint32_t __PKHBT(uint32_t val1, uint32_t val2, uint32_t val3) {
     return ((((int32_t)(val1) << 0) & (int32_t)0x0000FFFF) | (((int32_t)(val2) << val3) & (int32_t)0xFFFF0000));
 }
 
@@ -1496,8 +1365,7 @@ __ALWAYS_STATIC_INLINE uint32_t __PKHBT(uint32_t val1, uint32_t val2, uint32_t v
                  res[15:0]  = val2[15:0] >> val3        \n
                  res[31:16] = val1[31:16]
  */
-__ALWAYS_STATIC_INLINE uint32_t __PKHTB(uint32_t val1, uint32_t val2, uint32_t val3)
-{
+__ALWAYS_STATIC_INLINE uint32_t __PKHTB(uint32_t val1, uint32_t val2, uint32_t val3) {
     return ((((int32_t)(val1) << 0) & (int32_t)0xFFFF0000) | (((int32_t)(val2) >> val3) & (int32_t)0x0000FFFF));
 }
 
@@ -1512,8 +1380,7 @@ __ALWAYS_STATIC_INLINE uint32_t __PKHTB(uint32_t val1, uint32_t val2, uint32_t v
                  the signed saturation of the high halfword in val1, saturated to the bit position specified in
                  val2 and returned in the high halfword of the return value.
  */
-__ALWAYS_STATIC_INLINE uint32_t __SSAT16(int32_t x, const uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __SSAT16(int32_t x, const uint32_t y) {
     int32_t r = 0, s = 0;
 
     r = __SSAT((((int32_t)x << 16) >> 16), y) & (int32_t)0x0000FFFF;
@@ -1533,8 +1400,7 @@ __ALWAYS_STATIC_INLINE uint32_t __SSAT16(int32_t x, const uint32_t y)
                  the saturation of the high halfword in val1, saturated to the bit position specified in
                  val2 and returned in the high halfword of the return value.
  */
-__ALWAYS_STATIC_INLINE uint32_t __USAT16(uint32_t x, const uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __USAT16(uint32_t x, const uint32_t y) {
     int32_t r = 0, s = 0;
 
     r = __IUSAT(((x << 16) >> 16), y) & 0x0000FFFF;
@@ -1560,16 +1426,15 @@ __ALWAYS_STATIC_INLINE uint32_t __USAT16(uint32_t x, const uint32_t y)
                  res[23:16] = val1[23:16] + val2[23:16]      \n
                  res[31:24] = val1[31:24] + val2[31:24]
  */
-__ALWAYS_STATIC_INLINE uint32_t __QADD8(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __QADD8(uint32_t x, uint32_t y) {
     int32_t r, s, t, u;
 
     r = __SSAT(((((int32_t)x << 24) >> 24) + (((int32_t)y << 24) >> 24)), 8) & (int32_t)0x000000FF;
     s = __SSAT(((((int32_t)x << 16) >> 24) + (((int32_t)y << 16) >> 24)), 8) & (int32_t)0x000000FF;
-    t = __SSAT(((((int32_t)x <<  8) >> 24) + (((int32_t)y <<  8) >> 24)), 8) & (int32_t)0x000000FF;
+    t = __SSAT(((((int32_t)x << 8) >> 24) + (((int32_t)y << 8) >> 24)), 8) & (int32_t)0x000000FF;
     u = __SSAT(((((int32_t)x) >> 24) + (((int32_t)y) >> 24)), 8) & (int32_t)0x000000FF;
 
-    return ((uint32_t)((u << 24) | (t << 16) | (s <<  8) | (r)));
+    return ((uint32_t)((u << 24) | (t << 16) | (s << 8) | (r)));
 }
 
 /**
@@ -1589,16 +1454,15 @@ __ALWAYS_STATIC_INLINE uint32_t __QADD8(uint32_t x, uint32_t y)
                  res[23:16] = val1[23:16] + val2[23:16]      \n
                  res[31:24] = val1[31:24] + val2[31:24]
  */
-__ALWAYS_STATIC_INLINE uint32_t __UQADD8(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __UQADD8(uint32_t x, uint32_t y) {
     int32_t r, s, t, u;
 
     r = __IUSAT((((x << 24) >> 24) + ((y << 24) >> 24)), 8) & 0x000000FF;
     s = __IUSAT((((x << 16) >> 24) + ((y << 16) >> 24)), 8) & 0x000000FF;
-    t = __IUSAT((((x <<  8) >> 24) + ((y <<  8) >> 24)), 8) & 0x000000FF;
+    t = __IUSAT((((x << 8) >> 24) + ((y << 8) >> 24)), 8) & 0x000000FF;
     u = __IUSAT((((x) >> 24) + ((y) >> 24)), 8) & 0x000000FF;
 
-    return ((u << 24) | (t << 16) | (s <<  8) | (r));
+    return ((u << 24) | (t << 16) | (s << 8) | (r));
 }
 
 /**
@@ -1616,16 +1480,15 @@ __ALWAYS_STATIC_INLINE uint32_t __UQADD8(uint32_t x, uint32_t y)
                  res[23:16] = val1[23:16] + val2[23:16]      \n
                  res[31:24] = val1[31:24] + val2[31:24]
  */
-__ALWAYS_STATIC_INLINE uint32_t __SADD8(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __SADD8(uint32_t x, uint32_t y) {
     int32_t r, s, t, u;
 
     r = ((((int32_t)x << 24) >> 24) + (((int32_t)y << 24) >> 24)) & (int32_t)0x000000FF;
     s = ((((int32_t)x << 16) >> 24) + (((int32_t)y << 16) >> 24)) & (int32_t)0x000000FF;
-    t = ((((int32_t)x <<  8) >> 24) + (((int32_t)y <<  8) >> 24)) & (int32_t)0x000000FF;
+    t = ((((int32_t)x << 8) >> 24) + (((int32_t)y << 8) >> 24)) & (int32_t)0x000000FF;
     u = ((((int32_t)x) >> 24) + (((int32_t)y) >> 24)) & (int32_t)0x000000FF;
 
-    return ((uint32_t)((u << 24) | (t << 16) | (s <<  8) | (r)));
+    return ((uint32_t)((u << 24) | (t << 16) | (s << 8) | (r)));
 }
 
 /**
@@ -1643,16 +1506,15 @@ __ALWAYS_STATIC_INLINE uint32_t __SADD8(uint32_t x, uint32_t y)
                  res[23:16] = val1[23:16] + val2[23:16]      \n
                  res[31:24] = val1[31:24] + val2[31:24]
  */
-__ALWAYS_STATIC_INLINE uint32_t __UADD8(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __UADD8(uint32_t x, uint32_t y) {
     int32_t r, s, t, u;
 
     r = (((x << 24) >> 24) + ((y << 24) >> 24)) & 0x000000FF;
     s = (((x << 16) >> 24) + ((y << 16) >> 24)) & 0x000000FF;
-    t = (((x <<  8) >> 24) + ((y <<  8) >> 24)) & 0x000000FF;
+    t = (((x << 8) >> 24) + ((y << 8) >> 24)) & 0x000000FF;
     u = (((x) >> 24) + ((y) >> 24)) & 0x000000FF;
 
-    return ((u << 24) | (t << 16) | (s <<  8) | (r));
+    return ((u << 24) | (t << 16) | (s << 8) | (r));
 }
 
 /**
@@ -1672,16 +1534,15 @@ __ALWAYS_STATIC_INLINE uint32_t __UADD8(uint32_t x, uint32_t y)
                  res[23:16] = val1[23:16] - val2[23:16]      \n
                  res[31:24] = val1[31:24] - val2[31:24]
  */
-__ALWAYS_STATIC_INLINE uint32_t __QSUB8(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __QSUB8(uint32_t x, uint32_t y) {
     int32_t r, s, t, u;
 
     r = __SSAT(((((int32_t)x << 24) >> 24) - (((int32_t)y << 24) >> 24)), 8) & (int32_t)0x000000FF;
     s = __SSAT(((((int32_t)x << 16) >> 24) - (((int32_t)y << 16) >> 24)), 8) & (int32_t)0x000000FF;
-    t = __SSAT(((((int32_t)x <<  8) >> 24) - (((int32_t)y <<  8) >> 24)), 8) & (int32_t)0x000000FF;
+    t = __SSAT(((((int32_t)x << 8) >> 24) - (((int32_t)y << 8) >> 24)), 8) & (int32_t)0x000000FF;
     u = __SSAT(((((int32_t)x) >> 24) - (((int32_t)y) >> 24)), 8) & (int32_t)0x000000FF;
 
-    return ((uint32_t)((u << 24) | (t << 16) | (s <<  8) | (r)));
+    return ((uint32_t)((u << 24) | (t << 16) | (s << 8) | (r)));
 }
 
 /**
@@ -1701,16 +1562,15 @@ __ALWAYS_STATIC_INLINE uint32_t __QSUB8(uint32_t x, uint32_t y)
                  res[23:16] = val1[23:16] - val2[23:16]      \n
                  res[31:24] = val1[31:24] - val2[31:24]
  */
-__ALWAYS_STATIC_INLINE uint32_t __UQSUB8(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __UQSUB8(uint32_t x, uint32_t y) {
     int32_t r, s, t, u;
 
     r = __IUSAT((((x << 24) >> 24) - ((y << 24) >> 24)), 8) & 0x000000FF;
     s = __IUSAT((((x << 16) >> 24) - ((y << 16) >> 24)), 8) & 0x000000FF;
-    t = __IUSAT((((x <<  8) >> 24) - ((y <<  8) >> 24)), 8) & 0x000000FF;
+    t = __IUSAT((((x << 8) >> 24) - ((y << 8) >> 24)), 8) & 0x000000FF;
     u = __IUSAT((((x) >> 24) - ((y) >> 24)), 8) & 0x000000FF;
 
-    return ((u << 24) | (t << 16) | (s <<  8) | (r));
+    return ((u << 24) | (t << 16) | (s << 8) | (r));
 }
 
 /**
@@ -1728,16 +1588,15 @@ __ALWAYS_STATIC_INLINE uint32_t __UQSUB8(uint32_t x, uint32_t y)
                  res[23:16] = val1[23:16] - val2[23:16]      \n
                  res[31:24] = val1[31:24] - val2[31:24]
  */
-__ALWAYS_STATIC_INLINE uint32_t __SSUB8(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __SSUB8(uint32_t x, uint32_t y) {
     int32_t r, s, t, u;
 
     r = ((((int32_t)x << 24) >> 24) - (((int32_t)y << 24) >> 24)) & (int32_t)0x000000FF;
     s = ((((int32_t)x << 16) >> 24) - (((int32_t)y << 16) >> 24)) & (int32_t)0x000000FF;
-    t = ((((int32_t)x <<  8) >> 24) - (((int32_t)y <<  8) >> 24)) & (int32_t)0x000000FF;
+    t = ((((int32_t)x << 8) >> 24) - (((int32_t)y << 8) >> 24)) & (int32_t)0x000000FF;
     u = ((((int32_t)x) >> 24) - (((int32_t)y) >> 24)) & (int32_t)0x000000FF;
 
-    return ((uint32_t)((u << 24) | (t << 16) | (s <<  8) | (r)));
+    return ((uint32_t)((u << 24) | (t << 16) | (s << 8) | (r)));
 }
 
 /**
@@ -1755,16 +1614,15 @@ __ALWAYS_STATIC_INLINE uint32_t __SSUB8(uint32_t x, uint32_t y)
                  res[23:16] = val1[23:16] - val2[23:16]      \n
                  res[31:24] = val1[31:24] - val2[31:24]
  */
-__ALWAYS_STATIC_INLINE uint32_t __USUB8(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __USUB8(uint32_t x, uint32_t y) {
     int32_t r, s, t, u;
 
     r = (((x << 24) >> 24) - ((y << 24) >> 24)) & 0x000000FF;
     s = (((x << 16) >> 24) - ((y << 16) >> 24)) & 0x000000FF;
-    t = (((x <<  8) >> 24) - ((y <<  8) >> 24)) & 0x000000FF;
+    t = (((x << 8) >> 24) - ((y << 8) >> 24)) & 0x000000FF;
     u = (((x) >> 24) - ((y) >> 24)) & 0x000000FF;
 
-    return ((u << 24) | (t << 16) | (s <<  8) | (r));
+    return ((u << 24) | (t << 16) | (s << 8) | (r));
 }
 
 /**
@@ -1785,13 +1643,12 @@ __ALWAYS_STATIC_INLINE uint32_t __USUB8(uint32_t x, uint32_t y)
                  absdiff4   = val1[31:24] - val2[31:24]      \n
                  res[31:0]  = absdiff1 + absdiff2 + absdiff3 + absdiff4
  */
-__ALWAYS_STATIC_INLINE uint32_t __USAD8(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __USAD8(uint32_t x, uint32_t y) {
     int32_t r, s, t, u;
 
     r = (((x << 24) >> 24) - ((y << 24) >> 24)) & 0x000000FF;
     s = (((x << 16) >> 24) - ((y << 16) >> 24)) & 0x000000FF;
-    t = (((x <<  8) >> 24) - ((y <<  8) >> 24)) & 0x000000FF;
+    t = (((x << 8) >> 24) - ((y << 8) >> 24)) & 0x000000FF;
     u = (((x) >> 24) - ((y) >> 24)) & 0x000000FF;
 
     return (u + t + s + r);
@@ -1817,19 +1674,18 @@ __ALWAYS_STATIC_INLINE uint32_t __USAD8(uint32_t x, uint32_t y)
                  sum = absdiff1 + absdiff2 + absdiff3 + absdiff4 \n
                  res[31:0] = sum[31:0] + val3[31:0]
  */
-__ALWAYS_STATIC_INLINE uint32_t __USADA8(uint32_t x, uint32_t y, uint32_t sum)
-{
+__ALWAYS_STATIC_INLINE uint32_t __USADA8(uint32_t x, uint32_t y, uint32_t sum) {
     int32_t r, s, t, u;
 
 #ifdef __cplusplus
     r = (abs((long long)((x << 24) >> 24) - ((y << 24) >> 24))) & 0x000000FF;
     s = (abs((long long)((x << 16) >> 24) - ((y << 16) >> 24))) & 0x000000FF;
-    t = (abs((long long)((x <<  8) >> 24) - ((y <<  8) >> 24))) & 0x000000FF;
+    t = (abs((long long)((x << 8) >> 24) - ((y << 8) >> 24))) & 0x000000FF;
     u = (abs((long long)((x) >> 24) - ((y) >> 24))) & 0x000000FF;
 #else
     r = (abs(((x << 24) >> 24) - ((y << 24) >> 24))) & 0x000000FF;
     s = (abs(((x << 16) >> 24) - ((y << 16) >> 24))) & 0x000000FF;
-    t = (abs(((x <<  8) >> 24) - ((y <<  8) >> 24))) & 0x000000FF;
+    t = (abs(((x << 8) >> 24) - ((y << 8) >> 24))) & 0x000000FF;
     u = (abs(((x) >> 24) - ((y) >> 24))) & 0x000000FF;
 #endif
     return (u + t + s + r + sum);
@@ -1848,8 +1704,7 @@ __ALWAYS_STATIC_INLINE uint32_t __USADA8(uint32_t x, uint32_t y, uint32_t sum)
                  res[15:0]  = val1[15:0]  + val2[15:0]        \n
                  res[31:16] = val1[31:16] + val2[31:16]
  */
-__ALWAYS_STATIC_INLINE uint32_t __QADD16(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __QADD16(uint32_t x, uint32_t y) {
     int32_t r = 0, s = 0;
 
     r = __SSAT(((((int32_t)x << 16) >> 16) + (((int32_t)y << 16) >> 16)), 16) & (int32_t)0x0000FFFF;
@@ -1871,8 +1726,7 @@ __ALWAYS_STATIC_INLINE uint32_t __QADD16(uint32_t x, uint32_t y)
                  res[15:0]  = val1[15:0]  + val2[15:0]        \n
                  res[31:16] = val1[31:16] + val2[31:16]
  */
-__ALWAYS_STATIC_INLINE uint32_t __UQADD16(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __UQADD16(uint32_t x, uint32_t y) {
     int32_t r = 0, s = 0;
 
     r = __IUSAT((((x << 16) >> 16) + ((y << 16) >> 16)), 16) & 0x0000FFFF;
@@ -1892,8 +1746,7 @@ __ALWAYS_STATIC_INLINE uint32_t __UQADD16(uint32_t x, uint32_t y)
                  res[15:0]  = val1[15:0]  + val2[15:0]        \n
                  res[31:16] = val1[31:16] + val2[31:16]
  */
-__ALWAYS_STATIC_INLINE uint32_t __SADD16(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __SADD16(uint32_t x, uint32_t y) {
     int32_t r = 0, s = 0;
 
     r = ((((int32_t)x << 16) >> 16) + (((int32_t)y << 16) >> 16)) & (int32_t)0x0000FFFF;
@@ -1913,8 +1766,7 @@ __ALWAYS_STATIC_INLINE uint32_t __SADD16(uint32_t x, uint32_t y)
                  res[15:0]  = val1[15:0]  + val2[15:0]        \n
                  res[31:16] = val1[31:16] + val2[31:16]
  */
-__ALWAYS_STATIC_INLINE uint32_t __UADD16(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __UADD16(uint32_t x, uint32_t y) {
     int32_t r = 0, s = 0;
 
     r = (((x << 16) >> 16) + ((y << 16) >> 16)) & 0x0000FFFF;
@@ -1922,7 +1774,6 @@ __ALWAYS_STATIC_INLINE uint32_t __UADD16(uint32_t x, uint32_t y)
 
     return ((s << 16) | (r));
 }
-
 
 /**
   \brief   Dual 16-bit signed addition with halved results.
@@ -1935,8 +1786,7 @@ __ALWAYS_STATIC_INLINE uint32_t __UADD16(uint32_t x, uint32_t y)
                  res[15:0]  = (val1[15:0]  + val2[15:0]) >> 1        \n
                  res[31:16] = (val1[31:16] + val2[31:16]) >> 1
  */
-__ALWAYS_STATIC_INLINE uint32_t __SHADD16(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __SHADD16(uint32_t x, uint32_t y) {
     int32_t r, s;
 
     r = (((((int32_t)x << 16) >> 16) + (((int32_t)y << 16) >> 16)) >> 1) & (int32_t)0x0000FFFF;
@@ -1956,8 +1806,7 @@ __ALWAYS_STATIC_INLINE uint32_t __SHADD16(uint32_t x, uint32_t y)
                  res[15:0]  = (val1[15:0]  + val2[15:0]) >> 1        \n
                  res[31:16] = (val1[31:16] + val2[31:16]) >> 1
  */
-__ALWAYS_STATIC_INLINE uint32_t __UHADD16(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __UHADD16(uint32_t x, uint32_t y) {
     int32_t r, s;
 
     r = ((((x << 16) >> 16) + ((y << 16) >> 16)) >> 1) & 0x0000FFFF;
@@ -1981,16 +1830,15 @@ __ALWAYS_STATIC_INLINE uint32_t __UHADD16(uint32_t x, uint32_t y)
                  res[23:16] = (val1[23:16] + val2[23:16]) >> 1    \n
                  res[31:24] = (val1[31:24] + val2[31:24]) >> 1
  */
-__ALWAYS_STATIC_INLINE uint32_t __SHADD8(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __SHADD8(uint32_t x, uint32_t y) {
     int32_t r, s, t, u;
 
     r = (((((int32_t)x << 24) >> 24) + (((int32_t)y << 24) >> 24)) >> 1) & (int32_t)0x000000FF;
     s = (((((int32_t)x << 16) >> 24) + (((int32_t)y << 16) >> 24)) >> 1) & (int32_t)0x000000FF;
-    t = (((((int32_t)x <<  8) >> 24) + (((int32_t)y <<  8) >> 24)) >> 1) & (int32_t)0x000000FF;
+    t = (((((int32_t)x << 8) >> 24) + (((int32_t)y << 8) >> 24)) >> 1) & (int32_t)0x000000FF;
     u = (((((int32_t)x) >> 24) + (((int32_t)y) >> 24)) >> 1) & (int32_t)0x000000FF;
 
-    return ((uint32_t)((u << 24) | (t << 16) | (s <<  8) | (r)));
+    return ((uint32_t)((u << 24) | (t << 16) | (s << 8) | (r)));
 }
 
 /**
@@ -2008,16 +1856,15 @@ __ALWAYS_STATIC_INLINE uint32_t __SHADD8(uint32_t x, uint32_t y)
                  res[23:16] = (val1[23:16] + val2[23:16]) >> 1    \n
                  res[31:24] = (val1[31:24] + val2[31:24]) >> 1
  */
-__ALWAYS_STATIC_INLINE uint32_t __UHADD8(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __UHADD8(uint32_t x, uint32_t y) {
     int32_t r, s, t, u;
 
     r = ((((x << 24) >> 24) + ((y << 24) >> 24)) >> 1) & 0x000000FF;
     s = ((((x << 16) >> 24) + ((y << 16) >> 24)) >> 1) & 0x000000FF;
-    t = ((((x <<  8) >> 24) + ((y <<  8) >> 24)) >> 1) & 0x000000FF;
+    t = ((((x << 8) >> 24) + ((y << 8) >> 24)) >> 1) & 0x000000FF;
     u = ((((x) >> 24) + ((y) >> 24)) >> 1) & 0x000000FF;
 
-    return ((u << 24) | (t << 16) | (s <<  8) | (r));
+    return ((u << 24) | (t << 16) | (s << 8) | (r));
 }
 
 /**
@@ -2033,8 +1880,7 @@ __ALWAYS_STATIC_INLINE uint32_t __UHADD8(uint32_t x, uint32_t y)
                  res[15:0]  = val1[15:0]  - val2[15:0]        \n
                  res[31:16] = val1[31:16] - val2[31:16]
  */
-__ALWAYS_STATIC_INLINE uint32_t __QSUB16(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __QSUB16(uint32_t x, uint32_t y) {
     int32_t r, s;
 
     r = __SSAT(((((int32_t)x << 16) >> 16) - (((int32_t)y << 16) >> 16)), 16) & (int32_t)0x0000FFFF;
@@ -2056,8 +1902,7 @@ __ALWAYS_STATIC_INLINE uint32_t __QSUB16(uint32_t x, uint32_t y)
                  res[15:0]  = val1[15:0]  - val2[15:0]        \n
                  res[31:16] = val1[31:16] - val2[31:16]
  */
-__ALWAYS_STATIC_INLINE uint32_t __UQSUB16(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __UQSUB16(uint32_t x, uint32_t y) {
     int32_t r, s;
 
     r = __IUSAT((((x << 16) >> 16) - ((y << 16) >> 16)), 16) & 0x0000FFFF;
@@ -2079,8 +1924,7 @@ __ALWAYS_STATIC_INLINE uint32_t __UQSUB16(uint32_t x, uint32_t y)
                  res[15:0]  = val1[15:0]  - val2[15:0]        \n
                  res[31:16] = val1[31:16] - val2[31:16]
  */
-__ALWAYS_STATIC_INLINE uint32_t __SSUB16(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __SSUB16(uint32_t x, uint32_t y) {
     int32_t r, s;
 
     r = ((((int32_t)x << 16) >> 16) - (((int32_t)y << 16) >> 16)) & (int32_t)0x0000FFFF;
@@ -2102,8 +1946,7 @@ __ALWAYS_STATIC_INLINE uint32_t __SSUB16(uint32_t x, uint32_t y)
                  res[15:0]  = val1[15:0]  - val2[15:0]        \n
                  res[31:16] = val1[31:16] - val2[31:16]
  */
-__ALWAYS_STATIC_INLINE uint32_t __USUB16(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __USUB16(uint32_t x, uint32_t y) {
     int32_t r, s;
 
     r = (((x << 16) >> 16) - ((y << 16) >> 16)) & 0x0000FFFF;
@@ -2123,8 +1966,7 @@ __ALWAYS_STATIC_INLINE uint32_t __USUB16(uint32_t x, uint32_t y)
                  res[15:0]  = (val1[15:0]  - val2[15:0]) >> 1        \n
                  res[31:16] = (val1[31:16] - val2[31:16]) >> 1
  */
-__ALWAYS_STATIC_INLINE uint32_t __SHSUB16(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __SHSUB16(uint32_t x, uint32_t y) {
     int32_t r, s;
 
     r = (((((int32_t)x << 16) >> 16) - (((int32_t)y << 16) >> 16)) >> 1) & (int32_t)0x0000FFFF;
@@ -2144,8 +1986,7 @@ __ALWAYS_STATIC_INLINE uint32_t __SHSUB16(uint32_t x, uint32_t y)
                  res[15:0]  = (val1[15:0]  - val2[15:0]) >> 1        \n
                  res[31:16] = (val1[31:16] - val2[31:16]) >> 1
  */
-__ALWAYS_STATIC_INLINE uint32_t __UHSUB16(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __UHSUB16(uint32_t x, uint32_t y) {
     int32_t r, s;
 
     r = ((((x << 16) >> 16) - ((y << 16) >> 16)) >> 1) & 0x0000FFFF;
@@ -2169,16 +2010,15 @@ __ALWAYS_STATIC_INLINE uint32_t __UHSUB16(uint32_t x, uint32_t y)
                  res[23:16] = (val1[23:16] - val2[23:16]) >> 1    \n
                  res[31:24] = (val1[31:24] - val2[31:24]) >> 1
  */
-__ALWAYS_STATIC_INLINE uint32_t __SHSUB8(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __SHSUB8(uint32_t x, uint32_t y) {
     int32_t r, s, t, u;
 
     r = (((((int32_t)x << 24) >> 24) - (((int32_t)y << 24) >> 24)) >> 1) & (int32_t)0x000000FF;
     s = (((((int32_t)x << 16) >> 24) - (((int32_t)y << 16) >> 24)) >> 1) & (int32_t)0x000000FF;
-    t = (((((int32_t)x <<  8) >> 24) - (((int32_t)y <<  8) >> 24)) >> 1) & (int32_t)0x000000FF;
+    t = (((((int32_t)x << 8) >> 24) - (((int32_t)y << 8) >> 24)) >> 1) & (int32_t)0x000000FF;
     u = (((((int32_t)x) >> 24) - (((int32_t)y) >> 24)) >> 1) & (int32_t)0x000000FF;
 
-    return ((uint32_t)((u << 24) | (t << 16) | (s <<  8) | (r)));
+    return ((uint32_t)((u << 24) | (t << 16) | (s << 8) | (r)));
 }
 
 /**
@@ -2196,16 +2036,15 @@ __ALWAYS_STATIC_INLINE uint32_t __SHSUB8(uint32_t x, uint32_t y)
                  res[23:16] = (val1[23:16] - val2[23:16]) >> 1    \n
                  res[31:24] = (val1[31:24] - val2[31:24]) >> 1
  */
-__ALWAYS_STATIC_INLINE uint32_t __UHSUB8(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __UHSUB8(uint32_t x, uint32_t y) {
     int32_t r, s, t, u;
 
     r = ((((x << 24) >> 24) - ((y << 24) >> 24)) >> 1) & 0x000000FF;
     s = ((((x << 16) >> 24) - ((y << 16) >> 24)) >> 1) & 0x000000FF;
-    t = ((((x <<  8) >> 24) - ((y <<  8) >> 24)) >> 1) & 0x000000FF;
+    t = ((((x << 8) >> 24) - ((y << 8) >> 24)) >> 1) & 0x000000FF;
     u = ((((x) >> 24) - ((y) >> 24)) >> 1) & 0x000000FF;
 
-    return ((u << 24) | (t << 16) | (s <<  8) | (r));
+    return ((u << 24) | (t << 16) | (s << 8) | (r));
 }
 
 /**
@@ -2226,8 +2065,7 @@ __ALWAYS_STATIC_INLINE uint32_t __UHSUB8(uint32_t x, uint32_t y)
                  res[15:0]  = val1[15:0]  - val2[31:16]        \n
                  res[31:16] = val1[31:16] + val2[15:0]
  */
-__ALWAYS_STATIC_INLINE uint32_t __QASX(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __QASX(uint32_t x, uint32_t y) {
     int32_t r, s;
 
     r = __SSAT(((((int32_t)x << 16) >> 16) - (((int32_t)y) >> 16)), 16) & (int32_t)0x0000FFFF;
@@ -2254,8 +2092,7 @@ __ALWAYS_STATIC_INLINE uint32_t __QASX(uint32_t x, uint32_t y)
                  res[15:0]  = val1[15:0]  - val2[31:16]        \n
                  res[31:16] = val1[31:16] + val2[15:0]
  */
-__ALWAYS_STATIC_INLINE uint32_t __UQASX(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __UQASX(uint32_t x, uint32_t y) {
     int32_t r, s;
 
     r = __IUSAT((((x << 16) >> 16) - ((y) >> 16)), 16) & 0x0000FFFF;
@@ -2280,8 +2117,7 @@ __ALWAYS_STATIC_INLINE uint32_t __UQASX(uint32_t x, uint32_t y)
                  res[15:0]  = val1[15:0]  - val2[31:16]        \n
                  res[31:16] = val1[31:16] + val2[15:0]
  */
-__ALWAYS_STATIC_INLINE uint32_t __SASX(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __SASX(uint32_t x, uint32_t y) {
     int32_t r, s;
 
     r = ((((int32_t)x << 16) >> 16) - (((int32_t)y) >> 16)) & (int32_t)0x0000FFFF;
@@ -2306,8 +2142,7 @@ __ALWAYS_STATIC_INLINE uint32_t __SASX(uint32_t x, uint32_t y)
                  res[15:0]  = val1[15:0]  - val2[31:16]        \n
                  res[31:16] = val1[31:16] + val2[15:0]
  */
-__ALWAYS_STATIC_INLINE uint32_t __UASX(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __UASX(uint32_t x, uint32_t y) {
     int32_t r, s;
 
     r = (((x << 16) >> 16) - ((y) >> 16)) & 0x0000FFFF;
@@ -2330,8 +2165,7 @@ __ALWAYS_STATIC_INLINE uint32_t __UASX(uint32_t x, uint32_t y)
                  res[15:0]  = (val1[15:0]  - val2[31:16]) >> 1        \n
                  res[31:16] = (val1[31:16] + val2[15:0]) >> 1
  */
-__ALWAYS_STATIC_INLINE uint32_t __SHASX(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __SHASX(uint32_t x, uint32_t y) {
     int32_t r, s;
 
     r = (((((int32_t)x << 16) >> 16) - (((int32_t)y) >> 16)) >> 1) & (int32_t)0x0000FFFF;
@@ -2356,8 +2190,7 @@ __ALWAYS_STATIC_INLINE uint32_t __SHASX(uint32_t x, uint32_t y)
                  res[15:0]  = (val1[15:0]  - val2[31:16]) >> 1        \n
                  res[31:16] = (val1[31:16] + val2[15:0]) >> 1
  */
-__ALWAYS_STATIC_INLINE uint32_t __UHASX(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __UHASX(uint32_t x, uint32_t y) {
     int32_t r, s;
 
     r = ((((x << 16) >> 16) - ((y) >> 16)) >> 1) & 0x0000FFFF;
@@ -2384,8 +2217,7 @@ __ALWAYS_STATIC_INLINE uint32_t __UHASX(uint32_t x, uint32_t y)
                  res[15:0]  = val1[15:0]  + val2[31:16]        \n
                  res[31:16] = val1[31:16] - val2[15:0]
  */
-__ALWAYS_STATIC_INLINE uint32_t __QSAX(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __QSAX(uint32_t x, uint32_t y) {
     int32_t r, s;
 
     r = __SSAT(((((int32_t)x << 16) >> 16) + (((int32_t)y) >> 16)), 16) & (int32_t)0x0000FFFF;
@@ -2412,8 +2244,7 @@ __ALWAYS_STATIC_INLINE uint32_t __QSAX(uint32_t x, uint32_t y)
                  res[15:0]  = val1[15:0]  + val2[31:16]        \n
                  res[31:16] = val1[31:16] - val2[15:0]
  */
-__ALWAYS_STATIC_INLINE uint32_t __UQSAX(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __UQSAX(uint32_t x, uint32_t y) {
     int32_t r, s;
 
     r = __IUSAT((((x << 16) >> 16) + ((y) >> 16)), 16) & 0x0000FFFF;
@@ -2438,8 +2269,7 @@ __ALWAYS_STATIC_INLINE uint32_t __UQSAX(uint32_t x, uint32_t y)
                  res[15:0]  = val1[15:0]  + val2[31:16]        \n
                  res[31:16] = val1[31:16] - val2[15:0]
  */
-__ALWAYS_STATIC_INLINE uint32_t __USAX(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __USAX(uint32_t x, uint32_t y) {
     int32_t r, s;
 
     r = (((x << 16) >> 16) + ((y) >> 16)) & 0x0000FFFF;
@@ -2464,8 +2294,7 @@ __ALWAYS_STATIC_INLINE uint32_t __USAX(uint32_t x, uint32_t y)
                  res[15:0]  = val1[15:0]  + val2[31:16]        \n
                  res[31:16] = val1[31:16] - val2[15:0]
  */
-__ALWAYS_STATIC_INLINE uint32_t __SSAX(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __SSAX(uint32_t x, uint32_t y) {
     int32_t r, s;
 
     r = ((((int32_t)x << 16) >> 16) + (((int32_t)y) >> 16)) & (int32_t)0x0000FFFF;
@@ -2473,7 +2302,6 @@ __ALWAYS_STATIC_INLINE uint32_t __SSAX(uint32_t x, uint32_t y)
 
     return ((uint32_t)((s << 16) | (r)));
 }
-
 
 /**
   \brief   Dual 16-bit signed subtraction and addition with halved results.
@@ -2489,8 +2317,7 @@ __ALWAYS_STATIC_INLINE uint32_t __SSAX(uint32_t x, uint32_t y)
                  res[15:0]  = (val1[15:0]  + val2[31:16]) >> 1        \n
                  res[31:16] = (val1[31:16] - val2[15:0]) >> 1
  */
-__ALWAYS_STATIC_INLINE uint32_t __SHSAX(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __SHSAX(uint32_t x, uint32_t y) {
     int32_t r, s;
 
     r = (((((int32_t)x << 16) >> 16) + (((int32_t)y) >> 16)) >> 1) & (int32_t)0x0000FFFF;
@@ -2515,8 +2342,7 @@ __ALWAYS_STATIC_INLINE uint32_t __SHSAX(uint32_t x, uint32_t y)
                  res[15:0]  = (val1[15:0]  + val2[31:16]) >> 1        \n
                  res[31:16] = (val1[31:16] - val2[15:0]) >> 1
  */
-__ALWAYS_STATIC_INLINE uint32_t __UHSAX(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __UHSAX(uint32_t x, uint32_t y) {
     int32_t r, s;
 
     r = ((((x << 16) >> 16) + ((y) >> 16)) >> 1) & 0x0000FFFF;
@@ -2538,8 +2364,7 @@ __ALWAYS_STATIC_INLINE uint32_t __UHSAX(uint32_t x, uint32_t y)
                  p2 = val1[31:16] * val2[15:0]        \n
                  res[31:0] = p1 - p2
  */
-__ALWAYS_STATIC_INLINE uint32_t __SMUSDX(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __SMUSDX(uint32_t x, uint32_t y) {
     return ((uint32_t)(((((int32_t)x << 16) >> 16) * (((int32_t)y) >> 16)) -
                        ((((int32_t)x) >> 16) * (((int32_t)y << 16) >> 16))));
 }
@@ -2556,12 +2381,10 @@ __ALWAYS_STATIC_INLINE uint32_t __SMUSDX(uint32_t x, uint32_t y)
                  p2 = val1[31:16] * val2[15:0]        \n
                  res[31:0] = p1 + p2
  */
-__ALWAYS_STATIC_INLINE uint32_t __SMUADX(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __SMUADX(uint32_t x, uint32_t y) {
     return ((uint32_t)(((((int32_t)x << 16) >> 16) * (((int32_t)y) >> 16)) +
                        ((((int32_t)x) >> 16) * (((int32_t)y << 16) >> 16))));
 }
-
 
 /**
   \brief   Saturating add.
@@ -2572,8 +2395,7 @@ __ALWAYS_STATIC_INLINE uint32_t __SMUADX(uint32_t x, uint32_t y)
   \remark
                  res[31:0] = SAT(val1 + SAT(val2))
  */
-__ALWAYS_STATIC_INLINE int32_t __QADD(int32_t x, int32_t y)
-{
+__ALWAYS_STATIC_INLINE int32_t __QADD(int32_t x, int32_t y) {
     int32_t result;
 
     if (y >= 0) {
@@ -2602,8 +2424,7 @@ __ALWAYS_STATIC_INLINE int32_t __QADD(int32_t x, int32_t y)
   \remark
                  res[31:0] = SAT(val1 - SAT(val2))
  */
-__ALWAYS_STATIC_INLINE int32_t __QSUB(int32_t x, int32_t y)
-{
+__ALWAYS_STATIC_INLINE int32_t __QSUB(int32_t x, int32_t y) {
     int64_t tmp;
     int32_t result;
 
@@ -2632,8 +2453,7 @@ __ALWAYS_STATIC_INLINE int32_t __QSUB(int32_t x, int32_t y)
                  p2 = val1[31:16] * val2[31:16]     \n
                  res[31:0] = p1 + p2 + val3[31:0]
  */
-__ALWAYS_STATIC_INLINE uint32_t __SMLAD(uint32_t x, uint32_t y, uint32_t sum)
-{
+__ALWAYS_STATIC_INLINE uint32_t __SMLAD(uint32_t x, uint32_t y, uint32_t sum) {
     return ((uint32_t)(((((int32_t)x << 16) >> 16) * (((int32_t)y << 16) >> 16)) +
                        ((((int32_t)x) >> 16) * (((int32_t)y) >> 16)) +
                        (((int32_t)sum))));
@@ -2653,8 +2473,7 @@ __ALWAYS_STATIC_INLINE uint32_t __SMLAD(uint32_t x, uint32_t y, uint32_t sum)
                  p2 = val1[31:16] * val2[15:0]      \n
                  res[31:0] = p1 + p2 + val3[31:0]
  */
-__ALWAYS_STATIC_INLINE uint32_t __SMLADX(uint32_t x, uint32_t y, uint32_t sum)
-{
+__ALWAYS_STATIC_INLINE uint32_t __SMLADX(uint32_t x, uint32_t y, uint32_t sum) {
     return ((uint32_t)(((((int32_t)x << 16) >> 16) * (((int32_t)y) >> 16)) +
                        ((((int32_t)x) >> 16) * (((int32_t)y << 16) >> 16)) +
                        (((int32_t)sum))));
@@ -2674,8 +2493,7 @@ __ALWAYS_STATIC_INLINE uint32_t __SMLADX(uint32_t x, uint32_t y, uint32_t sum)
                  p2 = val1[31:16] * val2[31:16]      \n
                  res[31:0] = p1 - p2 + val3[31:0]
  */
-__ALWAYS_STATIC_INLINE uint32_t __SMLSD(uint32_t x, uint32_t y, uint32_t sum)
-{
+__ALWAYS_STATIC_INLINE uint32_t __SMLSD(uint32_t x, uint32_t y, uint32_t sum) {
     return ((uint32_t)(((((int32_t)x << 16) >> 16) * (((int32_t)y << 16) >> 16)) -
                        ((((int32_t)x) >> 16) * (((int32_t)y) >> 16)) +
                        (((int32_t)sum))));
@@ -2694,8 +2512,7 @@ __ALWAYS_STATIC_INLINE uint32_t __SMLSD(uint32_t x, uint32_t y, uint32_t sum)
                  p2 = val1[31:16] * val2[15:0]      \n
                  res[31:0] = p1 - p2 + val3[31:0]
  */
-__ALWAYS_STATIC_INLINE uint32_t __SMLSDX(uint32_t x, uint32_t y, uint32_t sum)
-{
+__ALWAYS_STATIC_INLINE uint32_t __SMLSDX(uint32_t x, uint32_t y, uint32_t sum) {
     return ((uint32_t)(((((int32_t)x << 16) >> 16) * (((int32_t)y) >> 16)) -
                        ((((int32_t)x) >> 16) * (((int32_t)y << 16) >> 16)) +
                        (((int32_t)sum))));
@@ -2717,8 +2534,7 @@ __ALWAYS_STATIC_INLINE uint32_t __SMLSDX(uint32_t x, uint32_t y, uint32_t sum)
                  res[63:32] = sum[63:32]            \n
                  res[31:0]  = sum[31:0]
  */
-__ALWAYS_STATIC_INLINE uint64_t __SMLALD(uint32_t x, uint32_t y, uint64_t sum)
-{
+__ALWAYS_STATIC_INLINE uint64_t __SMLALD(uint32_t x, uint32_t y, uint64_t sum) {
     return ((uint64_t)(((((int32_t)x << 16) >> 16) * (((int32_t)y << 16) >> 16)) +
                        ((((int32_t)x) >> 16) * (((int32_t)y) >> 16)) +
                        (((uint64_t)sum))));
@@ -2741,8 +2557,7 @@ __ALWAYS_STATIC_INLINE uint64_t __SMLALD(uint32_t x, uint32_t y, uint64_t sum)
                  res[63:32] = sum[63:32]            \n
                  res[31:0]  = sum[31:0]
  */
-__ALWAYS_STATIC_INLINE uint64_t __SMLALDX(uint32_t x, uint32_t y, uint64_t sum)
-{
+__ALWAYS_STATIC_INLINE uint64_t __SMLALDX(uint32_t x, uint32_t y, uint64_t sum) {
     return ((uint64_t)(((((int32_t)x << 16) >> 16) * (((int32_t)y) >> 16)) +
                        ((((int32_t)x) >> 16) * (((int32_t)y << 16) >> 16)) +
                        (((uint64_t)sum))));
@@ -2764,8 +2579,7 @@ __ALWAYS_STATIC_INLINE uint64_t __SMLALDX(uint32_t x, uint32_t y, uint64_t sum)
                  p2 = val1[31:16] * val2[31:16]     \n
                  res[63:32][31:0] = p1 - p2 + val3[63:32][31:0]
  */
-__ALWAYS_STATIC_INLINE uint64_t __SMLSLD(uint32_t x, uint32_t y, uint64_t sum)
-{
+__ALWAYS_STATIC_INLINE uint64_t __SMLSLD(uint32_t x, uint32_t y, uint64_t sum) {
     return ((uint64_t)(((((int32_t)x << 16) >> 16) * (((int32_t)y << 16) >> 16)) -
                        ((((int32_t)x) >> 16) * (((int32_t)y) >> 16)) +
                        (((uint64_t)sum))));
@@ -2786,8 +2600,7 @@ __ALWAYS_STATIC_INLINE uint64_t __SMLSLD(uint32_t x, uint32_t y, uint64_t sum)
                  p2 = val1[31:16] * val2[15:0]       \n
                  res[63:32][31:0] = p1 - p2 + val3[63:32][31:0]
  */
-__ALWAYS_STATIC_INLINE uint64_t __SMLSLDX(uint32_t x, uint32_t y, uint64_t sum)
-{
+__ALWAYS_STATIC_INLINE uint64_t __SMLSLDX(uint32_t x, uint32_t y, uint64_t sum) {
     return ((uint64_t)(((((int32_t)x << 16) >> 16) * (((int32_t)y) >> 16)) -
                        ((((int32_t)x) >> 16) * (((int32_t)y << 16) >> 16)) +
                        (((uint64_t)sum))));
@@ -2805,8 +2618,7 @@ __ALWAYS_STATIC_INLINE uint64_t __SMLSLDX(uint32_t x, uint32_t y, uint64_t sum)
                  p = val1 * val2      \n
                  res[31:0] = p[63:32] + val3[31:0]
  */
-__ALWAYS_STATIC_INLINE uint32_t __SMMLA(int32_t x, int32_t y, int32_t sum)
-{
+__ALWAYS_STATIC_INLINE uint32_t __SMMLA(int32_t x, int32_t y, int32_t sum) {
     return (uint32_t)((int32_t)((int64_t)((int64_t)x * (int64_t)y) >> 32) + sum);
 }
 
@@ -2821,8 +2633,7 @@ __ALWAYS_STATIC_INLINE uint32_t __SMMLA(int32_t x, int32_t y, int32_t sum)
                  p2 = val1[31:16] * val2[31:16]     \n
                  res[31:0] = p1 + p2
  */
-__ALWAYS_STATIC_INLINE uint32_t __SMUAD(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __SMUAD(uint32_t x, uint32_t y) {
     return ((uint32_t)(((((int32_t)x << 16) >> 16) * (((int32_t)y << 16) >> 16)) +
                        ((((int32_t)x) >> 16) * (((int32_t)y) >> 16))));
 }
@@ -2839,8 +2650,7 @@ __ALWAYS_STATIC_INLINE uint32_t __SMUAD(uint32_t x, uint32_t y)
                  p2 = val1[31:16] * val2[31:16]     \n
                  res[31:0] = p1 - p2
  */
-__ALWAYS_STATIC_INLINE uint32_t __SMUSD(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __SMUSD(uint32_t x, uint32_t y) {
     return ((uint32_t)(((((int32_t)x << 16) >> 16) * (((int32_t)y << 16) >> 16)) -
                        ((((int32_t)x) >> 16) * (((int32_t)y) >> 16))));
 }
@@ -2857,10 +2667,9 @@ __ALWAYS_STATIC_INLINE uint32_t __SMUSD(uint32_t x, uint32_t y)
                  res[15:0]  = val1[15:0] + SignExtended(val2[7:0])      \n
                  res[31:16] = val1[31:16] + SignExtended(val2[23:16])
  */
-__ALWAYS_STATIC_INLINE uint32_t __SXTAB16(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __SXTAB16(uint32_t x, uint32_t y) {
     return ((uint32_t)((((((int32_t)y << 24) >> 24) + (((int32_t)x << 16) >> 16)) & (int32_t)0x0000FFFF) |
-                       (((((int32_t)y <<  8) >>  8)  + (((int32_t)x >> 16) << 16)) & (int32_t)0xFFFF0000)));
+                       (((((int32_t)y << 8) >> 8) + (((int32_t)x >> 16) << 16)) & (int32_t)0xFFFF0000)));
 }
 
 /**
@@ -2875,10 +2684,9 @@ __ALWAYS_STATIC_INLINE uint32_t __SXTAB16(uint32_t x, uint32_t y)
                  res[15:0]  = ZeroExt(val2[7:0]   to 16 bits) + val1[15:0]      \n
                  res[31:16] = ZeroExt(val2[31:16] to 16 bits) + val1[31:16]
  */
-__ALWAYS_STATIC_INLINE uint32_t __UXTAB16(uint32_t x, uint32_t y)
-{
+__ALWAYS_STATIC_INLINE uint32_t __UXTAB16(uint32_t x, uint32_t y) {
     return ((uint32_t)(((((y << 24) >> 24) + ((x << 16) >> 16)) & 0x0000FFFF) |
-                       ((((y <<  8) >>  8) + ((x >> 16) << 16)) & 0xFFFF0000)));
+                       ((((y << 8) >> 8) + ((x >> 16) << 16)) & 0xFFFF0000)));
 }
 
 /**
@@ -2892,10 +2700,9 @@ __ALWAYS_STATIC_INLINE uint32_t __UXTAB16(uint32_t x, uint32_t y)
                  res[15:0]  = SignExtended(val[7:0])       \n
                  res[31:16] = SignExtended(val[23:16])
  */
-__ALWAYS_STATIC_INLINE uint32_t __SXTB16(uint32_t x)
-{
+__ALWAYS_STATIC_INLINE uint32_t __SXTB16(uint32_t x) {
     return ((uint32_t)(((((int32_t)x << 24) >> 24) & (int32_t)0x0000FFFF) |
-                       ((((int32_t)x <<  8) >>  8) & (int32_t)0xFFFF0000)));
+                       ((((int32_t)x << 8) >> 8) & (int32_t)0xFFFF0000)));
 }
 
 /**
@@ -2909,10 +2716,9 @@ __ALWAYS_STATIC_INLINE uint32_t __SXTB16(uint32_t x)
                  res[15:0]  = SignExtended(val[7:0])       \n
                  res[31:16] = SignExtended(val[23:16])
  */
-__ALWAYS_STATIC_INLINE uint32_t __UXTB16(uint32_t x)
-{
+__ALWAYS_STATIC_INLINE uint32_t __UXTB16(uint32_t x) {
     return ((uint32_t)((((x << 24) >> 24) & 0x0000FFFF) |
-                       (((x <<  8) >>  8) & 0xFFFF0000)));
+                       (((x << 8) >> 8) & 0xFFFF0000)));
 }
 
 #endif /* _CSI_GCC_H_ */

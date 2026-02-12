@@ -16,16 +16,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define alloca(s) __builtin_alloca((s))
+#define alloca(s)          __builtin_alloca((s))
 
-#define MG_ARCH MG_ARCH_CUSTOM
-#define MG_ENABLE_SOCKET            1
-#define MG_ENABLE_LWIP              1
-#define MG_ENABLE_POSIX_FS          0
-#define MG_ENABLE_LINES             1
-#define MG_ENABLE_POLL              1
-#define MG_ENABLE_LOG               0
-#define MG_TLS                      MG_TLS_NONE
+#define MG_ARCH            MG_ARCH_CUSTOM
+#define MG_ENABLE_SOCKET   1
+#define MG_ENABLE_LWIP     1
+#define MG_ENABLE_POSIX_FS 0
+#define MG_ENABLE_LINES    1
+#define MG_ENABLE_POLL     1
+#define MG_ENABLE_LOG      0
+#define MG_TLS             MG_TLS_NONE
 
 #endif // __MONGOOSE_CONFIG_H__
-

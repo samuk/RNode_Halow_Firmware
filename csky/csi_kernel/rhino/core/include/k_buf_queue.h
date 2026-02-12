@@ -6,17 +6,17 @@
 #define K_BUF_QUEUE_H
 
 typedef struct {
-    blk_obj_t      blk_obj;
-    void          *buf;
-    k_ringbuf_t    ringbuf;
-    size_t         max_msg_size;
-    size_t         cur_num;
-    size_t         peak_num;
-    size_t         min_free_buf_size;
+    blk_obj_t blk_obj;
+    void *buf;
+    k_ringbuf_t ringbuf;
+    size_t max_msg_size;
+    size_t cur_num;
+    size_t peak_num;
+    size_t min_free_buf_size;
 #if (RHINO_CONFIG_SYSTEM_STATS > 0)
-    klist_t        buf_queue_item;
+    klist_t buf_queue_item;
 #endif
-    uint8_t        mm_alloc_flag;
+    uint8_t mm_alloc_flag;
 } kbuf_queue_t;
 
 typedef struct {
@@ -89,7 +89,6 @@ kstat_t krhino_buf_queue_dyn_del(kbuf_queue_t *queue);
  */
 kstat_t krhino_buf_queue_send(kbuf_queue_t *queue, void *msg, size_t size);
 
-
 /**
  * This function will receive msg form aqueue
  * @param[in]   queue  pointer to the queue
@@ -118,4 +117,3 @@ kstat_t krhino_buf_queue_flush(kbuf_queue_t *queue);
 kstat_t krhino_buf_queue_info_get(kbuf_queue_t *queue, kbuf_queue_info_t *info);
 
 #endif /* K_BUF_QUEUE_H */
-

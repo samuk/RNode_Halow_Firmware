@@ -11,22 +11,22 @@
 typedef void (*work_handle_t)(void *arg);
 
 typedef struct {
-    klist_t       work_node;
+    klist_t work_node;
     work_handle_t handle;
-    void         *arg;
-    tick_t        dly;
-    ktimer_t     *timer;
-    void         *wq;
-    uint8_t       work_exit;
+    void *arg;
+    tick_t dly;
+    ktimer_t *timer;
+    void *wq;
+    uint8_t work_exit;
 } kwork_t;
 
 typedef struct {
-    klist_t       workqueue_node;
-    klist_t       work_list;
-    kwork_t      *work_current; /* current work */
+    klist_t workqueue_node;
+    klist_t work_list;
+    kwork_t *work_current; /* current work */
     const name_t *name;
-    ktask_t       worker;
-    ksem_t        sem;
+    ktask_t worker;
+    ksem_t sem;
 } kworkqueue_t;
 
 /**
@@ -83,4 +83,3 @@ kstat_t krhino_work_cancel(kwork_t *work);
 #endif
 
 #endif /* K_WORKQUEUE_H */
-

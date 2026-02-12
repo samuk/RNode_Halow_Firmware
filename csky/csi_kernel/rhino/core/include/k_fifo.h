@@ -11,17 +11,16 @@ extern "C" {
 
 struct k_fifo {
 
-    uint32_t     in;
-    uint32_t     out;
-    uint32_t     mask;
-    void        *data;
-    uint32_t     free_bytes;
-    uint32_t     size;
-
+    uint32_t in;
+    uint32_t out;
+    uint32_t mask;
+    void *data;
+    uint32_t free_bytes;
+    uint32_t size;
 };
 
-#define fifo_min(x, y) ((x) > (y)?(y):(x))
-#define fifo_max(x, y) ((x) > (y)?(x):(y))
+#define fifo_min(x, y) ((x) > (y) ? (y) : (x))
+#define fifo_max(x, y) ((x) > (y) ? (x) : (y))
 
 /**
  * This function will init the fifo.
@@ -73,4 +72,3 @@ uint32_t fifo_out_all(struct k_fifo *fifo, void *buf);
 #endif
 
 #endif
-

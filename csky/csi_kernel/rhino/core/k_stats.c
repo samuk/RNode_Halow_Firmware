@@ -6,8 +6,7 @@
 #include <csi_gcc.h>
 
 #if (RHINO_CONFIG_SYSTEM_STATS > 0)
-__init void kobj_list_init(void)
-{
+__init void kobj_list_init(void) {
     klist_init(&(g_kobj_list.task_head));
     klist_init(&(g_kobj_list.mutex_head));
 
@@ -35,8 +34,7 @@ __init void kobj_list_init(void)
 
 #if (RHINO_CONFIG_TASK_STACK_OVF_CHECK > 0)
 #if (RHINO_CONFIG_CPU_STACK_DOWN > 0)
-void krhino_stack_ovf_check(void)
-{
+void krhino_stack_ovf_check(void) {
     cpu_stack_t *stack_start;
 
     stack_start = g_active_task[cpu_cur_get()]->task_stack_base;
@@ -52,8 +50,7 @@ void krhino_stack_ovf_check(void)
 
 #else
 
-void krhino_stack_ovf_check(void)
-{
+void krhino_stack_ovf_check(void) {
     cpu_stack_t *stack_start;
     cpu_stack_t *stack_end;
 
@@ -72,8 +69,7 @@ void krhino_stack_ovf_check(void)
 #endif
 
 #if (RHINO_CONFIG_TASK_SCHED_STATS > 0)
-void krhino_task_sched_stats_reset(void)
-{
+void krhino_task_sched_stats_reset(void) {
     lr_timer_t cur_time;
 
 #if (RHINO_CONFIG_DISABLE_INTRPT_STATS > 0)
@@ -85,12 +81,11 @@ void krhino_task_sched_stats_reset(void)
 #endif
 
     /* system first task starting time should be measured otherwise not correct */
-    cur_time = (lr_timer_t)LR_COUNT_GET();
+    cur_time                                = (lr_timer_t)LR_COUNT_GET();
     g_preferred_ready_task->task_time_start = cur_time;
 }
 
-void krhino_task_sched_stats_get(void)
-{
+void krhino_task_sched_stats_get(void) {
     lr_timer_t cur_time;
     lr_timer_t exec_time;
 
@@ -123,8 +118,8 @@ void krhino_task_sched_stats_get(void)
     g_preferred_ready_task[cpu_cur_get()]->task_ctx_switch_times++;
     g_sys_ctx_switch_times++;
 
-    cur_time   = (lr_timer_t)LR_COUNT_GET();
-    exec_time  = cur_time - g_active_task[cpu_cur_get()]->task_time_start;
+    cur_time  = (lr_timer_t)LR_COUNT_GET();
+    exec_time = cur_time - g_active_task[cpu_cur_get()]->task_time_start;
 
     g_active_task[cpu_cur_get()]->task_time_total_run += (sys_time_t)exec_time;
 
@@ -133,8 +128,7 @@ void krhino_task_sched_stats_get(void)
 #endif /* RHINO_CONFIG_TASK_SCHED_STATS */
 
 #if (RHINO_CONFIG_DISABLE_INTRPT_STATS > 0)
-void intrpt_disable_measure_start(void)
-{
+void intrpt_disable_measure_start(void) {
     g_intrpt_disable_times++;
 
     /* start measure interrupt disable time */
@@ -143,8 +137,7 @@ void intrpt_disable_measure_start(void)
     }
 }
 
-void intrpt_disable_measure_stop(void)
-{
+void intrpt_disable_measure_stop(void) {
     hr_timer_t diff;
 
     g_intrpt_disable_times--;
@@ -164,8 +157,7 @@ void intrpt_disable_measure_stop(void)
 #endif
 
 #if (RHINO_CONFIG_HW_COUNT > 0)
-void krhino_overhead_measure(void)
-{
+void krhino_overhead_measure(void) {
     hr_timer_t diff;
     hr_timer_t m1;
     hr_timer_t m2;
@@ -186,8 +178,7 @@ void krhino_overhead_measure(void)
 
 /*it should be called in cpu_stats task*/
 #if (RHINO_CONFIG_CPU_USAGE_STATS > 0)
-static void cpu_usage_task_entry(void *arg)
-{
+static void cpu_usage_task_entry(void *arg) {
     idle_count_t idle_count;
 
     (void)arg;
@@ -206,15 +197,13 @@ static void cpu_usage_task_entry(void *arg)
         if (idle_count < g_idle_count_max) {
             /* use 64bit for cpu_task_idle_count  to avoid overflow quickly */
             g_cpu_usage = 10000 - (uint32_t)((idle_count * 10000) / g_idle_count_max);
-        }
-        else {
+        } else {
             g_cpu_usage = 10000;
         }
     }
 }
 
-__init void cpu_usage_stats_start(void)
-{
+__init void cpu_usage_stats_start(void) {
     /* create a statistic task to calculate cpu usage */
     krhino_task_create(&g_cpu_usage_task, "cpu_stats", 0,
                        RHINO_CONFIG_CPU_USAGE_TASK_PRI,
@@ -222,10 +211,8 @@ __init void cpu_usage_stats_start(void)
                        1);
 }
 
-uint32_t krhino_get_cpu_usage(void)
-{
+uint32_t krhino_get_cpu_usage(void) {
     return g_cpu_usage;
 }
 
 #endif /* RHINO_CONFIG_CPU_USAGE_STATS */
-

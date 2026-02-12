@@ -5,7 +5,6 @@
 #ifndef K_TRACE_H
 #define K_TRACE_H
 
-
 #if (RHINO_CONFIG_TRACE > 0)
 /* task trace function */
 void _trace_init(void);
@@ -69,7 +68,7 @@ void _trace_timer_del(ktask_t *task, ktimer_t *timer);
 void _trace_mblk_pool_create(ktask_t *task, mblk_pool_t *pool);
 
 /* mm trace function */
-//void _trace_mm_pool_create(ktask_t *task, mm_pool_t *pool);
+// void _trace_mm_pool_create(ktask_t *task, mm_pool_t *pool);
 
 /* work queue trace */
 void _trace_work_init(ktask_t *task, kwork_t *work);
@@ -89,13 +88,13 @@ void _trace_workqueue_del(ktask_t *task, kworkqueue_t *workqueue);
 #define TRACE_TASK_WAIT_ABORT(task, task_abort)        _trace_task_abort(task, task_abort)
 
 /* semaphore trace */
-#define TRACE_SEM_CREATE(task, sem)                            _trace_sem_create(task, sem)
-#define TRACE_SEM_OVERFLOW(task, sem)                          _trace_sem_overflow(task, sem)
-#define TRACE_SEM_CNT_INCREASE(task, sem)                      _trace_sem_cnt_increase(task, sem)
-#define TRACE_SEM_GET_SUCCESS(task, sem)                       _trace_sem_get_success(task, sem)
-#define TRACE_SEM_GET_BLK(task, sem, wait_option)              _trace_sem_get_blk(task, sem, wait_option)
+#define TRACE_SEM_CREATE(task, sem)                                 _trace_sem_create(task, sem)
+#define TRACE_SEM_OVERFLOW(task, sem)                               _trace_sem_overflow(task, sem)
+#define TRACE_SEM_CNT_INCREASE(task, sem)                           _trace_sem_cnt_increase(task, sem)
+#define TRACE_SEM_GET_SUCCESS(task, sem)                            _trace_sem_get_success(task, sem)
+#define TRACE_SEM_GET_BLK(task, sem, wait_option)                   _trace_sem_get_blk(task, sem, wait_option)
 #define TRACE_SEM_TASK_WAKE(task, task_waked_up, sem, opt_wake_all) _trace_sem_task_wake(task, task_waked_up, sem, opt_wake_all)
-#define TRACE_SEM_DEL(task, sem)                               _trace_sem_del(task, sem);
+#define TRACE_SEM_DEL(task, sem)                                    _trace_sem_del(task, sem);
 
 /* mutex trace */
 #define TRACE_MUTEX_CREATE(task, mutex, name)             _trace_mutex_create(task, mutex, name)
@@ -115,24 +114,24 @@ void _trace_workqueue_del(ktask_t *task, kworkqueue_t *workqueue);
 #define TRACE_EVENT_DEL(task, event)                      _trace_event_del(task, event)
 
 /* buf_queue trace */
-#define TRACE_BUF_QUEUE_CREATE(task, buf_queue)                       _trace_buf_queue_create(task, buf_queue)
-#define TRACE_BUF_QUEUE_MAX(task, buf_queue, msg, msg_size)           _trace_buf_max(task, buf_queue, msg, msg_size)
-#define TRACE_BUF_QUEUE_POST(task, buf_queue, msg, msg_size)          _trace_buf_post(task, buf_queue, msg, msg_size)
-#define TRACE_BUF_QUEUE_TASK_WAKE(task, task_waked_up, queue)         _trace_buf_queue_task_wake(task, task_waked_up, queue)
-#define TRACE_BUF_QUEUE_GET_BLK(task, buf_queue, wait_option)         _trace_buf_queue_get_blk(task, buf_queue, wait_option)
+#define TRACE_BUF_QUEUE_CREATE(task, buf_queue)               _trace_buf_queue_create(task, buf_queue)
+#define TRACE_BUF_QUEUE_MAX(task, buf_queue, msg, msg_size)   _trace_buf_max(task, buf_queue, msg, msg_size)
+#define TRACE_BUF_QUEUE_POST(task, buf_queue, msg, msg_size)  _trace_buf_post(task, buf_queue, msg, msg_size)
+#define TRACE_BUF_QUEUE_TASK_WAKE(task, task_waked_up, queue) _trace_buf_queue_task_wake(task, task_waked_up, queue)
+#define TRACE_BUF_QUEUE_GET_BLK(task, buf_queue, wait_option) _trace_buf_queue_get_blk(task, buf_queue, wait_option)
 
 /* timer trace */
-#define TRACE_TIMER_CREATE(task, timer)         _trace_timer_create(task, timer)
-#define TRACE_TIMER_DEL(task, timer)            _trace_timer_del(task, timer)
+#define TRACE_TIMER_CREATE(task, timer) _trace_timer_create(task, timer)
+#define TRACE_TIMER_DEL(task, timer)    _trace_timer_del(task, timer)
 
 /* mblk trace */
-#define TRACE_MBLK_POOL_CREATE(task, pool)      _trace_mblk_pool_create(task, pool)
+#define TRACE_MBLK_POOL_CREATE(task, pool) _trace_mblk_pool_create(task, pool)
 
 /* mm trace */
-#define TRACE_MM_POOL_CREATE(task, pool)        _trace_mm_pool_create(task, pool)
+#define TRACE_MM_POOL_CREATE(task, pool) _trace_mm_pool_create(task, pool)
 
 /* mm region */
-#define TRACE_MM_REGION_CREATE(task, regions)   _trace_mm_region_create(task, regions)
+#define TRACE_MM_REGION_CREATE(task, regions) _trace_mm_region_create(task, regions)
 
 /* work queue trace */
 #define TRACE_WORK_INIT(task, work)             _trace_work_init(task, work)
@@ -204,4 +203,3 @@ void _trace_workqueue_del(ktask_t *task, kworkqueue_t *workqueue);
 #define TRACE_WORKQUEUE_DEL(task, workqueue)
 #endif
 #endif
-

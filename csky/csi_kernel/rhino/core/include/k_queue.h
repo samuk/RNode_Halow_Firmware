@@ -5,29 +5,29 @@
 #ifndef K_QUEUE_H
 #define K_QUEUE_H
 
-#define WAKE_ONE_TASK      0u
-#define WAKE_ALL_TASK      1u
+#define WAKE_ONE_TASK 0u
+#define WAKE_ALL_TASK 1u
 
 typedef struct {
-    void  **queue_start;
-    size_t  size;
-    size_t  cur_num;
-    size_t  peak_num;
+    void **queue_start;
+    size_t size;
+    size_t cur_num;
+    size_t peak_num;
 } msg_q_t;
 
 typedef struct {
-    msg_q_t  msg_q;
+    msg_q_t msg_q;
     klist_t *pend_entry;
 } msg_info_t;
 
 typedef struct queue_s {
-    blk_obj_t   blk_obj;
+    blk_obj_t blk_obj;
     k_ringbuf_t ringbuf;
-    msg_q_t     msg_q;
+    msg_q_t msg_q;
 #if (RHINO_CONFIG_SYSTEM_STATS > 0)
-    klist_t     queue_item;
+    klist_t queue_item;
 #endif
-    uint8_t     mm_alloc_flag;
+    uint8_t mm_alloc_flag;
 } kqueue_t;
 
 /**
@@ -115,4 +115,3 @@ kstat_t krhino_queue_flush(kqueue_t *queue);
 kstat_t krhino_queue_info_get(kqueue_t *queue, msg_info_t *info);
 
 #endif /* K_QUEUE_H */
-

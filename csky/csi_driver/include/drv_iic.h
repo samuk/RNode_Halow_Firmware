@@ -36,8 +36,8 @@ typedef void *iic_handle_t;
 
 /*----- IIC Control Codes: Mode -----*/
 typedef enum {
-    IIC_MODE_MASTER,             ///< IIC Master
-    IIC_MODE_SLAVE               ///< IIC Slave
+    IIC_MODE_MASTER, ///< IIC Master
+    IIC_MODE_SLAVE   ///< IIC Slave
 } iic_mode_e;
 
 /*----- IIC Control Codes: IIC Bus Speed -----*/
@@ -50,42 +50,42 @@ typedef enum {
 
 /*----- IIC Control Codes: IIC Address Mode -----*/
 typedef enum {
-    IIC_ADDRESS_7BIT        = 0,  ///< 7-bit address mode
-    IIC_ADDRESS_10BIT       = 1   ///< 10-bit address mode
+    IIC_ADDRESS_7BIT  = 0, ///< 7-bit address mode
+    IIC_ADDRESS_10BIT = 1  ///< 10-bit address mode
 } iic_address_mode_e;
 
 /**
 \brief IIC Status
 */
 typedef struct {
-    uint32_t busy             : 1;        ///< Transmitter/Receiver busy flag
-    uint32_t mode             : 1;        ///< Mode: 0=Slave, 1=Master
-    uint32_t direction        : 1;        ///< Direction: 0=Transmitter, 1=Receiver
-    uint32_t general_call     : 1;        ///< General Call(address 0) indication (cleared on start of next Slave operation)
-    uint32_t arbitration_lost : 1;        ///< Master lost arbitration(in case of multi-masters) (cleared on start of next Master operation)
-    uint32_t bus_error        : 1;        ///< Bus error detected (cleared on start of next Master/Slave operation)
+    uint32_t busy : 1;             ///< Transmitter/Receiver busy flag
+    uint32_t mode : 1;             ///< Mode: 0=Slave, 1=Master
+    uint32_t direction : 1;        ///< Direction: 0=Transmitter, 1=Receiver
+    uint32_t general_call : 1;     ///< General Call(address 0) indication (cleared on start of next Slave operation)
+    uint32_t arbitration_lost : 1; ///< Master lost arbitration(in case of multi-masters) (cleared on start of next Master operation)
+    uint32_t bus_error : 1;        ///< Bus error detected (cleared on start of next Master/Slave operation)
 } iic_status_t;
 
 /****** IIC Event *****/
 typedef enum {
-    IIC_EVENT_TRANSFER_DONE        = 0,  ///< Master/Slave Transmit/Receive finished
-    IIC_EVENT_TRANSFER_INCOMPLETE  = 1,  ///< Master/Slave Transmit/Receive incomplete transfer
-    IIC_EVENT_SLAVE_TRANSMIT       = 2,  ///< Slave Transmit operation requested
-    IIC_EVENT_SLAVE_RECEIVE        = 3,  ///< Slave Receive operation requested
-    IIC_EVENT_ADDRESS_NACK         = 4,  ///< Address not acknowledged from Slave
-    IIC_EVENT_GENERAL_CALL         = 5,  ///< General Call indication
-    IIC_EVENT_ARBITRATION_LOST     = 6,  ///< Master lost arbitration
-    IIC_EVENT_BUS_ERROR            = 7,  ///< Bus error detected (START/STOP at illegal position)
-    IIC_EVENT_BUS_CLEAR            = 8   ///< Bus clear finished
+    IIC_EVENT_TRANSFER_DONE       = 0, ///< Master/Slave Transmit/Receive finished
+    IIC_EVENT_TRANSFER_INCOMPLETE = 1, ///< Master/Slave Transmit/Receive incomplete transfer
+    IIC_EVENT_SLAVE_TRANSMIT      = 2, ///< Slave Transmit operation requested
+    IIC_EVENT_SLAVE_RECEIVE       = 3, ///< Slave Receive operation requested
+    IIC_EVENT_ADDRESS_NACK        = 4, ///< Address not acknowledged from Slave
+    IIC_EVENT_GENERAL_CALL        = 5, ///< General Call indication
+    IIC_EVENT_ARBITRATION_LOST    = 6, ///< Master lost arbitration
+    IIC_EVENT_BUS_ERROR           = 7, ///< Bus error detected (START/STOP at illegal position)
+    IIC_EVENT_BUS_CLEAR           = 8  ///< Bus clear finished
 } iic_event_e;
 
-typedef void (*iic_event_cb_t)(int32_t idx, iic_event_e event);  ///< Pointer to \ref iic_event_cb_t : IIC Event call back.
+typedef void (*iic_event_cb_t)(int32_t idx, iic_event_e event); ///< Pointer to \ref iic_event_cb_t : IIC Event call back.
 
 /**
 \brief IIC Driver Capabilities.
 */
-typedef struct  {
-    uint32_t address_10_bit : 1;          ///< supports 10-bit addressing
+typedef struct {
+    uint32_t address_10_bit : 1; ///< supports 10-bit addressing
 } iic_capabilities_t;
 
 /**
@@ -221,7 +221,6 @@ int32_t csi_iic_config_speed(iic_handle_t handle, iic_speed_e speed);
 */
 int32_t csi_iic_config_addr_mode(iic_handle_t handle, iic_address_mode_e addr_mode);
 
-
 /**
   \brief       config iic slave address.
   \param[in]   handle  iic handle to operate.
@@ -257,7 +256,6 @@ int32_t csi_iic_send_stop(iic_handle_t handle);
   \return      error code
 */
 int32_t csi_iic_reset(iic_handle_t handle);
-
 
 #ifdef __cplusplus
 }

@@ -33,46 +33,46 @@ extern "C" {
 \brief DMA Driver Capabilities.
 */
 typedef struct {
-    uint32_t unalign_addr : 1;          ///< support for unalign address transfer when memory is source
+    uint32_t unalign_addr : 1; ///< support for unalign address transfer when memory is source
 } dma_capabilities_t;
 
 typedef enum {
-    DMA_STATE_FREE = 0,       ///< DMA channel not yet initialized or disabled
-    DMA_STATE_READY,          ///< DMA channel process success and ready for use, but not start yet
-    DMA_STATE_BUSY,           ///< DMA channel process is ongoing
-    DMA_STATE_DONE,           ///< DMA channel transfer done
-    DMA_STATE_ERROR,          ///< DMA channel transfer error
+    DMA_STATE_FREE = 0, ///< DMA channel not yet initialized or disabled
+    DMA_STATE_READY,    ///< DMA channel process success and ready for use, but not start yet
+    DMA_STATE_BUSY,     ///< DMA channel process is ongoing
+    DMA_STATE_DONE,     ///< DMA channel transfer done
+    DMA_STATE_ERROR,    ///< DMA channel transfer error
 } dma_status_e;
 
 /****** DMA specific error codes *****/
 typedef enum {
-    EDRV_DMA_MODE  = (DRV_ERROR_SPECIFIC + 1),     ///< Specified Mode not supported
+    EDRV_DMA_MODE = (DRV_ERROR_SPECIFIC + 1), ///< Specified Mode not supported
 } dma_error_e;
 
 /****** DMA Event *****/
 typedef enum {
-    DMA_EVENT_TRANSFER_DONE        = 0,  ///< transfer complete
-    DMA_EVENT_TRANSFER_HALF_DONE   = 1,  ///< transfer half done
-    DMA_EVENT_TRANSFER_MODE_DONE   = 2,  ///< transfer complete in a certain dma trigger mode.
-    DMA_EVENT_CAHNNEL_PEND         = 3,  ///< it happens when there is a low priority channel was preempted by a high priority channel
-    DMA_EVENT_TRANSFER_ERROR       = 4,  ///< transfer error
+    DMA_EVENT_TRANSFER_DONE      = 0, ///< transfer complete
+    DMA_EVENT_TRANSFER_HALF_DONE = 1, ///< transfer half done
+    DMA_EVENT_TRANSFER_MODE_DONE = 2, ///< transfer complete in a certain dma trigger mode.
+    DMA_EVENT_CAHNNEL_PEND       = 3, ///< it happens when there is a low priority channel was preempted by a high priority channel
+    DMA_EVENT_TRANSFER_ERROR     = 4, ///< transfer error
 } dma_event_e;
 
 typedef enum {
-    DMA_ADDR_INC    = 0,
+    DMA_ADDR_INC = 0,
     DMA_ADDR_DEC,
     DMA_ADDR_CONSTANT
 } dma_addr_inc_e;
 
 typedef enum {
-    DMA_MEM2MEM     = 0,
+    DMA_MEM2MEM = 0,
     DMA_MEM2PERH,
     DMA_PERH2MEM,
     DMA_PERH2PERH,
 } dma_trans_type_e;
 
 typedef enum {
-    DMA_SINGLE_TRIGGER     = 0,
+    DMA_SINGLE_TRIGGER = 0,
     DMA_GROUP_TRIGGER,
     DMA_BLOCK_TRIGGER
 } dma_trig_trans_mode_e;
@@ -93,22 +93,22 @@ typedef enum {
 } dma_channel_req_mode_e;
 
 typedef struct {
-    dma_addr_inc_e         src_inc;        ///< source address increment
-    dma_addr_inc_e         dst_inc;        ///< destination address increment
-    dma_addr_endian_e      src_endian;     ///< source read data little-big endian change control.
-    dma_addr_endian_e      dst_endian;     ///< destination write data little-big endian change control.
-    uint8_t                src_tw;         ///< source transfer width in byte
-    uint8_t                dst_tw;         ///< destination transfer width in byte
-    uint8_t                hs_if;          ///< a hardware handshaking interface (optional).
-    uint8_t                preemption;     ///< determine whether if a channel can be preempted by a higher priority channel, 0 -- not allow preempt, 1 -- allow preempt.
-    dma_trans_type_e       type;           ///< transfer type
-    dma_trig_trans_mode_e  mode;           ///< channel trigger mode
-    dma_channel_req_mode_e ch_mode;        ///< software or hardware to tigger dma channel work.
-    dma_single_dir_e       single_dir;     ///< after select single mode control for source(read) or destination(write) transfer.
-    uint32_t               group_len;      ///< group transaction length (unit: bytes) when use DMA_GROUP_TRIGGER mode.
+    dma_addr_inc_e src_inc;         ///< source address increment
+    dma_addr_inc_e dst_inc;         ///< destination address increment
+    dma_addr_endian_e src_endian;   ///< source read data little-big endian change control.
+    dma_addr_endian_e dst_endian;   ///< destination write data little-big endian change control.
+    uint8_t src_tw;                 ///< source transfer width in byte
+    uint8_t dst_tw;                 ///< destination transfer width in byte
+    uint8_t hs_if;                  ///< a hardware handshaking interface (optional).
+    uint8_t preemption;             ///< determine whether if a channel can be preempted by a higher priority channel, 0 -- not allow preempt, 1 -- allow preempt.
+    dma_trans_type_e type;          ///< transfer type
+    dma_trig_trans_mode_e mode;     ///< channel trigger mode
+    dma_channel_req_mode_e ch_mode; ///< software or hardware to tigger dma channel work.
+    dma_single_dir_e single_dir;    ///< after select single mode control for source(read) or destination(write) transfer.
+    uint32_t group_len;             ///< group transaction length (unit: bytes) when use DMA_GROUP_TRIGGER mode.
 } dma_config_t;
 
-typedef void (*dma_event_cb_t)(int32_t ch, dma_event_e event);   ///< Pointer to \ref dma_event_cb_t : dmac event call back.
+typedef void (*dma_event_cb_t)(int32_t ch, dma_event_e event); ///< Pointer to \ref dma_event_cb_t : dmac event call back.
 
 /**
   \brief     get one free dma channel
@@ -174,4 +174,3 @@ dma_status_e csi_dma_get_status(int32_t ch);
 #endif
 
 #endif /* _CSI_DMA_H_ */
-

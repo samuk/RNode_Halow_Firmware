@@ -1,20 +1,19 @@
 #ifndef __SYS_CONFIG_H__
 #define __SYS_CONFIG_H__
 
-#define PROJECT_TYPE PRO_TYPE_WNB
+#define PROJECT_TYPE           PRO_TYPE_WNB
 
-#define IP_SOF_BROADCAST 1
-#define LWIP_NETIF_HOSTNAME        1
-#define TCPIP_THREAD_STACKSIZE      2048
-#define HALOW_MTU               (512)
-//#define TCP_MSS                 (HALOW_MTU)              // Smaller packets -> less latency
-#define CFG_SERVER_PORT         (8002)
-#define TCP_SERVER_PORT         (8001)
-#define TCP_SERVER_MTU          (TCP_MSS)
-//#define TCP_SND_BUF             (2*TCP_MSS)         // Near realtime
-//#define TCP_SNDLOWAT            (TCP_MSS)
-//#define TCP_SNDQUEUELOWAT       2
-//#define TCP_SND_QUEUELEN        4
+#define IP_SOF_BROADCAST       1
+#define LWIP_RAW               1
+#define LWIP_NETIF_HOSTNAME    1
+#define TCPIP_THREAD_STACKSIZE 2048
+
+// #define TCP_MSS                 (HALOW_MTU)              // Smaller packets -> less latency
+
+// #define TCP_SND_BUF             (2*TCP_MSS)         // Near realtime
+// #define TCP_SNDLOWAT            (TCP_MSS)
+// #define TCP_SNDQUEUELOWAT       2
+// #define TCP_SND_QUEUELEN        4
 
 #define SYS_FACTORY_PARAM_SIZE 2048
 
@@ -24,7 +23,7 @@
 #define TDMA_BUFF_SIZE (100 * 1024)
 #endif
 
-#define SYS_HEAP_SIZE (60 * 1024)
+#define SYS_HEAP_SIZE     (60 * 1024)
 
 #define WIFI_RX_BUFF_SIZE (80 * 1024) //(17*1024)
 
@@ -36,9 +35,9 @@
 #define SKB_POOL_ADDR     (WIFI_RX_BUFF_ADDR + WIFI_RX_BUFF_SIZE)
 #define SKB_POOL_SIZE     (SRAM_POOL_START + SRAM_POOL_SIZE - SKB_POOL_ADDR)
 
-#define DEFAULT_SYS_CLK 144000000UL // options: 32M/48M/72M/144M, and 16*N from 64M to 128M
+#define DEFAULT_SYS_CLK   144000000UL // options: 32M/48M/72M/144M, and 16*N from 64M to 128M
 
-#define GMAC_ENABLE 1
+#define GMAC_ENABLE       1
 
 #define AUTO_ETHERNET_PHY
 
@@ -53,10 +52,21 @@
 #define HG_GMAC_MDC_PIN PA_11
 #endif
 
-#define LWIP_RAW 1 // support at+ping
-#define TX_PWR_SUPER_EN 1
-#define WNB_TX_POWER 20
+#define NET_IP_CONFIG_MODE_DEF        (NET_IP_MODE_DHCP)
+#define NET_IP_CONFIG_IP_DEF          (LWIP_MAKEU32(192, 168, 42, 42))
+#define NET_IP_CONFIG_MASK_DEF        (LWIP_MAKEU32(255, 255, 255, 0))
+#define NET_IP_CONFIG_GW_DEF          (LWIP_MAKEU32(0, 0, 0, 0))
 
-//#define ANT_CTRL_PIN PB_1 // 网桥用PB1来做双天线选择
+#define HALOW_MTU                     (512)
+#define HALOW_CONFIG_CENTRAL_FREQ_DEF (8665)
+#define HALOW_CONFIG_POWER_DEF        (17)
+#define HALOW_CONFIG_BANDWIDTH_DEF    (1)
+#define HALOW_CONFIG_MCS_DEF          (0)
+#define HALOW_CONFIG_SPOWER_EN_DEF    (false)
+
+#define TCP_SERVER_PORT               (8001)
+#define TCP_SERVER_MTU                (TCP_MSS)
+
+// #define ANT_CTRL_PIN PB_1 // 网桥用PB1来做双天线选择
 
 #endif

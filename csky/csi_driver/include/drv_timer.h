@@ -35,26 +35,26 @@ typedef void *timer_handle_t;
 
 /*----- TIMER Control Codes: Mode -----*/
 typedef enum {
-    TIMER_MODE_FREE_RUNNING                 = 0,   ///< free running mode
-    TIMER_MODE_RELOAD                              ///< reload mode
+    TIMER_MODE_FREE_RUNNING = 0, ///< free running mode
+    TIMER_MODE_RELOAD            ///< reload mode
 } timer_mode_e;
 
 /**
 \brief TIMER Status
 */
 typedef struct {
-    uint32_t active   : 1;                        ///< timer active flag
-    uint32_t timeout  : 1;                        ///< timeout flag
+    uint32_t active : 1;  ///< timer active flag
+    uint32_t timeout : 1; ///< timeout flag
 } timer_status_t;
 
 /**
 \brief TIMER Event
 */
 typedef enum {
-    TIMER_EVENT_TIMEOUT  = 0   ///< time out event
+    TIMER_EVENT_TIMEOUT = 0 ///< time out event
 } timer_event_e;
 
-typedef void (*timer_event_cb_t)(int32_t idx, timer_event_e event);   ///< Pointer to \ref timer_event_cb_t : TIMER Event call back.
+typedef void (*timer_event_cb_t)(int32_t idx, timer_event_e event); ///< Pointer to \ref timer_event_cb_t : TIMER Event call back.
 
 /**
   \brief       Initialize TIMER Interface. 1. Initializes the resources needed for the TIMER interface 2.registers event callback function
@@ -152,4 +152,3 @@ int32_t csi_timer_get_load_value(timer_handle_t handle, uint32_t *value);
 #endif
 
 #endif /* _CSI_TIMER_H_ */
-

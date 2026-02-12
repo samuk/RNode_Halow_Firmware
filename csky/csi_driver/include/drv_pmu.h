@@ -34,38 +34,38 @@ typedef void *pmu_handle_t;
 
 /****** PMU specific error codes *****/
 typedef enum {
-    EDRV_PMU_MODE  = (DRV_ERROR_SPECIFIC + 1),      ///< Specified Mode not supported
+    EDRV_PMU_MODE = (DRV_ERROR_SPECIFIC + 1), ///< Specified Mode not supported
 } pmu_error_e;
 
 /*----- PMU Control Codes: Mode -----*/
 typedef enum {
-    PMU_MODE_RUN                  = 0,   ///< Running mode
-    PMU_MODE_SLEEP,                      ///< Sleep mode
-    PMU_MODE_DOZE,                       ///< Doze mode
-    PMU_MODE_DORMANT,                    ///< Dormant mode
-    PMU_MODE_STANDBY,                    ///< Standby mode
-    PMU_MODE_SHUTDOWN                    ///< Shutdown mode
+    PMU_MODE_RUN = 0, ///< Running mode
+    PMU_MODE_SLEEP,   ///< Sleep mode
+    PMU_MODE_DOZE,    ///< Doze mode
+    PMU_MODE_DORMANT, ///< Dormant mode
+    PMU_MODE_STANDBY, ///< Standby mode
+    PMU_MODE_SHUTDOWN ///< Shutdown mode
 } pmu_mode_e;
 
 /*----- PMU Control Codes: Wakeup type -----*/
 typedef enum {
-    PMU_WAKEUP_TYPE_PULSE   = 0,    ///< Pulse interrupt
-    PMU_WAKEUP_TYPE_LEVEL           ///< Level interrupt
+    PMU_WAKEUP_TYPE_PULSE = 0, ///< Pulse interrupt
+    PMU_WAKEUP_TYPE_LEVEL      ///< Level interrupt
 } pmu_wakeup_type_e;
 
 /*----- PMU Control Codes: Wakeup polarity -----*/
 typedef enum {
-    PMU_WAKEUP_POL_LOW      = 0,       ///< Low or negedge
-    PMU_WAKEUP_POL_HIGH                ///< High or posedge
+    PMU_WAKEUP_POL_LOW = 0, ///< Low or negedge
+    PMU_WAKEUP_POL_HIGH     ///< High or posedge
 } pmu_wakeup_pol_e;
 
 /****** PMU Event *****/
 typedef enum {
-    PMU_EVENT_SLEEP_DONE        = 0,  ///< Send completed; however PMU may still transmit data
-    PMU_EVENT_PREPARE_SLEEP     = 1
+    PMU_EVENT_SLEEP_DONE    = 0, ///< Send completed; however PMU may still transmit data
+    PMU_EVENT_PREPARE_SLEEP = 1
 } pmu_event_e;
 
-typedef void (*pmu_event_cb_t)(int32_t idx, pmu_event_e event, pmu_mode_e mode);   ///< Pointer to \ref pmu_event_cb_t : PMU Event call back.
+typedef void (*pmu_event_cb_t)(int32_t idx, pmu_event_e event, pmu_mode_e mode); ///< Pointer to \ref pmu_event_cb_t : PMU Event call back.
 
 /**
   \brief       Initialize PMU Interface. 1. Initializes the resources needed for the PMU interface 2.registers event callback function

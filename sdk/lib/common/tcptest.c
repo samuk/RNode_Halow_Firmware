@@ -30,7 +30,6 @@
 #include "lwip/ip_addr.h"
 #include "lwip/tcpip.h"
 #include "netif/ethernetif.h"
-#include "syscfg.h"
 //#include "pairled.h"
 
 static struct os_task tcptest_task;

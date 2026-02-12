@@ -10,8 +10,7 @@
 #include "csi_core.h"
 
 #ifdef MPOOL_ALLOC
-void *krhino_mm_alloc(size_t size, void *caller)
-{
+void *krhino_mm_alloc(size_t size, void *caller) {
 #if defined(PSRAM_HEAP) && defined(PSRAM_TASK_STACK)
     return sysheap_alloc(&psram_heap, size, caller, 0);
 #else
@@ -19,8 +18,7 @@ void *krhino_mm_alloc(size_t size, void *caller)
 #endif
 }
 
-void krhino_mm_free(void *ptr)
-{
+void krhino_mm_free(void *ptr) {
 #if defined(PSRAM_HEAP) && defined(PSRAM_TASK_STACK)
     os_free_psram(ptr);
 #else
@@ -28,4 +26,3 @@ void krhino_mm_free(void *ptr)
 #endif
 }
 #endif
-

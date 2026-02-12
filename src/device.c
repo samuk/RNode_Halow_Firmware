@@ -50,8 +50,6 @@
 #include "dev/crc/hg_crc.h"
 #include "dev/sysaes/hg_sysaes.h"
 
-#include "syscfg.h"
-
 extern const struct hgwphy_ah_cfg nphyahcfg;
 extern union _dpd_ram dpd_ram;
 extern const uint32 rx_imb_iq_normal[6];

@@ -29,7 +29,6 @@ extern "C" {
 #include <stdint.h>
 #include <drv_common.h>
 
-
 /// definition for eflash handle.
 typedef void *eflash_handle_t;
 
@@ -37,38 +36,38 @@ typedef void *eflash_handle_t;
 \brief Flash information
 */
 typedef struct {
-    uint32_t          start;              ///< Chip Start address
-    uint32_t          end;                ///< Chip End address (start+size-1)
-    uint32_t          sector_count;       ///< Number of sectors
-    uint32_t          sector_size;        ///< Uniform sector size in bytes
-    uint32_t          page_size;          ///< Optimal programming page size in bytes
-    uint32_t          program_unit;       ///< Smallest programmable unit in bytes
-    uint8_t           erased_value;       ///< Contents of erased memory (usually 0xFF)
+    uint32_t start;        ///< Chip Start address
+    uint32_t end;          ///< Chip End address (start+size-1)
+    uint32_t sector_count; ///< Number of sectors
+    uint32_t sector_size;  ///< Uniform sector size in bytes
+    uint32_t page_size;    ///< Optimal programming page size in bytes
+    uint32_t program_unit; ///< Smallest programmable unit in bytes
+    uint8_t erased_value;  ///< Contents of erased memory (usually 0xFF)
 } eflash_info_t;
 
 /**
 \brief Flash Status
 */
 typedef struct {
-    uint32_t busy  : 1;                   ///< Flash busy flag
-    uint32_t error : 1;                   ///< Read/Program/Erase error flag (cleared on start of next operation)
+    uint32_t busy : 1;  ///< Flash busy flag
+    uint32_t error : 1; ///< Read/Program/Erase error flag (cleared on start of next operation)
 } eflash_status_t;
 
 /****** EFLASH Event *****/
 typedef enum {
-    EFLASH_EVENT_READY           = 0,  ///< Flash Ready
-    EFLASH_EVENT_ERROR,                ///< Read/Program/Erase Error
+    EFLASH_EVENT_READY = 0, ///< Flash Ready
+    EFLASH_EVENT_ERROR,     ///< Read/Program/Erase Error
 } eflash_event_e;
 
-typedef void (*eflash_event_cb_t)(int32_t idx, eflash_event_e event);   ///< Pointer to \ref eflash_event_cb_t : EFLASH Event call back.
+typedef void (*eflash_event_cb_t)(int32_t idx, eflash_event_e event); ///< Pointer to \ref eflash_event_cb_t : EFLASH Event call back.
 
 /**
 \brief Flash Driver Capabilities.
 */
 typedef struct {
-    uint32_t event_ready  : 1;            ///< Signal Flash Ready event
-    uint32_t data_width   : 2;            ///< Data width: 0=8-bit, 1=16-bit, 2=32-bit
-    uint32_t erase_chip   : 1;            ///< Supports EraseChip operation
+    uint32_t event_ready : 1; ///< Signal Flash Ready event
+    uint32_t data_width : 2;  ///< Data width: 0=8-bit, 1=16-bit, 2=32-bit
+    uint32_t erase_chip : 1;  ///< Supports EraseChip operation
 } eflash_capabilities_t;
 
 // Function documentation

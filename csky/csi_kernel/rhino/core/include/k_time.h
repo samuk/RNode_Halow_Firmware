@@ -28,7 +28,7 @@ sys_time_t krhino_sys_tick_get(void);
  * @param[in]  ms  ms which will be converted to ticks
  * @return  the ticks of the ms
  */
-tick_t     krhino_ms_to_ticks(sys_time_t ms);
+tick_t krhino_ms_to_ticks(sys_time_t ms);
 
 /**
  * This function will convert ticks to ms
@@ -38,4 +38,3 @@ tick_t     krhino_ms_to_ticks(sys_time_t ms);
 sys_time_t krhino_ticks_to_ms(tick_t ticks);
 
 #endif /* K_TIME_H */
-

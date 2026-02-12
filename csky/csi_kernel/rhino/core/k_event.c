@@ -6,8 +6,7 @@
 
 #if (RHINO_CONFIG_EVENT_FLAG > 0)
 static kstat_t event_create(kevent_t *event, const name_t *name, uint32_t flags,
-                            uint8_t mm_alloc_flag)
-{
+                            uint8_t mm_alloc_flag) {
     CPSR_ALLOC();
 
     NULL_PARA_CHK(event);
@@ -33,13 +32,11 @@ static kstat_t event_create(kevent_t *event, const name_t *name, uint32_t flags,
     return RHINO_SUCCESS;
 }
 
-kstat_t krhino_event_create(kevent_t *event, const name_t *name, uint32_t flags)
-{
+kstat_t krhino_event_create(kevent_t *event, const name_t *name, uint32_t flags) {
     return event_create(event, name, flags, K_OBJ_STATIC_ALLOC);
 }
 
-kstat_t krhino_event_del(kevent_t *event)
-{
+kstat_t krhino_event_del(kevent_t *event) {
     CPSR_ALLOC();
 
     klist_t *blk_list_head;
@@ -83,9 +80,8 @@ kstat_t krhino_event_del(kevent_t *event)
 
 #if (RHINO_CONFIG_KOBJ_DYN_ALLOC > 0)
 kstat_t krhino_event_dyn_create(kevent_t **event, const name_t *name,
-                                uint32_t flags)
-{
-    kstat_t   stat;
+                                uint32_t flags) {
+    kstat_t stat;
     kevent_t *event_obj;
 
     if (event == NULL) {
@@ -110,8 +106,7 @@ kstat_t krhino_event_dyn_create(kevent_t **event, const name_t *name,
     return stat;
 }
 
-kstat_t krhino_event_dyn_del(kevent_t *event)
-{
+kstat_t krhino_event_dyn_del(kevent_t *event) {
     CPSR_ALLOC();
 
     klist_t *blk_list_head;
@@ -155,8 +150,7 @@ kstat_t krhino_event_dyn_del(kevent_t *event)
 #endif
 
 kstat_t krhino_event_get(kevent_t *event, uint32_t flags, uint8_t opt,
-                         uint32_t *actl_flags, tick_t ticks)
-{
+                         uint32_t *actl_flags, tick_t ticks) {
     CPSR_ALLOC();
 
     kstat_t stat;
@@ -243,16 +237,15 @@ kstat_t krhino_event_get(kevent_t *event, uint32_t flags, uint8_t opt,
     return stat;
 }
 
-static kstat_t event_set(kevent_t *event, uint32_t flags, uint8_t opt)
-{
+static kstat_t event_set(kevent_t *event, uint32_t flags, uint8_t opt) {
     CPSR_ALLOC();
 
-    klist_t  *iter;
-    klist_t  *event_head;
-    klist_t  *iter_temp;
-    ktask_t  *task;
-    uint8_t   status;
-    uint32_t  cur_event_flags;
+    klist_t *iter;
+    klist_t *event_head;
+    klist_t *iter_temp;
+    ktask_t *task;
+    uint8_t status;
+    uint32_t cur_event_flags;
 
     /* this is only needed when system zero interrupt feature is enabled */
 #if (RHINO_CONFIG_INTRPT_GUARD > 0)
@@ -281,11 +274,11 @@ static kstat_t event_set(kevent_t *event, uint32_t flags, uint8_t opt)
     }
 
     cur_event_flags = event->flags;
-    iter = event_head->next;
+    iter            = event_head->next;
 
     /* if list is not empty */
     while (iter != event_head) {
-        task = krhino_list_entry(iter, ktask_t, task_list);
+        task      = krhino_list_entry(iter, ktask_t, task_list);
         iter_temp = iter->next;
 
         if (task->pend_option & RHINO_FLAGS_AND_MASK) {
@@ -324,8 +317,7 @@ static kstat_t event_set(kevent_t *event, uint32_t flags, uint8_t opt)
     return RHINO_SUCCESS;
 }
 
-kstat_t krhino_event_set(kevent_t *event, uint32_t flags, uint8_t opt)
-{
+kstat_t krhino_event_set(kevent_t *event, uint32_t flags, uint8_t opt) {
     NULL_PARA_CHK(event);
 
     if ((opt != RHINO_AND) && (opt != RHINO_OR)) {
@@ -335,4 +327,3 @@ kstat_t krhino_event_set(kevent_t *event, uint32_t flags, uint8_t opt)
     return event_set(event, flags, opt);
 }
 #endif /* RHINO_CONFIG_EVENT_FLAG */
-

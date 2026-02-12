@@ -34,8 +34,6 @@
 #include "lib/net/utils.h"
 #include "lib/umac/wifi_mgr.h"
 
-#include "syscfg.h"
-
 #define UART_BUS_RX_BUF_SIZE (4096)
 
 struct mac_bus_uart {

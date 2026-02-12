@@ -63,4 +63,3 @@ extern "C" {
 #endif
 
 #endif /* K_API_H */
-

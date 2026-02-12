@@ -50,11 +50,11 @@
  ****************************************************************************/
 #ifndef CONFIG_MM_MAX_USED
 #define CONFIG_MM_MAX_USED 1
-#endif 
+#endif
 
 #define true  1
 #define false 0
-#define OK  0
+#define OK    0
 /* Configuration ************************************************************/
 /* If the MCU has a small (16-bit) address capability, then we will use
  * a smaller chunk header that contains 16-bit size/offset information.
@@ -64,12 +64,12 @@
  */
 
 #ifdef CONFIG_SMALL_MEMORY
-  /* If the MCU has a small addressing capability, then for the smaller
-   * chunk header.
-   */
+/* If the MCU has a small addressing capability, then for the smaller
+ * chunk header.
+ */
 
-#  undef  CONFIG_MM_SMALL
-#  define CONFIG_MM_SMALL 1
+#undef CONFIG_MM_SMALL
+#define CONFIG_MM_SMALL 1
 #endif
 
 /* Terminology:
@@ -103,15 +103,15 @@
 
 #undef MM_KERNEL_USRHEAP_INIT
 #if defined(CONFIG_BUILD_PROTECTED) && defined(__KERNEL__)
-#  define MM_KERNEL_USRHEAP_INIT 1
+#define MM_KERNEL_USRHEAP_INIT 1
 #elif !defined(CONFIG_BUILD_KERNEL)
-#  define MM_KERNEL_USRHEAP_INIT 1
+#define MM_KERNEL_USRHEAP_INIT 1
 #endif
 
 /* The kernel heap is never accessible from user code */
 
 #ifndef __KERNEL__
-#  undef CONFIG_MM_KERNEL_HEAP
+#undef CONFIG_MM_KERNEL_HEAP
 #endif
 
 /* Chunk Header Definitions *************************************************/
@@ -136,28 +136,28 @@
  * REVISIT: We could do better on machines with 16-bit addressing.
  */
 
-#  define MM_MIN_SHIFT    4  /* 16 bytes */
-#  define MM_MAX_SHIFT   15  /* 32 Kb */
+#define MM_MIN_SHIFT 4  /* 16 bytes */
+#define MM_MAX_SHIFT 15 /* 32 Kb */
 
 #elif defined(CONFIG_HAVE_LONG_LONG)
 /* Four byte offsets; Pointers may be 4 or 8 bytes
  * sizeof(struct mm_freenode_s) is 16 or 24 bytes.
  */
-  
-#  if UINTPTR_MAX <= UINT32_MAX
-#    define MM_MIN_SHIFT  4  /* 16 bytes */
-#  elif UINTPTR_MAX <= UINT64_MAX
-#    define MM_MIN_SHIFT  5  /* 32 bytes */
-#  endif
-#  define MM_MAX_SHIFT   22  /*  4 Mb */
+
+#if UINTPTR_MAX <= UINT32_MAX
+#define MM_MIN_SHIFT 4 /* 16 bytes */
+#elif UINTPTR_MAX <= UINT64_MAX
+#define MM_MIN_SHIFT 5 /* 32 bytes */
+#endif
+#define MM_MAX_SHIFT 22 /*  4 Mb */
 
 #else
 /* Four byte offsets; Pointers must be 4 bytes.
  * sizeof(struct mm_freenode_s) is 16 bytes.
  */
 
-#  define MM_MIN_SHIFT    4  /* 16 bytes */
-#  define MM_MAX_SHIFT   22  /*  4 Mb */
+#define MM_MIN_SHIFT 4  /* 16 bytes */
+#define MM_MAX_SHIFT 22 /*  4 Mb */
 #endif
 
 /* All other definitions derive from these two */
@@ -166,7 +166,7 @@
 #define MM_MAX_CHUNK     (1 << MM_MAX_SHIFT)
 #define MM_NNODES        (MM_MAX_SHIFT - MM_MIN_SHIFT + 1)
 
-#define MM_GRAN_MASK     (MM_MIN_CHUNK-1)
+#define MM_GRAN_MASK     (MM_MIN_CHUNK - 1)
 #define MM_ALIGN_UP(a)   (((a) + MM_GRAN_MASK) & ~MM_GRAN_MASK)
 #define MM_ALIGN_DOWN(a) ((a) & ~MM_GRAN_MASK)
 
@@ -175,9 +175,9 @@
  */
 
 #ifdef CONFIG_MM_SMALL
-# define MM_ALLOC_BIT    0x8000
+#define MM_ALLOC_BIT 0x8000
 #else
-# define MM_ALLOC_BIT    0x80000000
+#define MM_ALLOC_BIT 0x80000000
 #endif
 #define MM_IS_ALLOCATED(n) \
   ((int)((struct mm_allocnode_s*)(n)->preceding) < 0))
@@ -186,26 +186,25 @@
  * Public Types
  ****************************************************************************/
 
-struct mallinfo
-{
-  int arena;    /* This is the total size of memory allocated
-                 * for use by malloc in bytes. */
-  int ordblks;  /* This is the number of free (not in use) chunks */
-  int mxordblk; /* Size of the largest free (not in use) chunk */
-  int uordblks; /* This is the total size of memory occupied by
-                 * chunks handed out by malloc. */
-  int fordblks; /* This is the total size of memory occupied
-                 * by free (not in use) chunks.*/
+struct mallinfo {
+    int arena;    /* This is the total size of memory allocated
+                   * for use by malloc in bytes. */
+    int ordblks;  /* This is the number of free (not in use) chunks */
+    int mxordblk; /* Size of the largest free (not in use) chunk */
+    int uordblks; /* This is the total size of memory occupied by
+                   * chunks handed out by malloc. */
+    int fordblks; /* This is the total size of memory occupied
+                   * by free (not in use) chunks.*/
 };
 
 /* Determines the size of the chunk size/offset type */
 
 #ifdef CONFIG_MM_SMALL
-   typedef uint16_t mmsize_t;
-#  define MMSIZE_MAX 0xffff
+typedef uint16_t mmsize_t;
+#define MMSIZE_MAX 0xffff
 #else
-   typedef size_t mmsize_t;
-#  define MMSIZE_MAX SIZE_MAX
+typedef size_t mmsize_t;
+#define MMSIZE_MAX SIZE_MAX
 #endif
 
 /* This describes an allocated chunk.  An allocated chunk is
@@ -213,40 +212,38 @@ struct mallinfo
  * size.  If set, then this is an allocated chunk.
  */
 
-struct mm_allocnode_s
-{
-  mmsize_t size;           /* Size of this chunk */
-  mmsize_t preceding;      /* Size of the preceding chunk */
+struct mm_allocnode_s {
+    mmsize_t size;      /* Size of this chunk */
+    mmsize_t preceding; /* Size of the preceding chunk */
 };
 
 /* What is the size of the allocnode? */
 
 #ifdef CONFIG_MM_SMALL
-# define SIZEOF_MM_ALLOCNODE   4
+#define SIZEOF_MM_ALLOCNODE 4
 #else
-# define SIZEOF_MM_ALLOCNODE   8
+#define SIZEOF_MM_ALLOCNODE 8
 #endif
 
 #define CHECK_ALLOCNODE_SIZE \
-  DEBUGASSERT(sizeof(struct mm_allocnode_s) == SIZEOF_MM_ALLOCNODE)
+    DEBUGASSERT(sizeof(struct mm_allocnode_s) == SIZEOF_MM_ALLOCNODE)
 
 /* This describes a free chunk */
 
-struct mm_freenode_s
-{
-  mmsize_t size;                   /* Size of this chunk */
-  mmsize_t preceding;              /* Size of the preceding chunk */
-  struct mm_freenode_s *flink; /* Supports a doubly linked list */
-  struct mm_freenode_s *blink;
+struct mm_freenode_s {
+    mmsize_t size;               /* Size of this chunk */
+    mmsize_t preceding;          /* Size of the preceding chunk */
+    struct mm_freenode_s *flink; /* Supports a doubly linked list */
+    struct mm_freenode_s *blink;
 };
 
 /* What is the size of the freenode? */
 
-#define MM_PTR_SIZE sizeof(struct mm_freenode_s *)
-#define SIZEOF_MM_FREENODE (SIZEOF_MM_ALLOCNODE + 2*MM_PTR_SIZE)
+#define MM_PTR_SIZE        sizeof(struct mm_freenode_s *)
+#define SIZEOF_MM_FREENODE (SIZEOF_MM_ALLOCNODE + 2 * MM_PTR_SIZE)
 
 #define CHECK_FREENODE_SIZE \
-  DEBUGASSERT(sizeof(struct mm_freenode_s) == SIZEOF_MM_FREENODE)
+    DEBUGASSERT(sizeof(struct mm_freenode_s) == SIZEOF_MM_FREENODE)
 
 #ifndef CONFIG_MM_REGIONS
 #define CONFIG_MM_REGIONS 1
@@ -254,36 +251,35 @@ struct mm_freenode_s
 
 /* This describes one heap (possibly with multiple regions) */
 
-typedef void* sem_t;
-struct mm_heap_s
-{
-  /* Mutually exclusive access to this data set is enforced with
-   * the following un-named semaphore.
-   */
+typedef void *sem_t;
+struct mm_heap_s {
+    /* Mutually exclusive access to this data set is enforced with
+     * the following un-named semaphore.
+     */
 
-  sem_t mm_semaphore;
-  uint16_t mm_holder;
-  int   mm_counts_held;
+    sem_t mm_semaphore;
+    uint16_t mm_holder;
+    int mm_counts_held;
 
-  /* This is the size of the heap provided to mm */
+    /* This is the size of the heap provided to mm */
 
-  size_t  mm_heapsize;
+    size_t mm_heapsize;
 
-  /* This is the first and last nodes of the heap */
+    /* This is the first and last nodes of the heap */
 
-  struct mm_allocnode_s *mm_heapstart[CONFIG_MM_REGIONS];
-  struct mm_allocnode_s *mm_heapend[CONFIG_MM_REGIONS];
+    struct mm_allocnode_s *mm_heapstart[CONFIG_MM_REGIONS];
+    struct mm_allocnode_s *mm_heapend[CONFIG_MM_REGIONS];
 
 #if CONFIG_MM_REGIONS > 1
-  int mm_nregions;
+    int mm_nregions;
 #endif
 
-  /* All free nodes are maintained in a doubly linked list.  This
-   * array provides some hooks into the list at various points to
-   * speed searches for free nodes.
-   */
+    /* All free nodes are maintained in a doubly linked list.  This
+     * array provides some hooks into the list at various points to
+     * speed searches for free nodes.
+     */
 
-  struct mm_freenode_s mm_nodelist[MM_NNODES];
+    struct mm_freenode_s mm_nodelist[MM_NNODES];
 };
 
 /****************************************************************************
@@ -293,8 +289,7 @@ struct mm_heap_s
 #undef EXTERN
 #if defined(__cplusplus)
 #define EXTERN extern "C"
-extern "C"
-{
+extern "C" {
 #else
 #define EXTERN extern
 #endif
@@ -376,13 +371,13 @@ void kmm_addregion(void *heapstart, size_t heapsize);
 
 /* Functions contained in umm_sem.c ****************************************/
 
-int  umm_trysemaphore(void);
+int umm_trysemaphore(void);
 void umm_givesemaphore(void);
 
 /* Functions contained in kmm_sem.c ****************************************/
 
 #ifdef CONFIG_MM_KERNEL_HEAP
-int  kmm_trysemaphore(void);
+int kmm_trysemaphore(void);
 void kmm_givesemaphore(void);
 #endif
 
@@ -393,20 +388,19 @@ void kmm_givesemaphore(void);
 struct m_dbg_hdr {
     dq_entry_t node;
     void *caller;
-    uint32_t size:23;
-    uint32_t referenced:1;
-    uint32_t pid:8;
+    uint32_t size : 23;
+    uint32_t referenced : 1;
+    uint32_t pid : 8;
 #define MAGIC_INUSE 0x65657575
-#define MAGIC_FREE 0x3f3f3f3f
-#define MAGIC_END 0xe5e5e5e5
+#define MAGIC_FREE  0x3f3f3f3f
+#define MAGIC_END   0xe5e5e5e5
     uint32_t magic;
 };
 
 #define MDBG_SZ_HEAD sizeof(struct m_dbg_hdr)
 #define MDBG_SZ_TAIL 16
 
-static inline bool mdbg_calc_magic(struct m_dbg_hdr *hdr)
-{
+static inline bool mdbg_calc_magic(struct m_dbg_hdr *hdr) {
     uint32_t magic = (uint32_t)hdr->caller;
     magic ^= hdr->size;
     magic ^= hdr->pid;
@@ -414,19 +408,17 @@ static inline bool mdbg_calc_magic(struct m_dbg_hdr *hdr)
     return magic;
 }
 
-static inline bool mdbg_check_magic_hdr(struct m_dbg_hdr *hdr)
-{
+static inline bool mdbg_check_magic_hdr(struct m_dbg_hdr *hdr) {
     return mdbg_calc_magic(hdr) == hdr->magic;
 }
 
-static inline bool mdbg_check_magic_end(struct m_dbg_hdr *hdr)
-{
-    void *p = hdr + 1;
-    uint32_t *m = (uint32_t *)((uint32_t)p + hdr->size);
+static inline bool mdbg_check_magic_end(struct m_dbg_hdr *hdr) {
+    void *p        = hdr + 1;
+    uint32_t *m    = (uint32_t *)((uint32_t)p + hdr->size);
     uint32_t magic = MAGIC_END ^ hdr->magic;
     int i;
 
-    for (i=0;i<MDBG_SZ_TAIL/4;i++) {
+    for (i = 0; i < MDBG_SZ_TAIL / 4; i++) {
         if (m[i] != magic)
             return false;
     }
@@ -434,22 +426,19 @@ static inline bool mdbg_check_magic_end(struct m_dbg_hdr *hdr)
     return true;
 }
 
-static inline void mdbg_set_magic_hdr(struct m_dbg_hdr *hdr)
-{
+static inline void mdbg_set_magic_hdr(struct m_dbg_hdr *hdr) {
     hdr->magic = mdbg_calc_magic(hdr);
 }
 
-static inline void mdbg_set_magic_end(struct m_dbg_hdr *hdr)
-{
-    void *p = hdr + 1;
+static inline void mdbg_set_magic_end(struct m_dbg_hdr *hdr) {
+    void *p     = hdr + 1;
     uint32_t *m = (uint32_t *)((uint32_t)p + hdr->size);
     int i;
 
-    for (i=0;i<MDBG_SZ_TAIL/4;i++) {
+    for (i = 0; i < MDBG_SZ_TAIL / 4; i++) {
         m[i] = MAGIC_END ^ hdr->magic;
     }
 }
-
 
 void *mm_malloc(struct mm_heap_s *heap, size_t size, void *caller);
 
@@ -477,7 +466,7 @@ void kmm_free(void *mem);
 /* Functions contained in mm_realloc.c **************************************/
 
 void *mm_realloc(struct mm_heap_s *heap, void *oldmem,
-                     size_t size);
+                 size_t size);
 
 /* Functions contained in kmm_realloc.c *************************************/
 
@@ -508,7 +497,7 @@ void *kmm_zalloc(size_t size);
 /* Functions contained in mm_memalign.c *************************************/
 
 void *mm_memalign(struct mm_heap_s *heap, size_t alignment,
-                      size_t size);
+                  size_t size);
 
 /* Functions contained in kmm_memalign.c ************************************/
 
@@ -543,7 +532,7 @@ void *kmm_brkaddr(int region);
 #if defined(CONFIG_ARCH_ADDRENV) && defined(CONFIG_MM_PGALLOC) && \
     defined(CONFIG_ARCH_USE_MMU)
 void *mm_sbrk(struct mm_heap_s *heap, intptr_t incr,
-                  uintptr_t maxbreak);
+              uintptr_t maxbreak);
 #endif
 
 /* Functions contained in kmm_sbrk.c ****************************************/
@@ -605,10 +594,10 @@ void mm_leak_del_chunk(struct m_dbg_hdr *chunk);
 void mm_leak_dump(void);
 void mm_leak_search_chunk(void *mem);
 #else
-//static inline void mm_leak_add_chunk(struct m_dbg_hdr *chunk){}
-//static inline void mm_leak_del_chunk(struct m_dbg_hdr *chunk){}
-//static inline void mm_leak_dump(void){}
-//static inline void mm_leak_search_chunk(void *mem){}
+// static inline void mm_leak_add_chunk(struct m_dbg_hdr *chunk){}
+// static inline void mm_leak_del_chunk(struct m_dbg_hdr *chunk){}
+// static inline void mm_leak_dump(void){}
+// static inline void mm_leak_search_chunk(void *mem){}
 #endif
 
 #undef EXTERN

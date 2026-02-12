@@ -6,16 +6,14 @@
 #include <csi_gcc.h>
 
 #if (RHINO_CONFIG_DISABLE_SCHED_STATS > 0)
-static void sched_disable_measure_start(void)
-{
+static void sched_disable_measure_start(void) {
     /* start measure system lock time */
     if (g_sched_lock[cpu_cur_get()] == 0u) {
         g_sched_disable_time_start = HR_COUNT_GET();
     }
 }
 
-static void sched_disable_measure_stop(void)
-{
+static void sched_disable_measure_stop(void) {
     hr_timer_t diff;
 
     /* stop measure system lock time, g_sched_lock is always zero here */
@@ -31,8 +29,7 @@ static void sched_disable_measure_stop(void)
 }
 #endif
 
-kstat_t krhino_sched_disable(void)
-{
+kstat_t krhino_sched_disable(void) {
     CPSR_ALLOC();
 
     RHINO_CRITICAL_ENTER();
@@ -55,8 +52,7 @@ kstat_t krhino_sched_disable(void)
     return RHINO_SUCCESS;
 }
 
-kstat_t krhino_sched_enable(void)
-{
+kstat_t krhino_sched_enable(void) {
     CPSR_ALLOC();
 
     RHINO_CRITICAL_ENTER();
@@ -85,8 +81,7 @@ kstat_t krhino_sched_enable(void)
 }
 
 #if (RHINO_CONFIG_CPU_NUM > 1)
-void core_sched(void)
-{
+void core_sched(void) {
     uint8_t cur_cpu_num;
 
     cur_cpu_num = cpu_cur_get();
@@ -115,11 +110,9 @@ void core_sched(void)
     g_active_task[cur_cpu_num]->cur_exc = 0;
 
     cpu_task_switch();
-
 }
 #else
-void core_sched(void)
-{
+void core_sched(void) {
     CPSR_ALLOC();
     uint8_t cur_cpu_num;
 
@@ -157,8 +150,7 @@ void core_sched(void)
 }
 #endif
 
-__init void runqueue_init(runqueue_t *rq)
-{
+__init void runqueue_init(runqueue_t *rq) {
     uint8_t prio;
 
     rq->highest_pri = RHINO_CONFIG_PRI_MAX;
@@ -168,8 +160,7 @@ __init void runqueue_init(runqueue_t *rq)
     }
 }
 
-RHINO_INLINE void ready_list_init(runqueue_t *rq, ktask_t *task)
-{
+RHINO_INLINE void ready_list_init(runqueue_t *rq, ktask_t *task) {
     rq->cur_list_item[task->prio] = &task->task_list;
     klist_init(rq->cur_list_item[task->prio]);
     krhino_bitmap_set(rq->task_bit_map, task->prio);
@@ -179,13 +170,11 @@ RHINO_INLINE void ready_list_init(runqueue_t *rq, ktask_t *task)
     }
 }
 
-RHINO_INLINE uint8_t is_ready_list_empty(uint8_t prio)
-{
+RHINO_INLINE uint8_t is_ready_list_empty(uint8_t prio) {
     return (g_ready_queue.cur_list_item[prio] == NULL);
 }
 
-RHINO_INLINE void _ready_list_add_tail(runqueue_t *rq, ktask_t *task)
-{
+RHINO_INLINE void _ready_list_add_tail(runqueue_t *rq, ktask_t *task) {
     if (is_ready_list_empty(task->prio)) {
         ready_list_init(rq, task);
         return;
@@ -194,8 +183,7 @@ RHINO_INLINE void _ready_list_add_tail(runqueue_t *rq, ktask_t *task)
     klist_insert(rq->cur_list_item[task->prio], &task->task_list);
 }
 
-RHINO_INLINE void _ready_list_add_head(runqueue_t *rq, ktask_t *task)
-{
+RHINO_INLINE void _ready_list_add_head(runqueue_t *rq, ktask_t *task) {
     if (is_ready_list_empty(task->prio)) {
         ready_list_init(rq, task);
         return;
@@ -206,8 +194,7 @@ RHINO_INLINE void _ready_list_add_head(runqueue_t *rq, ktask_t *task)
 }
 
 #if (RHINO_CONFIG_CPU_NUM > 1)
-static void task_sched_to_cpu(runqueue_t *rq, ktask_t *task, uint8_t cur_cpu_num)
-{
+static void task_sched_to_cpu(runqueue_t *rq, ktask_t *task, uint8_t cur_cpu_num) {
     uint8_t i;
     uint8_t low_pri;
 
@@ -225,7 +212,7 @@ static void task_sched_to_cpu(runqueue_t *rq, ktask_t *task, uint8_t cur_cpu_num
             low_pri = g_active_task[0]->prio;
             for (i = 0; i < RHINO_CONFIG_CPU_NUM - 1; i++) {
                 if (low_pri < g_active_task[i + 1]->prio) {
-                     low_pri = g_active_task[i + 1]->prio;
+                    low_pri = g_active_task[i + 1]->prio;
                 }
             }
 
@@ -242,32 +229,27 @@ static void task_sched_to_cpu(runqueue_t *rq, ktask_t *task, uint8_t cur_cpu_num
     }
 }
 
-void ready_list_add_head(runqueue_t *rq, ktask_t *task)
-{
+void ready_list_add_head(runqueue_t *rq, ktask_t *task) {
     _ready_list_add_head(rq, task);
     task_sched_to_cpu(rq, task, cpu_cur_get());
 }
 
-void ready_list_add_tail(runqueue_t *rq, ktask_t *task)
-{
+void ready_list_add_tail(runqueue_t *rq, ktask_t *task) {
     _ready_list_add_tail(rq, task);
     task_sched_to_cpu(rq, task, cpu_cur_get());
 }
 
 #else
-void ready_list_add_head(runqueue_t *rq, ktask_t *task)
-{
+void ready_list_add_head(runqueue_t *rq, ktask_t *task) {
     _ready_list_add_head(rq, task);
 }
 
-void ready_list_add_tail(runqueue_t *rq, ktask_t *task)
-{
+void ready_list_add_tail(runqueue_t *rq, ktask_t *task) {
     _ready_list_add_tail(rq, task);
 }
 #endif
 
-void ready_list_add(runqueue_t *rq, ktask_t *task)
-{
+void ready_list_add(runqueue_t *rq, ktask_t *task) {
     /* if task prio is equal current task prio then add to the end */
     if (task->prio == g_active_task[cpu_cur_get()]->prio) {
         ready_list_add_tail(rq, task);
@@ -276,10 +258,9 @@ void ready_list_add(runqueue_t *rq, ktask_t *task)
     }
 }
 
-void ready_list_rm(runqueue_t *rq, ktask_t *task)
-{
-    int32_t  i;
-    uint8_t  pri = task->prio;
+void ready_list_rm(runqueue_t *rq, ktask_t *task) {
+    int32_t i;
+    uint8_t pri = task->prio;
 
     /* if the ready list is not only one, we do not need to update the highest prio */
     if ((rq->cur_list_item[pri]) != (rq->cur_list_item[pri]->next)) {
@@ -313,20 +294,18 @@ void ready_list_rm(runqueue_t *rq, ktask_t *task)
     }
 }
 
-void ready_list_head_to_tail(runqueue_t *rq, ktask_t *task)
-{
+void ready_list_head_to_tail(runqueue_t *rq, ktask_t *task) {
     rq->cur_list_item[task->prio] = rq->cur_list_item[task->prio]->next;
 }
 
 #if (RHINO_CONFIG_CPU_NUM > 1)
-void preferred_cpu_ready_task_get(runqueue_t *rq, uint8_t cpu_num)
-{
+void preferred_cpu_ready_task_get(runqueue_t *rq, uint8_t cpu_num) {
     klist_t *iter;
     ktask_t *task;
     uint32_t task_bit_map[NUM_WORDS];
     klist_t *node;
     uint8_t flag;
-    uint8_t  highest_pri = rq->highest_pri;
+    uint8_t highest_pri = rq->highest_pri;
 
     node = rq->cur_list_item[highest_pri];
     iter = node;
@@ -340,12 +319,11 @@ void preferred_cpu_ready_task_get(runqueue_t *rq, uint8_t cpu_num)
             break;
         }
 
-        flag = ((task->cur_exc == 0) && (task->cpu_binded == 0))
-               || ((task->cur_exc == 0) && (task->cpu_binded == 1) && (task->cpu_num == cpu_num));
+        flag = ((task->cur_exc == 0) && (task->cpu_binded == 0)) || ((task->cur_exc == 0) && (task->cpu_binded == 1) && (task->cpu_num == cpu_num));
 
         if (flag > 0) {
-            task->cpu_num = cpu_num;
-            task->cur_exc = 1;
+            task->cpu_num                   = cpu_num;
+            task->cur_exc                   = 1;
             g_preferred_ready_task[cpu_num] = task;
             break;
         }
@@ -353,15 +331,14 @@ void preferred_cpu_ready_task_get(runqueue_t *rq, uint8_t cpu_num)
         if (iter->next == rq->cur_list_item[highest_pri]) {
             task_bit_map[highest_pri >> 5] &= ~(1u << (31u - (highest_pri & 31u)));
             highest_pri = krhino_find_first_bit(task_bit_map);
-            iter = rq->cur_list_item[highest_pri];
+            iter        = rq->cur_list_item[highest_pri];
         } else {
             iter = iter->next;
         }
     }
 }
 #else
-void preferred_cpu_ready_task_get(runqueue_t *rq, uint8_t cpu_num)
-{
+void preferred_cpu_ready_task_get(runqueue_t *rq, uint8_t cpu_num) {
     klist_t *node = rq->cur_list_item[rq->highest_pri];
     /* get the highest prio task object */
     g_preferred_ready_task[cpu_num] = krhino_list_entry(node, ktask_t, task_list);
@@ -372,8 +349,7 @@ void preferred_cpu_ready_task_get(runqueue_t *rq, uint8_t cpu_num)
 
 #if (RHINO_CONFIG_CPU_NUM > 1)
 
-static void _time_slice_update(ktask_t *task, uint8_t i)
-{
+static void _time_slice_update(ktask_t *task, uint8_t i) {
     klist_t *head;
 
     head = g_ready_queue.cur_list_item[task->prio];
@@ -408,15 +384,13 @@ static void _time_slice_update(ktask_t *task, uint8_t i)
 
     /* restore the task time slice */
     task->time_slice = task->time_total;
-    
+
     if (i != cpu_cur_get()) {
         cpu_signal(i);
     }
-
 }
 
-void time_slice_update(void)
-{
+void time_slice_update(void) {
     CPSR_ALLOC();
     uint8_t i;
 
@@ -429,15 +403,13 @@ void time_slice_update(void)
     RHINO_CRITICAL_EXIT();
 }
 
-
 #else
-void time_slice_update(void)
-{
+void time_slice_update(void) {
     CPSR_ALLOC();
 
     ktask_t *task;
     klist_t *head;
-    uint8_t  task_pri;
+    uint8_t task_pri;
 
     RHINO_CRITICAL_ENTER();
     task_pri = g_active_task[cpu_cur_get()]->prio;
@@ -487,4 +459,3 @@ void time_slice_update(void)
 #endif
 
 #endif
-

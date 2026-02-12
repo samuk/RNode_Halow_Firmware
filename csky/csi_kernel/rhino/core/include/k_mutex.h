@@ -6,16 +6,16 @@
 #define K_MUTEX_H
 
 typedef struct mutex_s {
-    blk_obj_t       blk_obj;
-    ktask_t        *mutex_task; /* mutex owner task */
+    blk_obj_t blk_obj;
+    ktask_t *mutex_task;        /* mutex owner task */
     struct mutex_s *mutex_list; /* task mutex list */
-    mutex_nested_t  owner_nested;
+    mutex_nested_t owner_nested;
 
 #if (RHINO_CONFIG_SYSTEM_STATS > 0)
-    klist_t         mutex_item;
+    klist_t mutex_item;
 #endif
 
-    uint8_t         mm_alloc_flag;
+    uint8_t mm_alloc_flag;
 } kmutex_t;
 
 /**
@@ -66,4 +66,3 @@ kstat_t krhino_mutex_lock(kmutex_t *mutex, tick_t ticks);
 kstat_t krhino_mutex_unlock(kmutex_t *mutex);
 
 #endif /* K_MUTEX_H */
-

@@ -14,32 +14,26 @@ fields.
 
 /* find most significant bit set */
 
-int ffs32_msb(uint32_t bitmap)
-{
-    if (bitmap == 0)
-        {
+int ffs32_msb(uint32_t bitmap) {
+    if (bitmap == 0) {
         return 0;
-        }
+    }
 
     return 32 - krhino_find_first_bit(&bitmap);
 }
 
-
 /* find least significant bit set */
 
-int ffs32_lsb(uint32_t bitmap)
-{
+int ffs32_lsb(uint32_t bitmap) {
     uint32_t x;
-    int      lsbit;
+    int lsbit;
 
-    if (bitmap == 0) 
-        {
+    if (bitmap == 0) {
         return 0;
-        }
+    }
 
-    x = bitmap & -bitmap;
+    x     = bitmap & -bitmap;
     lsbit = krhino_find_first_bit((uint32_t *)(&x));
 
     return 32 - lsbit;
 }
-

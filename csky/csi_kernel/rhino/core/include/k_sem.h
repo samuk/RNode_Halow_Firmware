@@ -9,11 +9,11 @@
 #define WAKE_ALL_SEM 1u
 
 typedef struct sem_s {
-    blk_obj_t   blk_obj;
+    blk_obj_t blk_obj;
     sem_count_t count;
     sem_count_t peak_count;
 #if (RHINO_CONFIG_SYSTEM_STATS > 0)
-    klist_t     sem_item;
+    klist_t sem_item;
 #endif
     uint8_t mm_alloc_flag;
 } ksem_t;
@@ -81,7 +81,7 @@ kstat_t krhino_sem_take(ksem_t *sem, tick_t ticks);
  * @param[in]  sem_count  count of the semaphore
  * @return  the operation status, RHINO_SUCCESS is OK, others is error
  */
-kstat_t krhino_sem_count_set(ksem_t *sem, sem_count_t  count);
+kstat_t krhino_sem_count_set(ksem_t *sem, sem_count_t count);
 
 /**
  * This function will get count of a semaphore
@@ -92,4 +92,3 @@ kstat_t krhino_sem_count_set(ksem_t *sem, sem_count_t  count);
 kstat_t krhino_sem_count_get(ksem_t *sem, sem_count_t *count);
 
 #endif /* K_SEM_H */
-

@@ -15,19 +15,18 @@
  */
 
 #include <k_api.h>
-//#include <drv_timer.h>
+// #include <drv_timer.h>
 #include <csi_config.h>
 #include <csi_core.h>
 /* auto define heap size */
 extern size_t __heap_start;
 extern size_t __heap_end;
-extern k_mm_region_t   g_mm_region[];
+extern k_mm_region_t g_mm_region[];
 
 extern void soc_hw_timer_init(void);
 
 #if (RHINO_CONFIG_USER_HOOK > 0)
-__init void krhino_init_hook(void)
-{
+__init void krhino_init_hook(void) {
 #if (RHINO_CONFIG_HW_COUNT > 0)
     soc_hw_timer_init();
 #endif
@@ -36,80 +35,53 @@ __init void krhino_init_hook(void)
     g_mm_region[0].len = (uint32_t)(&__heap_end) - (uint32_t)(&__heap_start);
 }
 
-void krhino_start_hook(void)
-{
-
+void krhino_start_hook(void) {
 }
 
-void krhino_task_create_hook(ktask_t *task)
-{
-
+void krhino_task_create_hook(ktask_t *task) {
 }
 
-void krhino_task_del_hook(ktask_t *task, res_free_t *arg)
-{
-
+void krhino_task_del_hook(ktask_t *task, res_free_t *arg) {
 }
 
-void krhino_task_abort_hook(ktask_t *task)
-{
-
+void krhino_task_abort_hook(ktask_t *task) {
 }
 
-void krhino_task_switch_hook(ktask_t *orgin, ktask_t *dest)
-{
-
+void krhino_task_switch_hook(ktask_t *orgin, ktask_t *dest) {
 }
 
-
-void krhino_tick_hook(void)
-{
-
+void krhino_tick_hook(void) {
 }
 
-void krhino_idle_pre_hook(void)
-{
+void krhino_idle_pre_hook(void) {
     extern void lpm_idle_pre_hook(void);
     lpm_idle_pre_hook();
 }
 
-int32_t _sleep_tick_get()
-{
-    if (is_klist_empty(&g_tick_head))
-    {
+int32_t _sleep_tick_get() {
+    if (is_klist_empty(&g_tick_head)) {
         return -1;
     }
 
-    ktask_t * p_tcb  = krhino_list_entry(g_tick_head.next, ktask_t, tick_list);
-    return  p_tcb->tick_match > g_tick_count ?  p_tcb->tick_match - g_tick_count : 0;
+    ktask_t *p_tcb = krhino_list_entry(g_tick_head.next, ktask_t, tick_list);
+    return p_tcb->tick_match > g_tick_count ? p_tcb->tick_match - g_tick_count : 0;
 }
 
-void krhino_idle_hook(void)
-{
+void krhino_idle_hook(void) {
     extern void lpm_idle_hook(void);
     lpm_idle_hook();
 }
 
-void krhino_intrpt_hook(int irq)
-{
-
+void krhino_intrpt_hook(int irq) {
 }
 
-void krhino_mm_alloc_hook(void *mem, size_t size)
-{
-
+void krhino_mm_alloc_hook(void *mem, size_t size) {
 }
 
 #endif
 
-void krhino_intrpt_enter_hook(int irq)
-{
-
+void krhino_intrpt_enter_hook(int irq) {
 }
 
-void krhino_intrpt_exit_hook(int irq)
-{
-
+void krhino_intrpt_exit_hook(int irq) {
 }
-
-

@@ -35,20 +35,20 @@ typedef void *spi_handle_t;
 
 /****** SPI specific error codes *****/
 typedef enum {
-    SPI_ERROR_MODE  = (DRV_ERROR_SPECIFIC + 1),     ///< Specified Mode not supported
-    SPI_ERROR_FRAME_FORMAT,                       ///< Specified Frame Format not supported
-    SPI_ERROR_DATA_BITS,                          ///< Specified number of Data bits not supported
-    SPI_ERROR_BIT_ORDER,                          ///< Specified Bit order not supported
-    SPI_ERROR_SS_MODE                             ///< Specified Slave Select Mode not supported
+    SPI_ERROR_MODE = (DRV_ERROR_SPECIFIC + 1), ///< Specified Mode not supported
+    SPI_ERROR_FRAME_FORMAT,                    ///< Specified Frame Format not supported
+    SPI_ERROR_DATA_BITS,                       ///< Specified number of Data bits not supported
+    SPI_ERROR_BIT_ORDER,                       ///< Specified Bit order not supported
+    SPI_ERROR_SS_MODE                          ///< Specified Slave Select Mode not supported
 } spi_error_e;
 
 /*----- SPI Control Codes: Mode -----*/
 typedef enum {
-    SPI_MODE_INACTIVE = 0,       ///< SPI Inactive
-    SPI_MODE_MASTER,             ///< SPI Master (Output on MOSI, Input on MISO); arg = Bus Speed in bps
-    SPI_MODE_SLAVE,              ///< SPI Slave  (Output on MISO, Input on MOSI)
-    SPI_MODE_MASTER_SIMPLEX,     ///< SPI Master (Output/Input on MOSI); arg = Bus Speed in bps
-    SPI_MODE_SLAVE_SIMPLEX       ///< SPI Slave  (Output/Input on MISO)
+    SPI_MODE_INACTIVE = 0,   ///< SPI Inactive
+    SPI_MODE_MASTER,         ///< SPI Master (Output on MOSI, Input on MISO); arg = Bus Speed in bps
+    SPI_MODE_SLAVE,          ///< SPI Slave  (Output on MISO, Input on MOSI)
+    SPI_MODE_MASTER_SIMPLEX, ///< SPI Master (Output/Input on MOSI); arg = Bus Speed in bps
+    SPI_MODE_SLAVE_SIMPLEX   ///< SPI Slave  (Output/Input on MISO)
 } spi_mode_e;
 
 /*----- SPI Control Codes: Mode Parameters: Frame Format -----*/
@@ -61,59 +61,59 @@ typedef enum {
 
 /*----- SPI Control Codes: Mode Parameters: Bit Order -----*/
 typedef enum {
-    SPI_ORDER_MSB2LSB = 0,  ///< SPI Bit order from MSB to LSB
-    SPI_ORDER_LSB2MSB       ///< SPI Bit order from LSB to MSB
+    SPI_ORDER_MSB2LSB = 0, ///< SPI Bit order from MSB to LSB
+    SPI_ORDER_LSB2MSB      ///< SPI Bit order from LSB to MSB
 } spi_bit_order_e;
 
 /*----- SPI Control Codes: Mode Parameters: Data Width in bits -----*/
-#define SPI_DATAWIDTH_MAX 32         /* 1 ~ 32 bit*/
+#define SPI_DATAWIDTH_MAX 32 /* 1 ~ 32 bit*/
 
 /*----- SPI Control Codes: Mode Parameters: Slave Select Mode -----*/
 typedef enum {
     /*options for SPI_MODE_MASTER/SPI_MODE_MASTER_SIMPLEX */
-    SPI_SS_MASTER_UNUSED = 0,        ///< SPI Slave Select when Master: Not used.SS line is not controlled by master, For example,SS line connected to a fixed low level
-    SPI_SS_MASTER_SW,               ///< SPI Slave Select when Master: Software controlled. SS line is configured by software
-    SPI_SS_MASTER_HW_OUTPUT,         ///< SPI Slave Select when Master: Hardware controlled Output.SS line is activated or deactivated automatically by hardware
-    SPI_SS_MASTER_HW_INPUT,          ///< SPI Slave Select when Master: Hardware monitored Input.Used in multi-master configuration where a master does not drive the Slave Select when driving the bus, but rather monitors it
+    SPI_SS_MASTER_UNUSED = 0, ///< SPI Slave Select when Master: Not used.SS line is not controlled by master, For example,SS line connected to a fixed low level
+    SPI_SS_MASTER_SW,         ///< SPI Slave Select when Master: Software controlled. SS line is configured by software
+    SPI_SS_MASTER_HW_OUTPUT,  ///< SPI Slave Select when Master: Hardware controlled Output.SS line is activated or deactivated automatically by hardware
+    SPI_SS_MASTER_HW_INPUT,   ///< SPI Slave Select when Master: Hardware monitored Input.Used in multi-master configuration where a master does not drive the Slave Select when driving the bus, but rather monitors it
     /*options for SPI_MODE_SLAVE/SPI_MODE_SLAVE_SIMPLEX */
-    SPI_SS_SLAVE_HW,                 ///< SPI Slave Select when Slave: Hardware monitored.Hardware monitors the Slave Select line and accepts transfers only when the line is active
-    SPI_SS_SLAVE_SW                  ///< SPI Slave Select when Slave: Software controlled.Used only when the Slave Select line is not used. Software controls if the slave is responding or not(enables or disables transfers)
+    SPI_SS_SLAVE_HW, ///< SPI Slave Select when Slave: Hardware monitored.Hardware monitors the Slave Select line and accepts transfers only when the line is active
+    SPI_SS_SLAVE_SW  ///< SPI Slave Select when Slave: Software controlled.Used only when the Slave Select line is not used. Software controls if the slave is responding or not(enables or disables transfers)
 } spi_ss_mode_e;
 
 /****** SPI Slave Select Signal definitions *****/
 typedef enum {
-    SPI_SS_INACTIVE = 0,        ///< SPI Slave Select Signal/line Inactive
-    SPI_SS_ACTIVE               ///< SPI Slave Select Signal/line Active
+    SPI_SS_INACTIVE = 0, ///< SPI Slave Select Signal/line Inactive
+    SPI_SS_ACTIVE        ///< SPI Slave Select Signal/line Active
 } spi_ss_stat_e;
 
 /**
 \brief SPI Status
 */
 typedef struct {
-    uint32_t busy       : 1;              ///< Transmitter/Receiver busy flag
-    uint32_t data_lost  : 1;              ///< Data lost: Receive overflow / Transmit underflow (cleared on start of transfer operation)
-    uint32_t mode_fault : 1;              ///< Mode fault detected; optional (cleared on start of transfer operation)
+    uint32_t busy : 1;       ///< Transmitter/Receiver busy flag
+    uint32_t data_lost : 1;  ///< Data lost: Receive overflow / Transmit underflow (cleared on start of transfer operation)
+    uint32_t mode_fault : 1; ///< Mode fault detected; optional (cleared on start of transfer operation)
 } spi_status_t;
 
 /****** SPI Event *****/
 typedef enum {
-    SPI_EVENT_TRANSFER_COMPLETE = 0,   ///< Data Transfer completed. Occurs after call to csi_spi_send, csi_spi_receive, or csi_spi_transfer to indicate that all the data has been transferred. The driver is ready for the next transfer operation
-    SPI_EVENT_TX_COMPLETE,              ///< Data Transfer completed. Occurs after call to csi_spi_send, csi_spi_receive, or csi_spi_transfer to indicate that all the data has been transferred. The driver is ready for the next transfer operation
-    SPI_EVENT_RX_COMPLETE,              ///< Data Transfer completed. Occurs after call to csi_spi_send, csi_spi_receive, or csi_spi_transfer to indicate that all the data has been transferred. The driver is ready for the next transfer operation
-    SPI_EVENT_DATA_LOST,               ///< Data lost: Receive overflow / Transmit underflow. Occurs in slave mode when data is requested/sent by master but send/receive/transfer operation has not been started and indicates that data is lost. Occurs also in master mode when driver cannot transfer data fast enough.
-    SPI_EVENT_MODE_FAULT               ///< Master Mode Fault (SS deactivated when Master).Occurs in master mode when Slave Select is deactivated and indicates Master Mode Fault. The driver is ready for the next transfer operation.
+    SPI_EVENT_TRANSFER_COMPLETE = 0, ///< Data Transfer completed. Occurs after call to csi_spi_send, csi_spi_receive, or csi_spi_transfer to indicate that all the data has been transferred. The driver is ready for the next transfer operation
+    SPI_EVENT_TX_COMPLETE,           ///< Data Transfer completed. Occurs after call to csi_spi_send, csi_spi_receive, or csi_spi_transfer to indicate that all the data has been transferred. The driver is ready for the next transfer operation
+    SPI_EVENT_RX_COMPLETE,           ///< Data Transfer completed. Occurs after call to csi_spi_send, csi_spi_receive, or csi_spi_transfer to indicate that all the data has been transferred. The driver is ready for the next transfer operation
+    SPI_EVENT_DATA_LOST,             ///< Data lost: Receive overflow / Transmit underflow. Occurs in slave mode when data is requested/sent by master but send/receive/transfer operation has not been started and indicates that data is lost. Occurs also in master mode when driver cannot transfer data fast enough.
+    SPI_EVENT_MODE_FAULT             ///< Master Mode Fault (SS deactivated when Master).Occurs in master mode when Slave Select is deactivated and indicates Master Mode Fault. The driver is ready for the next transfer operation.
 } spi_event_e;
 
-typedef void (*spi_event_cb_t)(int32_t idx, spi_event_e event);  ///< Pointer to \ref spi_event_cb_t : SPI Event call back.
+typedef void (*spi_event_cb_t)(int32_t idx, spi_event_e event); ///< Pointer to \ref spi_event_cb_t : SPI Event call back.
 
 /**
 \brief SPI Driver Capabilities.
 */
 typedef struct {
-    uint32_t simplex          : 1;        ///< supports Simplex Mode (Master and Slave)
-    uint32_t ti_ssi           : 1;        ///< supports TI Synchronous Serial Interface
-    uint32_t microwire        : 1;        ///< supports Microwire Interface
-    uint32_t event_mode_fault : 1;        ///< Signal Mode Fault event: \ref spi_event_e
+    uint32_t simplex : 1;          ///< supports Simplex Mode (Master and Slave)
+    uint32_t ti_ssi : 1;           ///< supports TI Synchronous Serial Interface
+    uint32_t microwire : 1;        ///< supports Microwire Interface
+    uint32_t event_mode_fault : 1; ///< Signal Mode Fault event: \ref spi_event_e
 } spi_capabilities_t;
 
 /**
@@ -151,13 +151,12 @@ spi_capabilities_t csi_spi_get_capabilities(int32_t idx);
   \return      error code
 */
 int32_t csi_spi_config(spi_handle_t handle,
-                       int32_t          baud,
-                       spi_mode_e       mode,
-                       spi_format_e     format,
-                       spi_bit_order_e  order,
-                       spi_ss_mode_e    ss_mode,
-                       int32_t        bit_width);
-
+                       int32_t baud,
+                       spi_mode_e mode,
+                       spi_format_e format,
+                       spi_bit_order_e order,
+                       spi_ss_mode_e ss_mode,
+                       int32_t bit_width);
 
 /**
   \brief         sending data to SPI transmitter,(received data is ignored).
@@ -219,7 +218,7 @@ spi_status_t csi_spi_get_status(spi_handle_t handle);
   \param[in]   mode     spi mode. \ref spi_mode_e
   \return      error code
 */
-int32_t csi_spi_config_mode(spi_handle_t handle, spi_mode_e  mode);
+int32_t csi_spi_config_mode(spi_handle_t handle, spi_mode_e mode);
 
 /**
   \brief       config the SPI block mode.
@@ -291,7 +290,6 @@ int32_t csi_spi_power_control(spi_handle_t handle, csi_power_stat_e state);
   \return      error code
 */
 int32_t csi_spi_ss_control(spi_handle_t handle, spi_ss_stat_e stat);
-
 
 #ifdef __cplusplus
 }

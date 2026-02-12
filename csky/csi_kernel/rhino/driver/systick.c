@@ -17,21 +17,20 @@
 #include <k_api.h>
 #include <csi_config.h>
 #include <soc.h>
-//#include <drv_timer.h>
+// #include <drv_timer.h>
 
 typedef struct osTimespec {
-    long    tv_sec;
-    long    tv_msec;
+    long tv_sec;
+    long tv_msec;
 } osTimespec_t;
 
 __bobj uint64_t g_sys_tick_count;
 __bobj osTimespec_t os_time2;
 
-void systick_handler(void)
-{
+void systick_handler(void) {
     g_sys_tick_count++;
-    os_time2.tv_msec += (1000/CONFIG_SYSTICK_HZ);
-    if(os_time2.tv_msec > 1000){
+    os_time2.tv_msec += (1000 / CONFIG_SYSTICK_HZ);
+    if (os_time2.tv_msec > 1000) {
         os_time2.tv_sec++;
         os_time2.tv_msec = 0;
     }

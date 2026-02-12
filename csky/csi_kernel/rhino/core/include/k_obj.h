@@ -31,10 +31,10 @@ typedef enum {
 } kobj_type_t;
 
 typedef struct blk_obj {
-    klist_t          blk_list;
-    const name_t    *name;
-    uint8_t          blk_policy; // blk_policy_t
-    uint8_t          obj_type;   // blk_state_t
+    klist_t blk_list;
+    const name_t *name;
+    uint8_t blk_policy; // blk_policy_t
+    uint8_t obj_type;   // blk_state_t
 } blk_obj_t;
 
 typedef struct {
@@ -63,4 +63,3 @@ typedef struct {
 } kobj_list_t;
 
 #endif /* K_OBJ_H */
-

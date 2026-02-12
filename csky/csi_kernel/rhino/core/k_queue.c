@@ -5,15 +5,13 @@
 #include <k_api.h>
 
 #if (RHINO_CONFIG_QUEUE > 0)
-RHINO_INLINE void task_msg_recv(ktask_t *task, void *msg)
-{
+RHINO_INLINE void task_msg_recv(ktask_t *task, void *msg) {
     task->msg = msg;
     pend_task_wakeup(task);
 }
 
 static kstat_t queue_create(kqueue_t *queue, const name_t *name, void **start,
-                            size_t msg_num, uint8_t mm_alloc_flag)
-{
+                            size_t msg_num, uint8_t mm_alloc_flag) {
     CPSR_ALLOC();
 
     NULL_PARA_CHK(queue);
@@ -34,10 +32,10 @@ static kstat_t queue_create(kqueue_t *queue, const name_t *name, void **start,
     ringbuf_init(&queue->ringbuf, (void *)start, msg_num * sizeof(void *),
                  RINGBUF_TYPE_FIX, sizeof(void *));
 
-    queue->msg_q.size         = msg_num;
-    queue->msg_q.cur_num      = 0u;
-    queue->msg_q.peak_num     = 0u;
-    queue->mm_alloc_flag      = mm_alloc_flag;
+    queue->msg_q.size     = msg_num;
+    queue->msg_q.cur_num  = 0u;
+    queue->msg_q.peak_num = 0u;
+    queue->mm_alloc_flag  = mm_alloc_flag;
 
     RHINO_CRITICAL_ENTER();
 #if (RHINO_CONFIG_SYSTEM_STATS > 0)
@@ -51,13 +49,11 @@ static kstat_t queue_create(kqueue_t *queue, const name_t *name, void **start,
 }
 
 kstat_t krhino_queue_create(kqueue_t *queue, const name_t *name, void **start,
-                            size_t msg_num)
-{
+                            size_t msg_num) {
     return queue_create(queue, name, start, msg_num, K_OBJ_STATIC_ALLOC);
 }
 
-kstat_t krhino_queue_del(kqueue_t *queue)
-{
+kstat_t krhino_queue_del(kqueue_t *queue) {
     CPSR_ALLOC();
 
     klist_t *blk_list_head;
@@ -100,11 +96,10 @@ kstat_t krhino_queue_del(kqueue_t *queue)
 
 #if (RHINO_CONFIG_KOBJ_DYN_ALLOC > 0)
 kstat_t krhino_queue_dyn_create(kqueue_t **queue, const name_t *name,
-                                size_t msg_num)
-{
-    kstat_t   stat;
+                                size_t msg_num) {
+    kstat_t stat;
     kqueue_t *queue_obj;
-    void     *msg_start;
+    void *msg_start;
 
     NULL_PARA_CHK(queue);
 
@@ -132,8 +127,7 @@ kstat_t krhino_queue_dyn_create(kqueue_t **queue, const name_t *name,
     return stat;
 }
 
-kstat_t krhino_queue_dyn_del(kqueue_t *queue)
-{
+kstat_t krhino_queue_dyn_del(kqueue_t *queue) {
     CPSR_ALLOC();
 
     klist_t *blk_list_head;
@@ -178,8 +172,7 @@ kstat_t krhino_queue_dyn_del(kqueue_t *queue)
 }
 #endif
 
-static kstat_t msg_send(kqueue_t *p_q, void *p_void, uint8_t opt_wake_all)
-{
+static kstat_t msg_send(kqueue_t *p_q, void *p_void, uint8_t opt_wake_all) {
     CPSR_ALLOC();
 
     klist_t *blk_list_head;
@@ -236,18 +229,15 @@ static kstat_t msg_send(kqueue_t *p_q, void *p_void, uint8_t opt_wake_all)
     return RHINO_SUCCESS;
 }
 
-kstat_t krhino_queue_back_send(kqueue_t *queue, void *msg)
-{
+kstat_t krhino_queue_back_send(kqueue_t *queue, void *msg) {
     return msg_send(queue, msg, WAKE_ONE_TASK);
 }
 
-kstat_t krhino_queue_all_send(kqueue_t *queue, void *msg)
-{
+kstat_t krhino_queue_all_send(kqueue_t *queue, void *msg) {
     return msg_send(queue, msg, WAKE_ALL_TASK);
 }
 
-kstat_t krhino_queue_recv(kqueue_t *queue, tick_t ticks, void **msg)
-{
+kstat_t krhino_queue_recv(kqueue_t *queue, tick_t ticks, void **msg) {
     CPSR_ALLOC();
 
     kstat_t ret;
@@ -320,8 +310,7 @@ kstat_t krhino_queue_recv(kqueue_t *queue, tick_t ticks, void **msg)
     return ret;
 }
 
-kstat_t krhino_queue_is_full(kqueue_t *queue)
-{
+kstat_t krhino_queue_is_full(kqueue_t *queue) {
     CPSR_ALLOC();
 
     kstat_t ret;
@@ -346,8 +335,7 @@ kstat_t krhino_queue_is_full(kqueue_t *queue)
     return ret;
 }
 
-kstat_t krhino_queue_flush(kqueue_t *queue)
-{
+kstat_t krhino_queue_flush(kqueue_t *queue) {
     CPSR_ALLOC();
 
     NULL_PARA_CHK(queue);
@@ -369,8 +357,7 @@ kstat_t krhino_queue_flush(kqueue_t *queue)
     return RHINO_SUCCESS;
 }
 
-kstat_t krhino_queue_info_get(kqueue_t *queue, msg_info_t *info)
-{
+kstat_t krhino_queue_info_get(kqueue_t *queue, msg_info_t *info) {
     CPSR_ALLOC();
 
     klist_t *blk_list_head;
@@ -393,7 +380,7 @@ kstat_t krhino_queue_info_get(kqueue_t *queue, msg_info_t *info)
         return RHINO_KOBJ_TYPE_ERR;
     }
 
-    blk_list_head           = &queue->blk_obj.blk_list;
+    blk_list_head = &queue->blk_obj.blk_list;
 
     info->msg_q.peak_num    = queue->msg_q.peak_num;
     info->msg_q.cur_num     = queue->msg_q.cur_num;
@@ -406,4 +393,3 @@ kstat_t krhino_queue_info_get(kqueue_t *queue, msg_info_t *info)
     return RHINO_SUCCESS;
 }
 #endif
-

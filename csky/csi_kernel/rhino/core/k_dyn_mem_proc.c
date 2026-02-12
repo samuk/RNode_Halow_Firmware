@@ -5,14 +5,13 @@
 #include <k_api.h>
 
 #if (RHINO_CONFIG_KOBJ_DYN_ALLOC > 0)
-void dyn_mem_proc_task(void *arg)
-{
+void dyn_mem_proc_task(void *arg) {
     CPSR_ALLOC();
 
-    kstat_t     ret;
+    kstat_t ret;
     res_free_t *res_free;
-    res_free_t  tmp;
-    uint32_t    i;
+    res_free_t tmp;
+    uint32_t i;
 
     (void)arg;
 
@@ -32,8 +31,7 @@ void dyn_mem_proc_task(void *arg)
                 for (i = 0; i < tmp.cnt; i++) {
                     krhino_mm_free(tmp.res[i]);
                 }
-            }
-            else {
+            } else {
                 RHINO_CRITICAL_EXIT();
                 break;
             }
@@ -41,11 +39,9 @@ void dyn_mem_proc_task(void *arg)
     }
 }
 
-__init void dyn_mem_proc_task_start(void)
-{
+__init void dyn_mem_proc_task_start(void) {
     krhino_task_create(&g_dyn_task, "dyn_mem", 0, RHINO_CONFIG_K_DYN_MEM_TASK_PRI,
-                        0, g_dyn_task_stack, RHINO_CONFIG_K_DYN_TASK_STACK,
-                        dyn_mem_proc_task, 1);
+                       0, g_dyn_task_stack, RHINO_CONFIG_K_DYN_TASK_STACK,
+                       dyn_mem_proc_task, 1);
 }
 #endif
-

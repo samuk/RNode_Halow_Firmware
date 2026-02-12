@@ -15,14 +15,14 @@
 #include "k_api.h"
 #include "cpu_pwr_config.h"
 
-//#if (RHINO_CONFIG_CPU_PWR_MGMT > 0)
-//#if (RHINO_CONFIG_CPU_TICKLESS > 0)
+// #if (RHINO_CONFIG_CPU_PWR_MGMT > 0)
+// #if (RHINO_CONFIG_CPU_TICKLESS > 0)
 
 #include "cpu_tickless.h"
 #include "drv_timer.h"
 #include "soc.h"
 
-//#define TIM_DBG
+// #define TIM_DBG
 
 #ifndef CONFIG_LPM_TICKLESS_SYSTIM
 #define CONFIG_LPM_TICKLESS_SYSTIM 0
@@ -32,14 +32,14 @@ extern int aos_lpm_register_device(uint8_t level, void *func, void *param);
 
 timer_handle_t wakeup_timer;
 
-static uint32_t     init_flag               = 0;
+static uint32_t init_flag = 0;
 
-static kspinlock_t  tim_spin;
+static kspinlock_t tim_spin;
 
-static kstat_t  tim_timer_init(void);
+static kstat_t tim_timer_init(void);
 static uint32_t tim_one_shot_max_seconds(void);
-static kstat_t  tim_one_shot_start(uint64_t         planUs);
-static kstat_t  tim_one_shot_stop(uint64_t *pPassedUs);
+static kstat_t tim_one_shot_start(uint64_t planUs);
+static kstat_t tim_one_shot_stop(uint64_t *pPassedUs);
 
 one_shot_timer_t tim_one_shot = {
     tim_timer_init,
@@ -48,15 +48,13 @@ one_shot_timer_t tim_one_shot = {
     tim_one_shot_stop,
 };
 
-void timer_event_cb(int32_t idx, timer_event_e event)
-{
+void timer_event_cb(int32_t idx, timer_event_e event) {
 #ifdef TIM_DBG
     printf("time out\n");
 #endif
 }
 
-kstat_t tim_timer_init(void)
-{
+kstat_t tim_timer_init(void) {
     if (init_flag == 1) {
         return RHINO_SUCCESS;
     }
@@ -75,30 +73,27 @@ kstat_t tim_timer_init(void)
 
 /* return the max period(in second) that could trigger interrupt */
 
-uint32_t tim_one_shot_max_seconds(void)
-{
+uint32_t tim_one_shot_max_seconds(void) {
     /* the max 32 bit value / count frequency */
 
     return 0xffffffff / drv_get_sys_freq();
 }
 
 /*******************************************************************************
-*
-* tim_one_shot_start - enable the timer in oneshot mode
-*
-* This function enables the timer in oneshot mode, the interrupt will be fired
-* after servral microseconds which is indicated by planUs.
-*
-* RETURNS: RHINO_SUCCESS or RHINO_PWR_MGMT_ERR if timer is not enabled
-*
-* ERRNO
-*/
+ *
+ * tim_one_shot_start - enable the timer in oneshot mode
+ *
+ * This function enables the timer in oneshot mode, the interrupt will be fired
+ * after servral microseconds which is indicated by planUs.
+ *
+ * RETURNS: RHINO_SUCCESS or RHINO_PWR_MGMT_ERR if timer is not enabled
+ *
+ * ERRNO
+ */
 
-kstat_t tim_one_shot_start
-(
-    uint64_t  planUs      /* IN */
-)
-{
+kstat_t tim_one_shot_start(
+    uint64_t planUs /* IN */
+) {
 
     krhino_spin_lock_irq_save(&tim_spin);
 #ifdef TIM_DBG
@@ -108,29 +103,26 @@ kstat_t tim_one_shot_start
     csi_timer_start(wakeup_timer);
     krhino_spin_unlock_irq_restore(&tim_spin);
     return RHINO_SUCCESS;
-
 }
 
 /*******************************************************************************
-*
-* tim_one_shot_stop - cancel the timer which was in oneshot mode
-*
-* This function is called to cancel the timer which was in oneshot mode.
-* the time has passed(microseconds) will be return in pPassedUs.
-*
-* RETURNS: RHINO_SUCCESS or RHINO_PWR_MGMT_ERR if timer is not disabled
-*
-* ERRNO: N/A
-*/
+ *
+ * tim_one_shot_stop - cancel the timer which was in oneshot mode
+ *
+ * This function is called to cancel the timer which was in oneshot mode.
+ * the time has passed(microseconds) will be return in pPassedUs.
+ *
+ * RETURNS: RHINO_SUCCESS or RHINO_PWR_MGMT_ERR if timer is not disabled
+ *
+ * ERRNO: N/A
+ */
 
-kstat_t tim_one_shot_stop
-(
-    uint64_t *pPassedUs   /* OUT  */
-)
-{
-    uint32_t load_val = 0;
+kstat_t tim_one_shot_stop(
+    uint64_t *pPassedUs /* OUT  */
+) {
+    uint32_t load_val    = 0;
     uint32_t current_val = 0;
-    *pPassedUs = 0;
+    *pPassedUs           = 0;
     krhino_spin_lock_irq_save(&tim_spin);
 
     csi_timer_get_load_value(wakeup_timer, &load_val);
@@ -147,6 +139,5 @@ kstat_t tim_one_shot_stop
     return RHINO_SUCCESS;
 }
 
-//#endif /* RHINO_CONFIG_CPU_TICKLESS */
-//#endif /* RHINO_CONFIG_CPU_PWR_MGMT */
-
+// #endif /* RHINO_CONFIG_CPU_TICKLESS */
+// #endif /* RHINO_CONFIG_CPU_PWR_MGMT */

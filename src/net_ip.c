@@ -4,6 +4,7 @@
 #include "lwip/dhcp.h"
 #include "configdb.h"
 #include "lwip/tcpip.h"
+#include "sys_config.h"
 
 #define NET_IP_DEBUG
 
@@ -20,11 +21,6 @@
 #define NET_IP_CONFIG_IP_NAME             NET_IP_CONFIG_ADD_CONFIG("ip")
 #define NET_IP_CONFIG_MASK_NAME           NET_IP_CONFIG_ADD_CONFIG("mask")
 #define NET_IP_CONFIG_GW_NAME             NET_IP_CONFIG_ADD_CONFIG("gw")
-
-#define NET_IP_CONFIG_MODE_DEF            (NET_IP_MODE_DHCP)
-#define NET_IP_CONFIG_IP_DEF              (LWIP_MAKEU32(192,168,42,42))
-#define NET_IP_CONFIG_MASK_DEF            (LWIP_MAKEU32(255,255,255,0))
-#define NET_IP_CONFIG_GW_DEF              (LWIP_MAKEU32(0,0,0,0))
 
 static struct netif *g_nif;
 extern struct netif *netif_default;

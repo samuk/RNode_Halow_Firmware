@@ -36,29 +36,29 @@ typedef void *rtc_handle_t;
 
 /****** rtc specific error codes *****/
 typedef enum {
-    RTC_ERROR_TIME  = (DRV_ERROR_SPECIFIC + 1),   ///<invalid data time
+    RTC_ERROR_TIME = (DRV_ERROR_SPECIFIC + 1), ///< invalid data time
 } rtc_error_e;
 
 /**
 \brief RTC Status
 */
 typedef struct {
-    uint32_t active          : 1;        ///< rtc is running or not
+    uint32_t active : 1; ///< rtc is running or not
 } rtc_status_t;
 
 /****** RTC Event *****/
 typedef enum {
-    RTC_EVENT_TIMER_INTRERRUPT  = 0   ///< generate interrupt
+    RTC_EVENT_TIMER_INTRERRUPT = 0 ///< generate interrupt
 } rtc_event_e;
 
-typedef void (*rtc_event_cb_t)(int32_t idx, rtc_event_e event);  ///< Pointer to \ref rtc_event_cb_t : RTC Event call back.
+typedef void (*rtc_event_cb_t)(int32_t idx, rtc_event_e event); ///< Pointer to \ref rtc_event_cb_t : RTC Event call back.
 
 /**
 \brief RTC Device Driver Capabilities.
 */
 typedef struct {
-    uint32_t interrupt_mode          : 1;      ///< supports Interrupt mode
-    uint32_t wrap_mode               : 1;      ///< supports wrap mode
+    uint32_t interrupt_mode : 1; ///< supports Interrupt mode
+    uint32_t wrap_mode : 1;      ///< supports wrap mode
 } rtc_capabilities_t;
 
 /**
@@ -120,7 +120,6 @@ int32_t csi_rtc_start(rtc_handle_t handle);
   \return      error code
 */
 int32_t csi_rtc_stop(rtc_handle_t handle);
-
 
 /**
   \brief       Get RTC status.

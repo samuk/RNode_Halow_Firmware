@@ -36,4 +36,3 @@ uint32_t krhino_get_cpu_usage(void);
 #endif
 
 #endif /* K_STATS_H */
-

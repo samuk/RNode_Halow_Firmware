@@ -6,14 +6,14 @@
 #define K_MM_BLK_H
 
 typedef struct {
-    kobj_type_t   obj_type;
+    kobj_type_t obj_type;
     const name_t *pool_name;
-    size_t        blk_size;
-    size_t        blk_avail;
-    size_t        blk_whole;
-    uint8_t      *avail_list;
+    size_t blk_size;
+    size_t blk_avail;
+    size_t blk_whole;
+    uint8_t *avail_list;
 #if (RHINO_CONFIG_SYSTEM_STATS > 0)
-    klist_t       mblkpool_stats_item;
+    klist_t mblkpool_stats_item;
 #endif
 } mblk_pool_t;
 
@@ -47,4 +47,3 @@ kstat_t krhino_mblk_alloc(mblk_pool_t *pool, void **blk);
 kstat_t krhino_mblk_free(mblk_pool_t *pool, void *blk);
 
 #endif /* K_MM_BLK_H */
-

@@ -4,8 +4,7 @@
 
 #include <k_api.h>
 
-void k_err_proc(kstat_t err)
-{
+void k_err_proc(kstat_t err) {
 #if 1
     soc_err_proc(err);
 #else
@@ -14,4 +13,3 @@ void k_err_proc(kstat_t err)
     }
 #endif
 }
-

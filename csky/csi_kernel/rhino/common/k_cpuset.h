@@ -24,24 +24,23 @@ extern "C" {
 
 /* typedefs */
 
-typedef unsigned int             cpuset_t;
+typedef unsigned int cpuset_t;
 
-#define CPUSET_ATOMIC_SET(cpuset, n)                \
-	(void) rhino_atomic_or ((atomic_t *) &(cpuset), 1 << (n))
-#define CPUSET_ATOMIC_CLR(cpuset, n)                \
-	(void) rhino_atomic_and ((atomic_t *) &(cpuset), ~((1 << (n))))
-#define CPUSET_ATOMIC_COPY(cpusetDst, cpusetSrc)    \
-    (void) rhino_atomic_set ((atomic_t *) &(cpusetDst), (atomic_t) (cpusetSrc))
+#define CPUSET_ATOMIC_SET(cpuset, n) \
+    (void)rhino_atomic_or((atomic_t *)&(cpuset), 1 << (n))
+#define CPUSET_ATOMIC_CLR(cpuset, n) \
+    (void)rhino_atomic_and((atomic_t *)&(cpuset), ~((1 << (n))))
+#define CPUSET_ATOMIC_COPY(cpusetDst, cpusetSrc) \
+    (void)rhino_atomic_set((atomic_t *)&(cpusetDst), (atomic_t)(cpusetSrc))
 
-#define CPUSET_CLR(cpuset, n)       ((cpuset) &= ~(1 << (n)))
-#define CPUSET_ZERO(cpuset)         ((cpuset) = 0)
-#define CPUSET_IS_ZERO(cpuset)      ((cpuset) == 0)
-#define CPUSET_SET(cpuset, n)       ((cpuset) |= (1 << (n)))
-#define CPUSET_ISSET(cpuset, n)     ((cpuset) & (1 << (n)))
+#define CPUSET_CLR(cpuset, n)   ((cpuset) &= ~(1 << (n)))
+#define CPUSET_ZERO(cpuset)     ((cpuset) = 0)
+#define CPUSET_IS_ZERO(cpuset)  ((cpuset) == 0)
+#define CPUSET_SET(cpuset, n)   ((cpuset) |= (1 << (n)))
+#define CPUSET_ISSET(cpuset, n) ((cpuset) & (1 << (n)))
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* __cpuset_h__ */
-

@@ -6,17 +6,17 @@
 #include "mongoose/mongoose_glue.h"
 
 int main(void) {
-  // Cross-platform hardware init
-  hal_init();
-  MG_INFO(("HAL initialised, starting firmware..."));
+    // Cross-platform hardware init
+    hal_init();
+    MG_INFO(("HAL initialised, starting firmware..."));
 
-  // This blocks forever. Call it at the end of main(), or in a
-  // separate RTOS task. Give that task 8k stack space.
-  mongoose_init();
+    // This blocks forever. Call it at the end of main(), or in a
+    // separate RTOS task. Give that task 8k stack space.
+    mongoose_init();
 
-  for (;;) {
-    mongoose_poll();
-  }
+    for (;;) {
+        mongoose_poll();
+    }
 
-  return 0;
+    return 0;
 }

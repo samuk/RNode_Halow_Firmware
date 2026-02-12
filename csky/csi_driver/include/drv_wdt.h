@@ -35,10 +35,10 @@ typedef void *wdt_handle_t;
 
 /****** WDT Event *****/
 typedef enum {
-    WDT_EVENT_TIMEOUT       = 0  ///< generate the interrupt
+    WDT_EVENT_TIMEOUT = 0 ///< generate the interrupt
 } wdt_event_e;
 
-typedef void (*wdt_event_cb_t)(int32_t idx, wdt_event_e event);   ///< Pointer to \ref wdt_event_cb_t : WDT Event call back.
+typedef void (*wdt_event_cb_t)(int32_t idx, wdt_event_e event); ///< Pointer to \ref wdt_event_cb_t : WDT Event call back.
 
 /**
   \brief       Initialize WDT Interface. 1. Initializes the resources needed for the WDT interface 2.registers event callback function

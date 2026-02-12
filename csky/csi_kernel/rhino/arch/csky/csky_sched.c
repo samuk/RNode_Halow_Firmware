@@ -16,60 +16,52 @@
 
 #include <k_api.h>
 
-#undef  PSR_SP
-#define PSR_SP  (1UL << 29)
+#undef PSR_SP
+#define PSR_SP (1UL << 29)
 static ktask_t *tee_caller_task = NULL;
 
-static inline uint32_t getcurrentpsr(void)
-{
+static inline uint32_t getcurrentpsr(void) {
     uint32_t flags;
 
-     __asm__ __volatile__(
+    __asm__ __volatile__(
         "mfcr   %0, psr \n"
-        :"=r"(flags)
+        : "=r"(flags)
         :
-        :
-        );
+        :);
 
     return flags;
 }
 
-static inline void clear_psr_sp(void)
-{
-    __asm__ __volatile__ (
+static inline void clear_psr_sp(void) {
+    __asm__ __volatile__(
         "mfcr  r0, psr \n"
         "bclri r0, 29  \n"
         "mtcr  r0, psr \n"
         :
         :
-        :"r0"
-     );
+        : "r0");
 }
 
-static inline void set_psr_sp(void)
-{
-    __asm__ __volatile__ (
+static inline void set_psr_sp(void) {
+    __asm__ __volatile__(
         "mfcr  r0, psr \n"
         "bseti r0, 29  \n"
         "mtcr  r0, psr \n"
         :
         :
-        :"r0"
-     );
+        : "r0");
 }
 
-void csky_get_tee_caller_task(void)
-{
+void csky_get_tee_caller_task(void) {
     uint32_t temp_psr;
 
     temp_psr = getcurrentpsr();
     if (temp_psr & PSR_SP) {
-       tee_caller_task = (tee_caller_task == NULL) ? g_active_task[cpu_cur_get()] : tee_caller_task;
+        tee_caller_task = (tee_caller_task == NULL) ? g_active_task[cpu_cur_get()] : tee_caller_task;
     }
 }
 
-void csky_deal_tee_caller_task(void)
-{
+void csky_deal_tee_caller_task(void) {
     uint32_t temp_psr;
 
     temp_psr = getcurrentpsr();

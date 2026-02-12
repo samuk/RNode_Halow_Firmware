@@ -23,21 +23,19 @@
 #ifndef _DRV_ERRNO_H_
 #define _DRV_ERRNO_H_
 
-
 #include <errno.h>
 
 #define ERRNO_DRV_START 0X80
 
 /* driver General error codes */
 typedef enum {
-    DRV_ERROR = ERRNO_DRV_START,   ///< Unspecified error
-    DRV_ERROR_BUSY,                ///< Driver is busy
-    DRV_ERROR_TIMEOUT,             ///< Timeout occurred
-    DRV_ERROR_UNSUPPORTED,         ///< Operation not supported
-    DRV_ERROR_PARAMETER,           ///< Parameter error
-    DRV_ERROR_SPECIFIC             ///< Start of driver specific errors
+    DRV_ERROR = ERRNO_DRV_START, ///< Unspecified error
+    DRV_ERROR_BUSY,              ///< Driver is busy
+    DRV_ERROR_TIMEOUT,           ///< Timeout occurred
+    DRV_ERROR_UNSUPPORTED,       ///< Operation not supported
+    DRV_ERROR_PARAMETER,         ///< Parameter error
+    DRV_ERROR_SPECIFIC           ///< Start of driver specific errors
 } drv_err_e;
-
 
 /** Get error type */
 #define GET_ERROR_TYPE(errno) \
@@ -53,7 +51,7 @@ typedef enum {
     (error & 0x000000FF)
 
 #ifndef CSI_DRV_ERRNO_BASE
-#define CSI_DRV_ERRNO_BASE          0x81000000
+#define CSI_DRV_ERRNO_BASE 0x81000000
 #endif
 
 /** driver module id definition*/

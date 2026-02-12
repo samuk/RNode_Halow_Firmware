@@ -11,12 +11,12 @@ typedef void (*halow_rx_cb)(
     const uint8_t *data,
     int32_t len);
 
-typedef struct{
-    uint16_t    central_freq;
-    uint8_t     bandwidth;
-    uint8_t     mcs;
-    uint8_t     rf_power;
-    uint8_t     rf_super_power;
+typedef struct {
+    uint16_t central_freq;
+    uint8_t bandwidth;
+    uint8_t mcs;
+    uint8_t rf_power;
+    uint8_t rf_super_power;
 } halow_config_t;
 
 bool halow_init(uint32_t rxbuf, uint32_t rxbuf_size,

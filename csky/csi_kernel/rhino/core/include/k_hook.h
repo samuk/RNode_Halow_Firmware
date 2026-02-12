@@ -61,4 +61,3 @@ void krhino_mm_alloc_hook(void *mem, size_t size);
 #endif
 
 #endif /* K_HOOK_H */
-

@@ -54,4 +54,3 @@ kstat_t krhino_task_sem_count_set(ktask_t *task, sem_count_t count);
 kstat_t krhino_task_sem_count_get(ktask_t *task, sem_count_t *count);
 
 #endif /* K_TASK_SEM_H */
-

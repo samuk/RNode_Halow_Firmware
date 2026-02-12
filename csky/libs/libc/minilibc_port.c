@@ -30,20 +30,19 @@
 #ifdef CONFIG_CHIP_YUNVOICE
 #include <drv_usi_usart.h>
 #else
-//#include <drv_usart.h>
+// #include <drv_usart.h>
 #endif
 
 #ifdef CONFIG_CHIP_YUNVOICE
-#define csi_usart_putchar     drv_usi_usart_putchar
-#define csi_usart_getchar     drv_usi_usart_getchar
+#define csi_usart_putchar drv_usi_usart_putchar
+#define csi_usart_getchar drv_usi_usart_getchar
 #endif
 
 extern void *console_handle;
-int32_t csi_usart_getchar(void* handle, uint8_t *ch);
-int32_t csi_usart_putchar(void*      handle, uint8_t ch);
+int32_t csi_usart_getchar(void *handle, uint8_t *ch);
+int32_t csi_usart_putchar(void *handle, uint8_t ch);
 
-int fputc(int ch, FILE *stream)
-{
+int fputc(int ch, FILE *stream) {
     (void)stream;
 
     if (console_handle == NULL) {
@@ -59,8 +58,7 @@ int fputc(int ch, FILE *stream)
     return 0;
 }
 
-int fgetc(FILE *stream)
-{
+int fgetc(FILE *stream) {
     uint8_t ch;
     (void)stream;
 
@@ -75,24 +73,22 @@ int fgetc(FILE *stream)
 
 /* For printf functions only, do not modify.
  */
-int os_critical_enter(unsigned int *lock)
-{
-//    (void)lock;
-//#ifndef CONFIG_KERNEL_NONE
-//    csi_kernel_sched_suspend();
-//#endif
+int os_critical_enter(unsigned int *lock) {
+    //    (void)lock;
+    // #ifndef CONFIG_KERNEL_NONE
+    //    csi_kernel_sched_suspend();
+    // #endif
 
     return 0;
 }
 
 /* For printf functions only, do not modify.
  */
-int os_critical_exit(unsigned int *lock)
-{
-//    (void)lock;
-//#ifndef CONFIG_KERNEL_NONE
-//    csi_kernel_sched_resume(0);
-//#endif
+int os_critical_exit(unsigned int *lock) {
+    //    (void)lock;
+    // #ifndef CONFIG_KERNEL_NONE
+    //    csi_kernel_sched_resume(0);
+    // #endif
 
     return 0;
 }

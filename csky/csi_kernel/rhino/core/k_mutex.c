@@ -4,8 +4,7 @@
 
 #include <k_api.h>
 
-kstat_t mutex_create(kmutex_t *mutex, const name_t *name, uint8_t mm_alloc_flag)
-{
+kstat_t mutex_create(kmutex_t *mutex, const name_t *name, uint8_t mm_alloc_flag) {
     CPSR_ALLOC();
 
     NULL_PARA_CHK(mutex);
@@ -32,13 +31,11 @@ kstat_t mutex_create(kmutex_t *mutex, const name_t *name, uint8_t mm_alloc_flag)
     return RHINO_SUCCESS;
 }
 
-kstat_t krhino_mutex_create(kmutex_t *mutex, const name_t *name)
-{
+kstat_t krhino_mutex_create(kmutex_t *mutex, const name_t *name) {
     return mutex_create(mutex, name, K_OBJ_STATIC_ALLOC);
 }
 
-static void mutex_release(ktask_t *task, kmutex_t *mutex_rel)
-{
+static void mutex_release(ktask_t *task, kmutex_t *mutex_rel) {
     uint8_t new_pri;
 
     /* find suitable task prio */
@@ -48,12 +45,10 @@ static void mutex_release(ktask_t *task, kmutex_t *mutex_rel)
         task_pri_change(task, new_pri);
 
         TRACE_MUTEX_RELEASE(g_active_task[cpu_cur_get()], task, new_pri);
-
     }
 }
 
-kstat_t krhino_mutex_del(kmutex_t *mutex)
-{
+kstat_t krhino_mutex_del(kmutex_t *mutex) {
     CPSR_ALLOC();
 
     klist_t *blk_list_head;
@@ -103,9 +98,8 @@ kstat_t krhino_mutex_del(kmutex_t *mutex)
 }
 
 #if (RHINO_CONFIG_KOBJ_DYN_ALLOC > 0)
-kstat_t krhino_mutex_dyn_create(kmutex_t **mutex, const name_t *name)
-{
-    kstat_t  stat;
+kstat_t krhino_mutex_dyn_create(kmutex_t **mutex, const name_t *name) {
+    kstat_t stat;
     kmutex_t *mutex_obj;
 
     if (mutex == NULL) {
@@ -130,8 +124,7 @@ kstat_t krhino_mutex_dyn_create(kmutex_t **mutex, const name_t *name)
     return stat;
 }
 
-kstat_t krhino_mutex_dyn_del(kmutex_t *mutex)
-{
+kstat_t krhino_mutex_dyn_del(kmutex_t *mutex) {
     CPSR_ALLOC();
 
     klist_t *blk_list_head;
@@ -183,11 +176,10 @@ kstat_t krhino_mutex_dyn_del(kmutex_t *mutex)
 }
 #endif
 
-uint8_t mutex_pri_limit(ktask_t *task, uint8_t pri)
-{
+uint8_t mutex_pri_limit(ktask_t *task, uint8_t pri) {
     kmutex_t *mutex_tmp;
-    uint8_t  high_pri;
-    ktask_t  *first_blk_task;
+    uint8_t high_pri;
+    ktask_t *first_blk_task;
     klist_t *blk_list_head;
 
     high_pri = pri;
@@ -198,7 +190,7 @@ uint8_t mutex_pri_limit(ktask_t *task, uint8_t pri)
 
         if (!is_klist_empty(blk_list_head)) {
             first_blk_task = krhino_list_entry(blk_list_head->next, ktask_t, task_list);
-            pri = first_blk_task->prio;
+            pri            = first_blk_task->prio;
         }
 
         /* can not set lower prio than the highest prio in all mutexes which hold lock */
@@ -210,14 +202,13 @@ uint8_t mutex_pri_limit(ktask_t *task, uint8_t pri)
     return high_pri;
 }
 
-uint8_t mutex_pri_look(ktask_t *task, kmutex_t *mutex_rel)
-{
-    kmutex_t  *mutex_tmp;
+uint8_t mutex_pri_look(ktask_t *task, kmutex_t *mutex_rel) {
+    kmutex_t *mutex_tmp;
     kmutex_t **prev;
-    uint8_t   new_pri;
-    uint8_t   pri;
-    ktask_t  *first_blk_task;
-    klist_t  *blk_list_head;
+    uint8_t new_pri;
+    uint8_t pri;
+    ktask_t *first_blk_task;
+    klist_t *blk_list_head;
 
     /* the base prio of task */
     new_pri = task->b_prio;
@@ -236,7 +227,7 @@ uint8_t mutex_pri_look(ktask_t *task, kmutex_t *mutex_rel)
         blk_list_head = &mutex_tmp->blk_obj.blk_list;
         if (!is_klist_empty(blk_list_head)) {
             first_blk_task = krhino_list_entry(blk_list_head->next, ktask_t, task_list);
-            pri = first_blk_task->prio;
+            pri            = first_blk_task->prio;
         }
 
         if (new_pri > pri) {
@@ -249,13 +240,12 @@ uint8_t mutex_pri_look(ktask_t *task, kmutex_t *mutex_rel)
     return new_pri;
 }
 
-void mutex_task_pri_reset(ktask_t *task)
-{
+void mutex_task_pri_reset(ktask_t *task) {
     kmutex_t *mutex_tmp;
     ktask_t *mutex_task;
 
     if (task->blk_obj->obj_type == RHINO_MUTEX_OBJ_TYPE) {
-        mutex_tmp = (kmutex_t *)(task->blk_obj);
+        mutex_tmp  = (kmutex_t *)(task->blk_obj);
         mutex_task = mutex_tmp->mutex_task;
 
         /* the new highest prio task blocked on this mutex may decrease prio than before so reset the mutex task prio */
@@ -265,13 +255,12 @@ void mutex_task_pri_reset(ktask_t *task)
     }
 }
 
-kstat_t krhino_mutex_lock(kmutex_t *mutex, tick_t ticks)
-{
+kstat_t krhino_mutex_lock(kmutex_t *mutex, tick_t ticks) {
     CPSR_ALLOC();
 
-    kstat_t  ret;
+    kstat_t ret;
     ktask_t *mutex_task;
-    uint8_t  cur_cpu_num;
+    uint8_t cur_cpu_num;
 
     NULL_PARA_CHK(mutex);
 
@@ -309,10 +298,10 @@ kstat_t krhino_mutex_lock(kmutex_t *mutex, tick_t ticks)
     mutex_task = mutex->mutex_task;
     if (mutex_task == NULL) {
         /* get lock */
-        mutex->mutex_task         = g_active_task[cur_cpu_num];
-        mutex->mutex_list         = g_active_task[cur_cpu_num]->mutex_list;
+        mutex->mutex_task                      = g_active_task[cur_cpu_num];
+        mutex->mutex_list                      = g_active_task[cur_cpu_num]->mutex_list;
         g_active_task[cur_cpu_num]->mutex_list = mutex;
-        mutex->owner_nested       = 1u;
+        mutex->owner_nested                    = 1u;
 
         TRACE_MUTEX_GET(g_active_task[cur_cpu_num], mutex, ticks);
 
@@ -339,7 +328,6 @@ kstat_t krhino_mutex_lock(kmutex_t *mutex, tick_t ticks)
         task_pri_change(mutex_task, g_active_task[cur_cpu_num]->prio);
 
         TRACE_TASK_PRI_INV(g_active_task[cur_cpu_num], mutex_task);
-
     }
 
     /* any way block the current task */
@@ -359,13 +347,12 @@ kstat_t krhino_mutex_lock(kmutex_t *mutex, tick_t ticks)
     return ret;
 }
 
-kstat_t krhino_mutex_unlock(kmutex_t *mutex)
-{
+kstat_t krhino_mutex_unlock(kmutex_t *mutex) {
     CPSR_ALLOC();
 
     klist_t *blk_list_head;
     ktask_t *task;
-    uint8_t  cur_cpu_num;
+    uint8_t cur_cpu_num;
 
     NULL_PARA_CHK(mutex);
 
@@ -430,4 +417,3 @@ kstat_t krhino_mutex_unlock(kmutex_t *mutex)
 
     return RHINO_SUCCESS;
 }
-

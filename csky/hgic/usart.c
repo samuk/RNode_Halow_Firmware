@@ -9,21 +9,16 @@
 #include "csi_core.h"
 
 extern int8_t __disable_print__;
-int32_t csi_usart_getchar(void* handle, uint8_t *ch)
-{
+int32_t csi_usart_getchar(void *handle, uint8_t *ch) {
     *ch = uart_getc((struct uart_device *)handle);
     return RET_OK;
 }
 
-int32_t csi_usart_putchar(void*      handle, uint8_t ch)
-{
+int32_t csi_usart_putchar(void *handle, uint8_t ch) {
     if (__disable_print__) { return 0; }
     return uart_putc((struct uart_device *)handle, ch);
 }
 
-void disable_print(int8_t dis)
-{
+void disable_print(int8_t dis) {
     __disable_print__ = dis;
 }
-
-

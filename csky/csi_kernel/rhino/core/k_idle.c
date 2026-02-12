@@ -5,8 +5,7 @@
 #include <k_api.h>
 
 #if (RHINO_CONFIG_CPU_USAGE_STATS > 0)
-void idle_count_set(idle_count_t value)
-{
+void idle_count_set(idle_count_t value) {
     CPSR_ALLOC();
 
     RHINO_CPU_INTRPT_DISABLE();
@@ -16,8 +15,7 @@ void idle_count_set(idle_count_t value)
     RHINO_CPU_INTRPT_ENABLE();
 }
 
-idle_count_t idle_count_get(void)
-{
+idle_count_t idle_count_get(void) {
     CPSR_ALLOC();
 
     idle_count_t idle_count;
@@ -32,12 +30,10 @@ idle_count_t idle_count_get(void)
 }
 #endif
 
-void __attribute__((weak)) user_idle_hook(void)
-{
+void __attribute__((weak)) user_idle_hook(void) {
 }
 
-void idle_task(void *arg)
-{
+void idle_task(void *arg) {
     CPSR_ALLOC();
 
     /* avoid warning */
@@ -56,10 +52,9 @@ void idle_task(void *arg)
 
         user_idle_hook();
 
-    /* RHINO_CONFIG_CPU_PWR_MGMT */
+        /* RHINO_CONFIG_CPU_PWR_MGMT */
 #if (RHINO_CONFIG_CPU_PWR_MGMT > 0)
         cpu_pwr_down();
 #endif
     }
 }
-

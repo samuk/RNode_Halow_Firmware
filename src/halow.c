@@ -11,6 +11,7 @@
 #include "osal/string.h"
 #include "halow_lbt.h"
 #include "configdb.h"
+#include "sys_config.h"
 
 #define HALOW_CONFIG_PREFIX             CONFIGDB_ADD_MODULE("halow")
 #define HALOW_CONFIG_ADD_CONFIG(name)   HALOW_CONFIG_PREFIX "." name
@@ -20,12 +21,6 @@
 #define HALOW_CONFIG_BANDWIDTH_NAME     HALOW_CONFIG_ADD_CONFIG("band")
 #define HALOW_CONFIG_MCS_NAME           HALOW_CONFIG_ADD_CONFIG("mcs")
 #define HALOW_CONFIG_SPOWER_EN_NAME     HALOW_CONFIG_ADD_CONFIG("spwr")
-
-#define HALOW_CONFIG_CENTRAL_FREQ_DEF   (8665)
-#define HALOW_CONFIG_POWER_DEF          (17)
-#define HALOW_CONFIG_BANDWIDTH_DEF      (1)
-#define HALOW_CONFIG_MCS_DEF            (0)
-#define HALOW_CONFIG_SPOWER_EN_DEF      (false)
 
 /* ===== Wi-Fi HaLow fixed config ===== */
 

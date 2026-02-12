@@ -6,8 +6,7 @@
 
 #if (RHINO_CONFIG_SEM > 0)
 static kstat_t sem_create(ksem_t *sem, const name_t *name, sem_count_t count,
-                          uint8_t mm_alloc_flag)
-{
+                          uint8_t mm_alloc_flag) {
     CPSR_ALLOC();
 
     NULL_PARA_CHK(sem);
@@ -36,13 +35,11 @@ static kstat_t sem_create(ksem_t *sem, const name_t *name, sem_count_t count,
     return RHINO_SUCCESS;
 }
 
-kstat_t krhino_sem_create(ksem_t *sem, const name_t *name, sem_count_t count)
-{
+kstat_t krhino_sem_create(ksem_t *sem, const name_t *name, sem_count_t count) {
     return sem_create(sem, name, count, K_OBJ_STATIC_ALLOC);
 }
 
-kstat_t krhino_sem_del(ksem_t *sem)
-{
+kstat_t krhino_sem_del(ksem_t *sem) {
     CPSR_ALLOC();
 
     klist_t *blk_list_head;
@@ -63,7 +60,7 @@ kstat_t krhino_sem_del(ksem_t *sem)
         return RHINO_KOBJ_DEL_ERR;
     }
 
-    blk_list_head = &sem->blk_obj.blk_list;
+    blk_list_head         = &sem->blk_obj.blk_list;
     sem->blk_obj.obj_type = RHINO_OBJ_TYPE_NONE;
 
     /* all task blocked on this queue is waken up */
@@ -83,10 +80,9 @@ kstat_t krhino_sem_del(ksem_t *sem)
 
 #if (RHINO_CONFIG_KOBJ_DYN_ALLOC > 0)
 kstat_t krhino_sem_dyn_create(ksem_t **sem, const name_t *name,
-                              sem_count_t count)
-{
+                              sem_count_t count) {
     kstat_t stat;
-    ksem_t  *sem_obj;
+    ksem_t *sem_obj;
 
     NULL_PARA_CHK(sem);
 
@@ -108,8 +104,7 @@ kstat_t krhino_sem_dyn_create(ksem_t **sem, const name_t *name,
     return stat;
 }
 
-kstat_t krhino_sem_dyn_del(ksem_t *sem)
-{
+kstat_t krhino_sem_dyn_del(ksem_t *sem) {
     CPSR_ALLOC();
 
     klist_t *blk_list_head;
@@ -130,7 +125,7 @@ kstat_t krhino_sem_dyn_del(ksem_t *sem)
         return RHINO_KOBJ_DEL_ERR;
     }
 
-    blk_list_head = &sem->blk_obj.blk_list;
+    blk_list_head         = &sem->blk_obj.blk_list;
     sem->blk_obj.obj_type = RHINO_OBJ_TYPE_NONE;
 
     /* all task blocked on this queue is waken up */
@@ -152,11 +147,10 @@ kstat_t krhino_sem_dyn_del(ksem_t *sem)
 
 #endif
 
-static kstat_t sem_give(ksem_t *sem, uint8_t opt_wake_all)
-{
+static kstat_t sem_give(ksem_t *sem, uint8_t opt_wake_all) {
     CPSR_ALLOC();
 
-    uint8_t  cur_cpu_num;
+    uint8_t cur_cpu_num;
     klist_t *blk_list_head;
 
     /* this is only needed when system zero interrupt feature is enabled */
@@ -200,16 +194,14 @@ static kstat_t sem_give(ksem_t *sem, uint8_t opt_wake_all)
     /* wake all the task blocked on this semaphore */
     if (opt_wake_all) {
         while (!is_klist_empty(blk_list_head)) {
-            TRACE_SEM_TASK_WAKE(g_active_task[cur_cpu_num], krhino_list_entry(blk_list_head->next,
-                                                                              ktask_t, task_list),
+            TRACE_SEM_TASK_WAKE(g_active_task[cur_cpu_num], krhino_list_entry(blk_list_head->next, ktask_t, task_list),
                                 sem, opt_wake_all);
 
             pend_task_wakeup(krhino_list_entry(blk_list_head->next, ktask_t, task_list));
         }
 
     } else {
-        TRACE_SEM_TASK_WAKE(g_active_task[cur_cpu_num], krhino_list_entry(blk_list_head->next,
-                                                                          ktask_t, task_list),
+        TRACE_SEM_TASK_WAKE(g_active_task[cur_cpu_num], krhino_list_entry(blk_list_head->next, ktask_t, task_list),
                             sem, opt_wake_all);
 
         /* wake up the highest prio task block on the semaphore */
@@ -221,26 +213,23 @@ static kstat_t sem_give(ksem_t *sem, uint8_t opt_wake_all)
     return RHINO_SUCCESS;
 }
 
-kstat_t krhino_sem_give(ksem_t *sem)
-{
+kstat_t krhino_sem_give(ksem_t *sem) {
     NULL_PARA_CHK(sem);
 
     return sem_give(sem, WAKE_ONE_SEM);
 }
 
-kstat_t krhino_sem_give_all(ksem_t *sem)
-{
+kstat_t krhino_sem_give_all(ksem_t *sem) {
     NULL_PARA_CHK(sem);
 
     return sem_give(sem, WAKE_ALL_SEM);
 }
 
-kstat_t krhino_sem_take(ksem_t *sem, tick_t ticks)
-{
+kstat_t krhino_sem_take(ksem_t *sem, tick_t ticks) {
     CPSR_ALLOC();
 
-    uint8_t  cur_cpu_num;
-    kstat_t  stat;
+    uint8_t cur_cpu_num;
+    kstat_t stat;
 
     NULL_PARA_CHK(sem);
 
@@ -290,8 +279,7 @@ kstat_t krhino_sem_take(ksem_t *sem, tick_t ticks)
     return stat;
 }
 
-kstat_t krhino_sem_count_set(ksem_t *sem, sem_count_t sem_count)
-{
+kstat_t krhino_sem_count_set(ksem_t *sem, sem_count_t sem_count) {
     CPSR_ALLOC();
 
     klist_t *blk_list_head;
@@ -331,8 +319,7 @@ kstat_t krhino_sem_count_set(ksem_t *sem, sem_count_t sem_count)
     return RHINO_SUCCESS;
 }
 
-kstat_t krhino_sem_count_get(ksem_t *sem, sem_count_t *count)
-{
+kstat_t krhino_sem_count_get(ksem_t *sem, sem_count_t *count) {
     NULL_PARA_CHK(sem);
     NULL_PARA_CHK(count);
     *count = sem->count;
@@ -341,4 +328,3 @@ kstat_t krhino_sem_count_get(ksem_t *sem, sem_count_t *count)
 }
 
 #endif /* RHINO_CONFIG_SEM */
-

@@ -36,30 +36,30 @@ typedef void *i2s_handle_t;
 
 /****** i2s specific error codes *****/
 typedef enum {
-    I2S_ERROR_SYNCHRONIZATION   = (DRV_ERROR_SPECIFIC + 1),  ///< Specified Synchronization not supported
-    I2S_ERROR_PROTOCOL,                                      ///< Specified Protocol not supported
-    I2S_ERROR_DATA_SIZE,                                     ///< Specified Data size not supported
-    I2S_ERROR_BIT_ORDER,                                     ///< Specified Bit order not supported
-    I2S_ERROR_MONO_MODE,                                     ///< Specified Mono mode not supported
-    I2S_ERROR_COMPANDING,                                    ///< Specified Companding not supported
-    I2S_ERROR_CLOCK_POLARITY,                                ///< Specified Clock polarity not supported
-    I2S_ERROR_AUDIO_FREQ,                                    ///< Specified Audio frequency not supported
-    I2S_ERROR_MCLK_PIN,                                      ///< Specified MCLK Pin setting not supported
-    I2S_ERROR_MCLK_PRESCALER,                                ///< Specified MCLK Prescaler not supported
-    I2S_ERROR_FRAME_LENGHT,                                  ///< Specified Frame length not supported
-    I2S_ERROR_FRAME_SYNC_WIDTH,                              ///< Specified Frame Sync width not supported
-    I2S_ERROR_FRAME_SYNC_POLARITY,                           ///< Specified Frame Sync polarity not supported
-    I2S_ERROR_FRAME_SYNC_EARLY,                              ///< Specified Frame Sync early not supported
-    I2S_ERROR_SLOT_COUNT,                                    ///< Specified Slot count not supported
-    I2S_ERROR_SLOT_SIZE,                                     ///< Specified Slot size not supported
-    I2S_ERROR_SLOT_OFFESET                                   ///< Specified Slot offset not supported
+    I2S_ERROR_SYNCHRONIZATION = (DRV_ERROR_SPECIFIC + 1), ///< Specified Synchronization not supported
+    I2S_ERROR_PROTOCOL,                                   ///< Specified Protocol not supported
+    I2S_ERROR_DATA_SIZE,                                  ///< Specified Data size not supported
+    I2S_ERROR_BIT_ORDER,                                  ///< Specified Bit order not supported
+    I2S_ERROR_MONO_MODE,                                  ///< Specified Mono mode not supported
+    I2S_ERROR_COMPANDING,                                 ///< Specified Companding not supported
+    I2S_ERROR_CLOCK_POLARITY,                             ///< Specified Clock polarity not supported
+    I2S_ERROR_AUDIO_FREQ,                                 ///< Specified Audio frequency not supported
+    I2S_ERROR_MCLK_PIN,                                   ///< Specified MCLK Pin setting not supported
+    I2S_ERROR_MCLK_PRESCALER,                             ///< Specified MCLK Prescaler not supported
+    I2S_ERROR_FRAME_LENGHT,                               ///< Specified Frame length not supported
+    I2S_ERROR_FRAME_SYNC_WIDTH,                           ///< Specified Frame Sync width not supported
+    I2S_ERROR_FRAME_SYNC_POLARITY,                        ///< Specified Frame Sync polarity not supported
+    I2S_ERROR_FRAME_SYNC_EARLY,                           ///< Specified Frame Sync early not supported
+    I2S_ERROR_SLOT_COUNT,                                 ///< Specified Slot count not supported
+    I2S_ERROR_SLOT_SIZE,                                  ///< Specified Slot size not supported
+    I2S_ERROR_SLOT_OFFESET                                ///< Specified Slot offset not supported
 } i2s_error_e;
 
 typedef enum {
-    I2S_MODE_TX_MASTER,  ///< i2s transmitter master mode
-    I2S_MODE_TX_SLAVE,   ///< i2s transmitter slave mode
-    I2S_MODE_RX_MASTER,  ///< i2s receiver master mode
-    I2S_MODE_RX_SLAVE,   ///< i2s receiver slave mode
+    I2S_MODE_TX_MASTER, ///< i2s transmitter master mode
+    I2S_MODE_TX_SLAVE,  ///< i2s transmitter slave mode
+    I2S_MODE_RX_MASTER, ///< i2s receiver master mode
+    I2S_MODE_RX_SLAVE,  ///< i2s receiver slave mode
 } i2s_mode_e;
 
 typedef enum {
@@ -73,38 +73,38 @@ typedef enum {
 \brief I2S Status
 */
 typedef struct {
-    uint32_t tx_busy          : 1;        ///< Transmitter busy flag
-    uint32_t rx_busy          : 1;        ///< Receiver busy flag
-    uint32_t tx_underflow     : 1;        ///< Transmit data underflow detected (cleared on start of next send operation)
-    uint32_t rx_overflow      : 1;        ///< Receive data overflow detected (cleared on start of next receive operation)
-    uint32_t frame_error      : 1;        ///< Sync Frame error detected (cleared on start of next send/receive operation)
+    uint32_t tx_busy : 1;      ///< Transmitter busy flag
+    uint32_t rx_busy : 1;      ///< Receiver busy flag
+    uint32_t tx_underflow : 1; ///< Transmit data underflow detected (cleared on start of next send operation)
+    uint32_t rx_overflow : 1;  ///< Receive data overflow detected (cleared on start of next receive operation)
+    uint32_t frame_error : 1;  ///< Sync Frame error detected (cleared on start of next send/receive operation)
 } i2s_status_t;
 
 /****** IIC Event *****/
 typedef enum {
-    I2S_EVENT_SEND_COMPLETE        = 0,  ///< Send completed
-    I2S_EVENT_RECEIVE_COMPLETE     = 1,  ///< Receive completed
-    I2S_EVENT_TX_UNDERFLOW         = 2,  ///< Transmit data not available
-    I2S_EVENT_RX_OVERFLOW          = 3,  ///< Receive data overflow
-    I2S_EVENT_FRAME_ERROR          = 4,  ///< Sync Frame error in Slave mode (optional)
+    I2S_EVENT_SEND_COMPLETE    = 0, ///< Send completed
+    I2S_EVENT_RECEIVE_COMPLETE = 1, ///< Receive completed
+    I2S_EVENT_TX_UNDERFLOW     = 2, ///< Transmit data not available
+    I2S_EVENT_RX_OVERFLOW      = 3, ///< Receive data overflow
+    I2S_EVENT_FRAME_ERROR      = 4, ///< Sync Frame error in Slave mode (optional)
 } i2s_event_e;
 
 /**
 \brief i2s Driver Capabilities.
 */
 typedef struct {
-    uint32_t    asynchronous        : 1;    ///< supports asynchronous Transmit/Receive
-    uint32_t    synchronous         : 1;    ///< supports synchronous Transmit/Receive
-    uint32_t    protocol_user       : 1;    ///< supports user defined Protocol
-    uint32_t    protocol_i2s        : 1;    ///< supports I2S Protocol
-    uint32_t    protocol_justified  : 1;    ///< supports MSB/LSB justified Protocol
-    uint32_t    mono_mode           : 1;    ///< supports Mono mode
-    uint32_t    companding          : 1;    ///< supports Companding
-    uint32_t    mclk_pin            : 1;    ///< supports MCLK (Master Clock) pin
-    uint32_t    event_frame_error   : 1;    ///< supports Frame error event: ARM_SAI_EVENT_FRAME_ERROR
+    uint32_t asynchronous : 1;       ///< supports asynchronous Transmit/Receive
+    uint32_t synchronous : 1;        ///< supports synchronous Transmit/Receive
+    uint32_t protocol_user : 1;      ///< supports user defined Protocol
+    uint32_t protocol_i2s : 1;       ///< supports I2S Protocol
+    uint32_t protocol_justified : 1; ///< supports MSB/LSB justified Protocol
+    uint32_t mono_mode : 1;          ///< supports Mono mode
+    uint32_t companding : 1;         ///< supports Companding
+    uint32_t mclk_pin : 1;           ///< supports MCLK (Master Clock) pin
+    uint32_t event_frame_error : 1;  ///< supports Frame error event: ARM_SAI_EVENT_FRAME_ERROR
 } i2s_capabilities_t;
 
-typedef void (*i2s_event_cb_t)(int32_t idx, i2s_event_e event);  ///< Pointer to \ref i2s_event_cb_t : i2s Event call back.
+typedef void (*i2s_event_cb_t)(int32_t idx, i2s_event_e event); ///< Pointer to \ref i2s_event_cb_t : i2s Event call back.
 
 /**
   \brief       Initialize I2S Interface. 1. Initializes the resources needed for the I2S index 2.registers event callback function
@@ -222,4 +222,3 @@ int32_t csi_i2s_power_control(i2s_handle_t handle, csi_power_stat_e state);
 #endif
 
 #endif /* _DRV_I2S_H_ */
-

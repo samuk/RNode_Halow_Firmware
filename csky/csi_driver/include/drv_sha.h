@@ -30,63 +30,60 @@ extern "C" {
 #include <drv_common.h>
 #include <drv_errno.h>
 
-
 /// definition for sha handle.
 typedef void *sha_handle_t;
 
 /****** SHA specific error codes *****/
 typedef enum {
-    SHA_ERROR_MODE  = (DRV_ERROR_SPECIFIC + 1),     ///< Specified Mode not supported
-    SHA_ERROR_ENDIAN                              ///< Specified endian not supported
+    SHA_ERROR_MODE = (DRV_ERROR_SPECIFIC + 1), ///< Specified Mode not supported
+    SHA_ERROR_ENDIAN                           ///< Specified endian not supported
 } sha_error_e;
 
 /*----- SHA Control Codes: Mode -----*/
 typedef enum {
-    SHA_MODE_1                    = 1,    ///< SHA_1 mode
-    SHA_MODE_256,                         ///< SHA_256 mode
-    SHA_MODE_224,                         ///< SHA_224 mode
-    SHA_MODE_512,                         ///< SHA_512 mode
-    SHA_MODE_384,                         ///< SHA_384 mode
-    SHA_MODE_512_256,                     ///< SHA_512_256 mode
-    SHA_MODE_512_224                      ///< SHA_512_224 mode
+    SHA_MODE_1 = 1,   ///< SHA_1 mode
+    SHA_MODE_256,     ///< SHA_256 mode
+    SHA_MODE_224,     ///< SHA_224 mode
+    SHA_MODE_512,     ///< SHA_512 mode
+    SHA_MODE_384,     ///< SHA_384 mode
+    SHA_MODE_512_256, ///< SHA_512_256 mode
+    SHA_MODE_512_224  ///< SHA_512_224 mode
 } sha_mode_e;
 
 /*----- SHA Control Codes: Mode Parameters: Endian -----*/
 typedef enum {
-    SHA_ENDIAN_MODE_BIG             = 0,    ///< Big Endian Mode
-    SHA_ENDIAN_MODE_LITTLE,                 ///< Little Endian Mode
+    SHA_ENDIAN_MODE_BIG = 0, ///< Big Endian Mode
+    SHA_ENDIAN_MODE_LITTLE,  ///< Little Endian Mode
 } sha_endian_mode_e;
 
 /**
 \brief SHA Status
 */
 typedef struct {
-    uint32_t busy             : 1;        ///< calculate busy flag
+    uint32_t busy : 1; ///< calculate busy flag
 } sha_status_t;
 
 /****** SHA Event *****/
 typedef enum {
-    SHA_EVENT_COMPLETE    = 0   ///< calculate completed
+    SHA_EVENT_COMPLETE = 0 ///< calculate completed
 } sha_event_e;
 
-typedef void (*sha_event_cb_t)(int32_t idx, sha_event_e event);   ///< Pointer to \ref sha_event_cb_t : SHA Event call back.
-
+typedef void (*sha_event_cb_t)(int32_t idx, sha_event_e event); ///< Pointer to \ref sha_event_cb_t : SHA Event call back.
 
 /**
 \brief SHA Device Driver Capabilities.
 */
 typedef struct {
-    uint32_t sha1               : 1;      ///< supports sha1 mode
-    uint32_t sha224             : 1;      ///< supports sha224 mode
-    uint32_t sha256             : 1;      ///< supports sha256 mode
-    uint32_t sha384             : 1;      ///< supports sha384 mode
-    uint32_t sha512             : 1;      ///< supports sha512 mode
-    uint32_t sha512_224         : 1;      ///< supports sha512_224 mode
-    uint32_t sha512_256         : 1;      ///< supports sha512_256 mode
-    uint32_t endianmode         : 1;      ///< supports endian mode control
-    uint32_t interruptmode      : 1;      ///< supports interrupt mode
+    uint32_t sha1 : 1;          ///< supports sha1 mode
+    uint32_t sha224 : 1;        ///< supports sha224 mode
+    uint32_t sha256 : 1;        ///< supports sha256 mode
+    uint32_t sha384 : 1;        ///< supports sha384 mode
+    uint32_t sha512 : 1;        ///< supports sha512 mode
+    uint32_t sha512_224 : 1;    ///< supports sha512_224 mode
+    uint32_t sha512_256 : 1;    ///< supports sha512_256 mode
+    uint32_t endianmode : 1;    ///< supports endian mode control
+    uint32_t interruptmode : 1; ///< supports interrupt mode
 } sha_capabilities_t;
-
 
 // Function documentation
 
@@ -130,8 +127,7 @@ sha_capabilities_t csi_sha_get_capabilities(int32_t idx);
 */
 int32_t csi_sha_config(sha_handle_t handle,
                        sha_mode_e mode,
-                       sha_endian_mode_e endian
-                      );
+                       sha_endian_mode_e endian);
 
 /**
   \brief       start the engine
@@ -166,7 +162,6 @@ int32_t csi_sha_finish(sha_handle_t handle, void *context, void *output);
   \return      SHA status \ref sha_status_t
 */
 sha_status_t csi_sha_get_status(sha_handle_t handle);
-
 
 #ifdef __cplusplus
 }

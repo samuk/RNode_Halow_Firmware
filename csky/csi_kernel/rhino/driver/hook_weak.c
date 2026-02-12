@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-void __attribute__((weak)) lpm_idle_hook(void)
-{
+void __attribute__((weak)) lpm_idle_hook(void) {
 }
 
-void __attribute__((weak)) lpm_idle_pre_hook(void)
-{
+void __attribute__((weak)) lpm_idle_pre_hook(void) {
 }

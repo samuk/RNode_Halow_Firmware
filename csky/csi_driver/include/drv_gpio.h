@@ -36,36 +36,36 @@ typedef void *gpio_pin_handle_t;
 
 /****** GPIO specific error codes *****/
 typedef enum {
-    GPIO_ERROR_MODE  = (DRV_ERROR_SPECIFIC + 1),      ///< Specified Mode not supported
-    GPIO_ERROR_DIRECTION,                        ///< Specified direction not supported
-    GPIO_ERROR_IRQ_MODE,                         ///< Specified irq mode not supported
+    GPIO_ERROR_MODE = (DRV_ERROR_SPECIFIC + 1), ///< Specified Mode not supported
+    GPIO_ERROR_DIRECTION,                       ///< Specified direction not supported
+    GPIO_ERROR_IRQ_MODE,                        ///< Specified irq mode not supported
 } gpio_error_e;
 
 /*----- GPIO Control Codes: Mode -----*/
 typedef enum {
-    GPIO_MODE_PULLNONE         = 0,    ///< pull none for input
-    GPIO_MODE_PULLUP,                  ///< pull up for input
-    GPIO_MODE_PULLDOWN,                ///< pull down for input
-    GPIO_MODE_OPEN_DRAIN,              ///< open drain mode for output
-    GPIO_MODE_PUSH_PULL,               ///< push-pull mode for output
+    GPIO_MODE_PULLNONE = 0, ///< pull none for input
+    GPIO_MODE_PULLUP,       ///< pull up for input
+    GPIO_MODE_PULLDOWN,     ///< pull down for input
+    GPIO_MODE_OPEN_DRAIN,   ///< open drain mode for output
+    GPIO_MODE_PUSH_PULL,    ///< push-pull mode for output
 } gpio_mode_e;
 
 /*----- GPIO Control Codes: Mode Parameters: Data Bits -----*/
 typedef enum {
-    GPIO_DIRECTION_INPUT             = 0,    ///< gpio as input
-    GPIO_DIRECTION_OUTPUT,                   ///< gpio as output
+    GPIO_DIRECTION_INPUT = 0, ///< gpio as input
+    GPIO_DIRECTION_OUTPUT,    ///< gpio as output
 } gpio_direction_e;
 
 /*----- GPIO Control Codes: Mode Parameters: Parity -----*/
 typedef enum {
-    GPIO_IRQ_MODE_RISING_EDGE     = 0,       ///< interrupt mode for rising edge
-    GPIO_IRQ_MODE_FALLING_EDGE,              ///< interrupt mode for falling edge
-    GPIO_IRQ_MODE_DOUBLE_EDGE,               ///< interrupt mode for double edge
-    GPIO_IRQ_MODE_LOW_LEVEL,                 ///< interrupt mode for low level
-    GPIO_IRQ_MODE_HIGH_LEVEL,                ///< interrupt mode for high level
+    GPIO_IRQ_MODE_RISING_EDGE = 0, ///< interrupt mode for rising edge
+    GPIO_IRQ_MODE_FALLING_EDGE,    ///< interrupt mode for falling edge
+    GPIO_IRQ_MODE_DOUBLE_EDGE,     ///< interrupt mode for double edge
+    GPIO_IRQ_MODE_LOW_LEVEL,       ///< interrupt mode for low level
+    GPIO_IRQ_MODE_HIGH_LEVEL,      ///< interrupt mode for high level
 } gpio_irq_mode_e;
 
-typedef void (*gpio_event_cb_t)(int32_t idx);   ///< gpio Event call back.
+typedef void (*gpio_event_cb_t)(int32_t idx); ///< gpio Event call back.
 
 /**
   \brief       Initialize GPIO handle.
@@ -143,7 +143,6 @@ int32_t csi_gpio_pin_read(gpio_pin_handle_t handle, bool *value);
   \return      error code
 */
 int32_t csi_gpio_pin_set_irq(gpio_pin_handle_t handle, gpio_irq_mode_e mode, bool enable);
-
 
 #ifdef __cplusplus
 }

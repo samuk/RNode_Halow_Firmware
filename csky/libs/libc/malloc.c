@@ -26,8 +26,7 @@
 #define MALLOC_WEAK __attribute__((weak))
 #endif
 
-MALLOC_WEAK void *malloc(size_t size)
-{
+MALLOC_WEAK void *malloc(size_t size) {
     void *ret;
 
 #ifdef CONFIG_KERNEL_NONE
@@ -39,8 +38,7 @@ MALLOC_WEAK void *malloc(size_t size)
     return ret;
 }
 
-MALLOC_WEAK void free(void *ptr)
-{
+MALLOC_WEAK void free(void *ptr) {
 #ifdef CONFIG_KERNEL_NONE
     mm_free(USR_HEAP, ptr, __builtin_return_address(0));
 #else
@@ -48,8 +46,7 @@ MALLOC_WEAK void free(void *ptr)
 #endif
 }
 
-MALLOC_WEAK void *realloc(void *ptr, size_t size)
-{
+MALLOC_WEAK void *realloc(void *ptr, size_t size) {
     void *new_ptr;
 
 #ifdef CONFIG_KERNEL_NONE
@@ -75,8 +72,7 @@ MALLOC_WEAK void *realloc(void *ptr, size_t size)
     return new_ptr;
 }
 
-MALLOC_WEAK void *calloc(size_t nmemb, size_t size)
-{
+MALLOC_WEAK void *calloc(size_t nmemb, size_t size) {
     void *ptr = NULL;
 
 #ifdef CONFIG_KERNEL_NONE

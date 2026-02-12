@@ -16,7 +16,6 @@
 #include "lib/umac/wifi_mgr.h"
 #include "lib/atcmd/libatcmd.h"
 #include "lib/lmac/lmac.h"
-#include "syscfg.h"
 
 __weak int32 wificfg_save(int8 force)
 {

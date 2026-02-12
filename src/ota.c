@@ -1,6 +1,7 @@
 // TODO
 // Checksum cheking
 
+#include "ota.h"
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
@@ -14,7 +15,6 @@
 
 #include "lib/ota/libota.h"
 #include "lib/ota/fw.h"
-#include "syscfg.h"
 #include "basic_include.h"
 
 extern uint8 g_mac[6];

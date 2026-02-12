@@ -53,8 +53,8 @@
  * ARCH_DATA_RESERVE_SIZE
  */
 
-#  include <nuttx/addrenv.h>
-#  define USR_HEAP (&ARCH_DATA_RESERVE->ar_usrheap)
+#include <nuttx/addrenv.h>
+#define USR_HEAP (&ARCH_DATA_RESERVE->ar_usrheap)
 
 #elif defined(CONFIG_BUILD_PROTECTED) && defined(__KERNEL__)
 /* In the protected mode, there are two heaps:  A kernel heap and a single
@@ -62,13 +62,13 @@
  * structure from the userspace interface.
  */
 
-#  include <nuttx/userspace.h>
-#  define USR_HEAP (USERSPACE->us_heap)
+#include <nuttx/userspace.h>
+#define USR_HEAP (USERSPACE->us_heap)
 
 #else
 /* Otherwise, the user heap data structures are in common .bss */
 
-#  define USR_HEAP &g_mmheap
+#define USR_HEAP &g_mmheap
 #endif
 
 /****************************************************************************

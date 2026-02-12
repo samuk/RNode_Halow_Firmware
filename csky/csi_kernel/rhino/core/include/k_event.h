@@ -7,13 +7,13 @@
 
 typedef struct {
     blk_obj_t blk_obj;
-    uint32_t  flags;
+    uint32_t flags;
 
 #if (RHINO_CONFIG_SYSTEM_STATS > 0)
-    klist_t   event_item;
+    klist_t event_item;
 #endif
 
-    uint8_t   mm_alloc_flag;
+    uint8_t mm_alloc_flag;
 } kevent_t;
 
 #define RHINO_FLAGS_AND_MASK   0x2u
@@ -81,4 +81,3 @@ kstat_t krhino_event_get(kevent_t *event, uint32_t flags, uint8_t opt,
 kstat_t krhino_event_set(kevent_t *event, uint32_t flags, uint8_t opt);
 
 #endif /* K_EVENT_H */
-

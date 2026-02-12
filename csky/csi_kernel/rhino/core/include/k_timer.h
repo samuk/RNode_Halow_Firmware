@@ -19,28 +19,28 @@ enum {
 typedef void (*timer_cb_t)(void *timer, void *arg);
 
 typedef struct {
-    klist_t       timer_list;
-    klist_t      *to_head;
+    klist_t timer_list;
+    klist_t *to_head;
     const name_t *name;
-    timer_cb_t    cb;
-    void         *timer_cb_arg;
-    sys_time_t    match;
-    sys_time_t    remain;
-    sys_time_t    init_count;
-    sys_time_t    round_ticks;
-    void         *priv;
-    kobj_type_t   obj_type;
-    uint8_t       timer_state;
-    uint8_t       mm_alloc_flag;
+    timer_cb_t cb;
+    void *timer_cb_arg;
+    sys_time_t match;
+    sys_time_t remain;
+    sys_time_t init_count;
+    sys_time_t round_ticks;
+    void *priv;
+    kobj_type_t obj_type;
+    uint8_t timer_state;
+    uint8_t mm_alloc_flag;
 } ktimer_t;
 
 typedef struct {
-    ktimer_t  *timer;
-    uint8_t    cb_num;
+    ktimer_t *timer;
+    uint8_t cb_num;
     sys_time_t first;
     union {
         sys_time_t round;
-        void      *arg;
+        void *arg;
     } u;
 } k_timer_queue_cb;
 
@@ -134,4 +134,3 @@ kstat_t krhino_timer_arg_change_auto(ktimer_t *timer, void *arg);
 kstat_t krhino_timer_arg_change(ktimer_t *timer, void *arg);
 
 #endif /* K_TIMER_H */
-

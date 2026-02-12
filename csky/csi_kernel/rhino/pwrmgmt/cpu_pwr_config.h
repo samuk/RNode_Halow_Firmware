@@ -8,19 +8,19 @@
 /* cpu power management configuration */
 
 #ifndef RHINO_CONFIG_CPU_TICKLESS
-#define RHINO_CONFIG_CPU_TICKLESS               1
+#define RHINO_CONFIG_CPU_TICKLESS 1
 #endif
 
 #ifndef RHINO_CONFIG_CPU_PWR_MGMT_SHOW
-#define RHINO_CONFIG_CPU_PWR_MGMT_SHOW          0
+#define RHINO_CONFIG_CPU_PWR_MGMT_SHOW 0
 #endif
 
 #ifndef RHINO_CONFIG_CPU_PWR_P_STATE_SUPPORT
-#define RHINO_CONFIG_CPU_PWR_P_STATE_SUPPORT    0
+#define RHINO_CONFIG_CPU_PWR_P_STATE_SUPPORT 0
 #endif
 
 #ifndef RHINO_CONFIG_PWR_DEBUG
-#define RHINO_CONFIG_PWR_DEBUG                  0
+#define RHINO_CONFIG_PWR_DEBUG 0
 #endif
 
 #ifndef RHINO_PWR_MGMT_ERR

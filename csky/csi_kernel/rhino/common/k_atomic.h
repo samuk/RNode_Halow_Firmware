@@ -15,8 +15,8 @@ modification history
 extern "C" {
 #endif
 
-typedef unsigned int    atomic_t;
-typedef atomic_t        atomic_val_t;
+typedef unsigned int atomic_t;
+typedef atomic_t atomic_val_t;
 
 extern atomic_val_t rhino_atomic_add(atomic_t *target, atomic_val_t value);
 extern atomic_val_t rhino_atomic_sub(atomic_t *target, atomic_val_t value);
@@ -30,11 +30,10 @@ extern atomic_val_t rhino_atomic_and(atomic_t *target, atomic_val_t value);
 extern atomic_val_t rhino_atomic_nand(atomic_t *target, atomic_val_t value);
 extern atomic_val_t rhino_atomic_clear(atomic_t *target);
 extern int rhino_atomic_cas(atomic_t *target, atomic_val_t old_value,
-			                atomic_val_t new_value);
+                            atomic_val_t new_value);
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* K_ATOMIC_H */
-

@@ -37,4 +37,3 @@ void coretim_clr_irq(void);
 uint32_t coretim_get_currval(void);
 
 #endif /* CORETIM_H */
-

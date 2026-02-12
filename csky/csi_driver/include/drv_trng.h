@@ -29,33 +29,32 @@ extern "C" {
 
 #include <stdint.h>
 
-
 /// definition for trng handle.
 typedef void *trng_handle_t;
 /****** TRNG specific error codes *****/
 typedef enum {
-    TRNG_ERROR_MODE = (DRV_ERROR_SPECIFIC + 1)  ///< Specified Mode not supported
+    TRNG_ERROR_MODE = (DRV_ERROR_SPECIFIC + 1) ///< Specified Mode not supported
 } trng_error_e;
 
 /**
 \brief TRNG Status
 */
 typedef struct {
-    uint32_t busy                : 1;
-    uint32_t data_valid          : 1;        ///< Data is valid flag
+    uint32_t busy : 1;
+    uint32_t data_valid : 1; ///< Data is valid flag
 } trng_status_t;
 
 /****** TRNG Event *****/
 typedef enum {
-    TRNG_EVENT_DATA_GENERATE_COMPLETE       = 0        ///< True random number generates completely
+    TRNG_EVENT_DATA_GENERATE_COMPLETE = 0 ///< True random number generates completely
 } trng_event_e;
-typedef void (*trng_event_cb_t)(int32_t idx, trng_event_e event);   ///< Pointer to \ref trng_event_cb_t : TRNG Event call back.
+typedef void (*trng_event_cb_t)(int32_t idx, trng_event_e event); ///< Pointer to \ref trng_event_cb_t : TRNG Event call back.
 
 /**
 \brief TRNG Device Driver Capabilities.
 */
 typedef struct {
-    uint32_t lowper_mode         : 1;        ///< supports low power mode
+    uint32_t lowper_mode : 1; ///< supports low power mode
 } trng_capabilities_t;
 
 // Function documentation
@@ -105,7 +104,6 @@ int32_t csi_trng_get_data(trng_handle_t handle, void *data, uint32_t num);
   \return      TRNG status \ref trng_status_t
 */
 trng_status_t csi_trng_get_status(trng_handle_t handle);
-
 
 #ifdef __cplusplus
 }

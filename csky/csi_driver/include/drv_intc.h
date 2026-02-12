@@ -36,8 +36,7 @@ typedef enum int_trigger_mode_t {
     INT_MODE_RISING_EDGE,
     INT_MODE_FALLING_EDGE,
     INT_MODE_DOUBLE_EDGE,
-}
-int_trigger_mode_t;
+} int_trigger_mode_t;
 
 /**
   \brief   initialize the INTC interrupt controller
@@ -175,4 +174,3 @@ void csi_intc_set_vector(int32_t IRQn, uint32_t handler);
 uint32_t csi_intc_get_vector(int32_t IRQn);
 
 #endif /* _CSI_INTC_H_ */
-

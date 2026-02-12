@@ -4,8 +4,7 @@
 
 #include <k_api.h>
 
-RHINO_INLINE void pend_list_add(klist_t *head, ktask_t *task)
-{
+RHINO_INLINE void pend_list_add(klist_t *head, ktask_t *task) {
     klist_t *tmp;
     klist_t *list_start = head;
     klist_t *list_end   = head;
@@ -19,8 +18,7 @@ RHINO_INLINE void pend_list_add(klist_t *head, ktask_t *task)
     klist_insert(tmp, &task->task_list);
 }
 
-void pend_task_wakeup(ktask_t *task)
-{
+void pend_task_wakeup(ktask_t *task) {
     /* wake up task depend on the different state of task */
     switch (task->task_state) {
         case K_PEND:
@@ -47,8 +45,7 @@ void pend_task_wakeup(ktask_t *task)
     task->blk_obj   = NULL;
 }
 
-void pend_to_blk_obj(blk_obj_t *blk_obj, ktask_t *task, tick_t timeout)
-{
+void pend_to_blk_obj(blk_obj_t *blk_obj, ktask_t *task, tick_t timeout) {
     /* task need to remember which object is blocked on */
     task->blk_obj = blk_obj;
 
@@ -70,8 +67,7 @@ void pend_to_blk_obj(blk_obj_t *blk_obj, ktask_t *task, tick_t timeout)
     }
 }
 
-void pend_task_rm(ktask_t *task)
-{
+void pend_task_rm(ktask_t *task) {
     switch (task->task_state) {
         case K_PEND:
             /* remove task on the block list because task is waken up */
@@ -98,8 +94,7 @@ void pend_task_rm(ktask_t *task)
     task->blk_obj = NULL;
 }
 
-void pend_list_reorder(ktask_t *task)
-{
+void pend_list_reorder(ktask_t *task) {
     if (task->blk_obj->blk_policy == BLK_POLICY_PRI) {
         /* remove it first and add it again in prio sorted list */
         klist_rm(&task->task_list);
@@ -107,8 +102,7 @@ void pend_list_reorder(ktask_t *task)
     }
 }
 
-kstat_t pend_state_end_proc(ktask_t *task)
-{
+kstat_t pend_state_end_proc(ktask_t *task) {
     kstat_t status;
 
     switch (task->blk_state) {
@@ -132,4 +126,3 @@ kstat_t pend_state_end_proc(ktask_t *task)
 
     return status;
 }
-

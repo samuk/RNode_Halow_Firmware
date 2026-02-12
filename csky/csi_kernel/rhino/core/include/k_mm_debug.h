@@ -36,5 +36,3 @@ uint32_t dump_mmleak(void);
 #endif /* RHINO_CONFIG_MM_DEBUG */
 
 #endif /* YSH_H */
-
-

@@ -27,13 +27,12 @@ void *g_bt_buffer[BT_SIZE];
 #define BT_STACK_SIZE 600
 int g_bt_stack[BT_STACK_SIZE / 4];
 char *g_dumpbuf = NULL;
-int g_dump_len = 0;
-int g_dump_max = 0;
+int g_dump_len  = 0;
+int g_dump_max  = 0;
 
-void dump_backtrace(void)
-{
-    int    i;
-    int    nptr;
+void dump_backtrace(void) {
+    int i;
+    int nptr;
 
     g_dump_len = 0;
 
@@ -58,9 +57,7 @@ void dump_backtrace(void)
     }
 }
 
-
-void __attribute__((naked))csky_show_backtrace(void *stack)
-{
+void __attribute__((naked)) csky_show_backtrace(void *stack) {
     asm volatile(
         "subi    sp, 68\n\t"
         "stm     r0-r13, (sp)\n\t"
@@ -94,14 +91,12 @@ void __attribute__((naked))csky_show_backtrace(void *stack)
         "ldw     r15, (sp, 56)\n\t"
         "ldm     r0-r13, (sp)\n\t"
         "addi    sp, 68\n\t"
-        "jmp     r15\n\t"
-        ::"r"(stack), "r"(BT_STACK_SIZE):);
-
+        "jmp     r15\n\t" ::"r"(stack),
+        "r"(BT_STACK_SIZE) :);
 }
 
-int csky_task_backtrace(void *stack, void *buf, int len)
-{
-    g_dumpbuf = buf;
+int csky_task_backtrace(void *stack, void *buf, int len) {
+    g_dumpbuf  = buf;
     g_dump_max = len;
 
     csky_show_backtrace(stack);

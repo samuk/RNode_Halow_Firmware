@@ -1,5 +1,7 @@
-#ifndef _PROJECT_SYSCFG_H_
-#define _PROJECT_SYSCFG_H_
+#ifndef __OTA_H__
+#define __OTA_H__
+
+#include "basic_include.h"
 
 // Musthave only for OTA
 struct system_status {
@@ -22,4 +24,4 @@ struct system_status {
     } dhcpc_result;
 };
 
-#endif
+#endif // __OTA_H__
