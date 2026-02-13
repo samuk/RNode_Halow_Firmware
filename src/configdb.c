@@ -5,8 +5,31 @@
 #include "osal/mutex.h"
 #include <string.h>
 
+//#define CONFIGDB_DEBUG
+
+#ifdef CONFIGDB_DEBUG
+#define cdb_debug(fmt, ...)  os_printf("[CDB] " fmt "\r\n", ##__VA_ARGS__)
+#else
+#define cdb_debug(fmt, ...)  do { } while (0)
+#endif
+
 static struct fdb_kvdb g_cfg_db;
 static struct os_mutex g_cfg_db_access_mutex;
+
+#ifdef CONFIGDB_DEBUG
+static inline void configdb_debug_i32( const char *tag,
+                                      const char *key,
+                                      int32_t v,
+                                      int32_t rc ){
+    cdb_debug("%s key=%s v=%ld rc=%ld",
+              tag ? tag : "CDB",
+              key ? key : "(null)",
+              (long)v,
+              (long)rc);
+}
+#else
+#define configdb_debug_i32(tag, key, v, rc) do { } while (0)
+#endif
 
 static int16_t clamp_i16(int32_t v){
     if (v < INT16_MIN) {
@@ -76,6 +99,7 @@ int32_t configdb_set_i32(const char* key, int32_t* paramp){
 
     int32_t res = (int32_t)fdb_kv_set_blob(dbp, key, &blob);
     configdb_release();
+    configdb_debug_i32("SET_I32", key, *paramp, res);
     if(res != 0){
         return -3;
     }
@@ -95,8 +119,10 @@ int32_t configdb_get_i32(const char* key, int32_t* paramp){
     size_t rd = fdb_kv_get_blob(dbp, key, &blob);
     configdb_release();
     if(rd != sizeof(param)){
+        configdb_debug_i32("GET_I32", key, param, -2);
         return -2;
     }
+    configdb_debug_i32("GET_I32", key, param, 0);
     *paramp = param;
     return 0;
 }

@@ -6,7 +6,7 @@
 #include "lwip/tcpip.h"
 #include "sys_config.h"
 
-#define NET_IP_DEBUG
+//#define NET_IP_DEBUG
 
 #ifdef NET_IP_DEBUG
 #define nip_debug(fmt, ...)  os_printf("[NET_IP] " fmt "\r\n", ##__VA_ARGS__)

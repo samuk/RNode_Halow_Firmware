@@ -13,6 +13,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "osal/task.h"
+#include "sys_config.h"
 
 #include "lib/net/mongoose/mongoose.h"
 
@@ -32,7 +33,7 @@ typedef struct{
     bool       open;
 } mg_lfs_fd_t;
 
-static struct os_work cfgp_work;
+static struct os_task g_cfgp_task;
 static struct mg_mgr mgr;
 
 static int mg_lfs_st( const char *path, size_t *size, time_t *mtime ){
@@ -166,19 +167,35 @@ struct mg_fs mg_fs_littlefs = {
     .mkd = mg_lfs_mkd,
 };
 
-static int32 cfgp_loop(struct os_work *work) {
-    //mg_mgr_poll(&mgr, 0); // I dont know why poll time work wrong
-    mongoose_poll();
-    os_run_work_delay(&cfgp_work, 5);
-    return 0;
+static void cfgp_task( void *arg ){
+    (void)arg;
+    for (;;) {
+        mongoose_poll();
+        os_sleep_ms(5);
+    }
 }
 
 int32_t config_page_init( void ){
-    lfs_mkdir(&g_lfs, CFGP_WWW_DIR);
+    int32_t ret;
+
+    ret = lfs_mkdir(&g_lfs, CFGP_WWW_DIR);
+    cfgp_debug("lfs_mkdir('%s') -> %d", CFGP_WWW_DIR, (int)ret);
+
+    ret = os_task_init((const uint8 *)"cfgp", &g_cfgp_task, cfgp_task, NULL);
+    cfgp_debug("os_task_init -> %d", (int)ret);
+    if (ret != 0) {
+        return ret;
+    }
+
+    ret = os_task_set_stacksize(&g_cfgp_task, CFGP_TASK_STACK);
+    cfgp_debug("os_task_set_stacksize -> %d", (int)ret);
+
+    ret = os_task_set_priority(&g_cfgp_task, CFGP_TASK_PRIO);
+    cfgp_debug("os_task_set_priority -> %d", (int)ret);
+    
     mongoose_init();
-    //mg_mgr_init(&mgr);
-    //mg_http_listen(&mgr, "http://0.0.0.0:80", ev_handler, NULL);
-    OS_WORK_INIT(&cfgp_work, cfgp_loop, 0);
-    os_run_work_delay(&cfgp_work, 1000);
-    return 0;
+
+    ret = os_task_run(&g_cfgp_task);
+    cfgp_debug("os_task_run -> %d", (int)ret);
+    return ret;
 }

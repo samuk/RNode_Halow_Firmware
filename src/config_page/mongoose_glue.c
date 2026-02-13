@@ -7,7 +7,9 @@
 #include "mongoose_glue.h"
 #include "halow.h"
 #include "net_ip.h"
+#include "tcp_server.h"
 #include "configdb.h"
+#include "utils.h"
 
 void glue_get_api_halow_cfg(struct api_halow_cfg *data) {
     halow_config_t halow_cfg;
@@ -77,71 +79,119 @@ void glue_set_api_net_cfg(struct api_net_cfg *data){
     net_ip_config_save(&cfg);
 }
 
+void glue_get_api_tcp_server_cfg(struct api_tcp_server_cfg *data) {
+    ip4_addr_t client_addr;
+    uint16_t client_port;
+    tcp_server_config_t cfg;
+
+    if (data == NULL) {
+        return;
+    }
+
+    tcp_server_config_load(&cfg);
+
+    memset(data, 0, sizeof(*data));
+    data->enable = cfg.enabled;
+    data->port   = (int)cfg.port;
+
+    utils_ip_mask_to_cidr(data->whitelist, sizeof(data->whitelist), &cfg.whitelist_ip, &cfg.whitelist_mask);
+    tcp_server_get_client_info(&client_addr, &client_port);
+    if (tcp_server_get_client_info(&client_addr, &client_port)) {
+        char ipbuf[16];
+        ip4addr_ntoa_r(&client_addr, ipbuf, sizeof(ipbuf));
+        snprintf(data->connected, sizeof(data->connected), "%s:%u", ipbuf, (unsigned)client_port);
+    } else {
+        snprintf(data->connected, sizeof(data->connected), "no connection");
+    }
+}
+
+void glue_set_api_tcp_server_cfg(struct api_tcp_server_cfg *data) {
+    tcp_server_config_t cfg;
+    ip4_addr_t ip;
+    ip4_addr_t mask;
+
+    if (data == NULL) {
+        return;
+    }
+
+    tcp_server_config_load(&cfg);
+
+    cfg.enabled = data->enable;
+
+    if ((data->port >= 1) && (data->port <= 65535)) {
+        cfg.port = (uint16_t)data->port;
+    }
+
+    if (utils_cidr_to_ip(data->whitelist, &ip) &&
+        utils_cidr_to_mask(data->whitelist, &mask)) {
+
+        cfg.whitelist_ip   = ip;
+        cfg.whitelist_mask = mask;
+    } else {
+        ip4_addr_set_u32(&cfg.whitelist_ip,   PP_HTONL(0u));
+        ip4_addr_set_u32(&cfg.whitelist_mask, PP_HTONL(0u));
+    }
+
+    tcp_server_config_apply(&cfg);
+    tcp_server_config_save(&cfg);
+}
+
 void *glue_ota_begin_firmware_update(char *file_name, size_t total_size) {
-  bool ok = mg_ota_begin(total_size);
-  MG_DEBUG(("%s size %lu, ok: %d", file_name, total_size, ok));
-  return ok ? (void *) 1 : NULL;
+    bool ok = mg_ota_begin(total_size);
+    MG_DEBUG(("%s size %lu, ok: %d", file_name, total_size, ok));
+    return ok ? (void *) 1 : NULL;
 }
 
 bool glue_ota_end_firmware_update(void *context) {
-  mg_timer_add(&g_mgr, 500, 0, (void (*)(void *)) (void *) mg_ota_end, context);
-  return true;
+    mg_timer_add(&g_mgr, 500, 0, (void (*)(void *)) (void *) mg_ota_end, context);
+    return true;
 }
 
 bool glue_ota_write_firmware_update(void *context, void *buf, size_t len) {
-  MG_DEBUG(("ctx: %p %p/%lu", context, buf, len));
-  return mg_ota_write(buf, len);
+    MG_DEBUG(("ctx: %p %p/%lu", context, buf, len));
+    return mg_ota_write(buf, len);
 }
 
 static struct api_lbt_cfg s_api_lbt_cfg = {false, 100};
 void glue_get_api_lbt_cfg(struct api_lbt_cfg *data) {
-  *data = s_api_lbt_cfg;  // Sync with your device
+    *data = s_api_lbt_cfg;  // Sync with your device
 }
 
 void glue_set_api_lbt_cfg(struct api_lbt_cfg *data) {
-  s_api_lbt_cfg = *data; // Sync with your device
+    s_api_lbt_cfg = *data; // Sync with your device
 }
 
 static struct api_dev_stat s_api_dev_stat = {"0s"};
 void glue_get_api_dev_stat(struct api_dev_stat *data) {
-  *data = s_api_dev_stat;  // Sync with your device
+    *data = s_api_dev_stat;  // Sync with your device
 }
 
 void glue_set_api_dev_stat(struct api_dev_stat *data) {
-  s_api_dev_stat = *data; // Sync with your device
+    s_api_dev_stat = *data; // Sync with your device
 }
 
 static struct api_radio_stat s_api_radio_stat = {"0.0%", "0 dBm", "0.0%", "0.0 kbps", "0.0 kbps", 0, 0, 0, 0};
 void glue_get_api_radio_stat(struct api_radio_stat *data) {
-  *data = s_api_radio_stat;  // Sync with your device
+    *data = s_api_radio_stat;  // Sync with your device
 }
 
 void glue_set_api_radio_stat(struct api_radio_stat *data) {
-  s_api_radio_stat = *data; // Sync with your device
-}
-
-static struct api_tcp_server_cfg s_api_tcp_server_cfg = {"0.0.0.0/0", "no connection", true, 8001};
-void glue_get_api_tcp_server_cfg(struct api_tcp_server_cfg *data) {
-  *data = s_api_tcp_server_cfg;  // Sync with your device
-}
-
-void glue_set_api_tcp_server_cfg(struct api_tcp_server_cfg *data) {
-  s_api_tcp_server_cfg = *data; // Sync with your device
+    s_api_radio_stat = *data; // Sync with your device
 }
 
 void *glue_ota_begin_api_firmware_update(char *file_name, size_t total_size) {
-  bool ok = mg_ota_begin(total_size);
-  MG_DEBUG(("%s size %lu, ok: %d", file_name, total_size, ok));
-  return ok ? (void *) 1 : NULL;
+    bool ok = mg_ota_begin(total_size);
+    MG_DEBUG(("%s size %lu, ok: %d", file_name, total_size, ok));
+    return ok ? (void *) 1 : NULL;
 }
 
 bool glue_ota_end_api_firmware_update(void *context) {
-  mg_timer_add(&g_mgr, 500, 0, (void (*)(void *)) (void *) mg_ota_end, context);
-  return true;
+    mg_timer_add(&g_mgr, 500, 0, (void (*)(void *)) (void *) mg_ota_end, context);
+    return true;
 }
 
 bool glue_ota_write_api_firmware_update(void *context, void *buf, size_t len) {
-  MG_DEBUG(("ctx: %p %p/%lu", context, buf, len));
-  return mg_ota_write(buf, len);
+    MG_DEBUG(("ctx: %p %p/%lu", context, buf, len));
+    return mg_ota_write(buf, len);
 }
 

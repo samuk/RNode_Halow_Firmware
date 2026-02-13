@@ -6,7 +6,11 @@
 #define IP_SOF_BROADCAST       1
 #define LWIP_RAW               1
 #define LWIP_NETIF_HOSTNAME    1
-#define TCPIP_THREAD_STACKSIZE 2048
+#define TCPIP_MBOX_SIZE              32
+#define DEFAULT_TCP_RECVMBOX_SIZE    32
+#define DEFAULT_ACCEPTMBOX_SIZE      8
+#define MEMP_NUM_TCP_PCB         16
+#define MEMP_NUM_TCP_PCB_LISTEN  4   
 
 // #define TCP_MSS                 (HALOW_MTU)              // Smaller packets -> less latency
 
@@ -20,12 +24,12 @@
 // #define SYS_CACHE_ENABLE                1
 
 #ifndef TDMA_BUFF_SIZE
-#define TDMA_BUFF_SIZE (100 * 1024)
+#define TDMA_BUFF_SIZE (20 * 1024)
 #endif
 
-#define SYS_HEAP_SIZE     (60 * 1024)
+#define SYS_HEAP_SIZE     (100 * 1024)
 
-#define WIFI_RX_BUFF_SIZE (80 * 1024) //(17*1024)
+#define WIFI_RX_BUFF_SIZE (20 * 1024) //(17*1024)
 
 #define SRAM_POOL_START   (srampool_start)
 #define SRAM_POOL_SIZE    (srampool_end - srampool_start)
@@ -35,7 +39,7 @@
 #define SKB_POOL_ADDR     (WIFI_RX_BUFF_ADDR + WIFI_RX_BUFF_SIZE)
 #define SKB_POOL_SIZE     (SRAM_POOL_START + SRAM_POOL_SIZE - SKB_POOL_ADDR)
 
-#define DEFAULT_SYS_CLK   144000000UL // options: 32M/48M/72M/144M, and 16*N from 64M to 128M
+#define DEFAULT_SYS_CLK   192000000UL // options: 32M/48M/72M/144M, and 16*N from 64M to 128M
 
 #define GMAC_ENABLE       1
 
@@ -66,6 +70,16 @@
 
 #define TCP_SERVER_PORT               (8001)
 #define TCP_SERVER_MTU                (TCP_MSS)
+
+#define TCP_SERVER_CONFIG_ENABLED_DEF               (true)
+#define TCP_SERVER_CONFIG_PORT_DEF                  (8001)
+#define TCP_SERVER_CONFIG_WHITELIST_IP_DEF          PP_HTONL(LWIP_MAKEU32(0, 0, 0, 0))
+#define TCP_SERVER_CONFIG_WHITELIST_MASK_DEF        PP_HTONL(LWIP_MAKEU32(0, 0, 0, 0))
+
+
+
+#define CFGP_TASK_PRIO    0
+#define CFGP_TASK_STACK   (20*1024)
 
 // #define ANT_CTRL_PIN PB_1 // 网桥用PB1来做双天线选择
 
