@@ -15,6 +15,7 @@
 #include "net_ip.h"
 #include "tcp_server.h"
 #include "utils.h"
+#include "statistics.h"
 
 /* -------------------------------------------------------------------------- */
 /* Change version                                                             */
@@ -419,12 +420,57 @@ int32_t web_api_dev_stat_get( const cJSON *in, cJSON *out ){
 }
 
 int32_t web_api_radio_stat_get( const cJSON *in, cJSON *out ){
+    statistics_radio_t st;
+    double v;
+    char buf[32];
+
     (void)in;
 
     if (out == NULL) {
         return WEB_API_RC_BAD_REQUEST;
     }
 
-    (void)cJSON_AddStringToObject(out, "todo", "radio_stat not implemented");
+    st = statistics_radio_get();
+
+    /* -------- RX bytes -------- */
+    v = (double)st.rx_bytes / 1024.0;   /* KiB */
+    if (v < 1024.0) {
+        snprintf(buf, sizeof(buf), "%.2f KiB", v);
+    } else if (v < 1024.0 * 1024.0) {
+        snprintf(buf, sizeof(buf), "%.2f MiB", v / 1024.0);
+    } else {
+        snprintf(buf, sizeof(buf), "%.2f GiB", v / (1024.0 * 1024.0));
+    }
+    (void)cJSON_AddStringToObject(out, "rx_bytes", buf);
+
+    /* -------- TX bytes -------- */
+    v = (double)st.tx_bytes / 1024.0;   /* KiB */
+    if (v < 1024.0) {
+        snprintf(buf, sizeof(buf), "%.2f KiB", v);
+    } else if (v < 1024.0 * 1024.0) {
+        snprintf(buf, sizeof(buf), "%.2f MiB", v / 1024.0);
+    } else {
+        snprintf(buf, sizeof(buf), "%.2f GiB", v / (1024.0 * 1024.0));
+    }
+    (void)cJSON_AddStringToObject(out, "tx_bytes", buf);
+
+    /* -------- packets -------- */
+    (void)cJSON_AddNumberToObject(out, "rx_packets", (double)st.rx_packets);
+    (void)cJSON_AddNumberToObject(out, "tx_packets", (double)st.tx_packets);
+
+    /* -------- speed (kbit/s) -------- */
+    v = (double)st.rx_bitps / 1000.0;
+    snprintf(buf, sizeof(buf), "%.2f kbit/s", v);
+    (void)cJSON_AddStringToObject(out, "rx_speed", buf);
+
+    v = (double)st.tx_bitps / 1000.0;
+    snprintf(buf, sizeof(buf), "%.2f kbit/s", v);
+    (void)cJSON_AddStringToObject(out, "tx_speed", buf);
+
+    /* -------- placeholders -------- */
+    (void)cJSON_AddNumberToObject(out, "airtime_1h", 42);
+    (void)cJSON_AddNumberToObject(out, "ch_util",    42);
+    (void)cJSON_AddNumberToObject(out, "bg_pwr_dbm", 42);
+
     return WEB_API_RC_OK;
 }

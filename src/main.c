@@ -30,8 +30,10 @@
 #include "configdb.h"
 #include "tftp_server.h"
 #include "config_page/config_page.h"
+#include "config_page/config_api_calls.h"
 #include "net_ip.h"
 #include "ota.h"
+#include "statistics.h"
 #ifdef MULTI_WAKEUP
 #include "lib/common/sleep_api.h"
 #include "hal/gpio.h"
@@ -59,6 +61,7 @@ static void halow_rx_handler(struct hgic_rx_info *info,
         return;
     }
     //os_printf("RX: %db\n", len);
+    statistics_radio_register_rx_package(len);
     tcp_server_send(data, len);
 }
 
@@ -133,7 +136,12 @@ int32_t tcp_to_halow_send(const uint8_t* data, uint32_t len){
     if(len == 0){
         return -200;
     }
-    return halow_tx(data, len);
+    int32_t res = halow_tx(data, len);
+    if(res != 0){
+        return res;
+    }
+    statistics_radio_register_tx_package(len);  
+    return 0;
 }
 
 void assert_printf(char *msg, int line, char *file){
@@ -141,6 +149,31 @@ void assert_printf(char *msg, int line, char *file){
     for (;;) {}
 }
 
+// Shitty solution for web page auto update
+static void heartbeat_task_fn( void *arg ){
+    (void)arg;
+
+    while (1) {
+        os_sleep_ms(1000);
+        web_api_notify_change();
+    }
+}
+
+static void heartbeat_task_start( void ){
+    static struct os_task ui_task;
+    int32_t ret;
+    ret = os_task_init((const uint8 *)"ui_hb",
+                       &ui_task,
+                       heartbeat_task_fn,
+                       0);
+    if (ret != 0) {
+        return;
+    }
+
+    (void)os_task_set_stacksize(&ui_task, 1024);
+    (void)os_task_set_priority(&ui_task, 5);
+    (void)os_task_run(&ui_task);
+}
 
 static void boot_counter_update(void){
     int32_t pwr_on_cnt = 0;
@@ -171,6 +204,7 @@ __init int main(void) {
     tftp_server_init();
     net_ip_init();
     statistics_init();
+    heartbeat_task_start();
     tcp_server_init(tcp_to_halow_send);
     OS_WORK_INIT(&main_wk, sys_main_loop,0);
     os_run_work_delay(&main_wk, 1000);
