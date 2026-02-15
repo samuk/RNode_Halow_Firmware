@@ -146,7 +146,9 @@ int32_t web_api_halow_cfg_get( const cJSON *in, cJSON *out ){
 
     halow_config_load(&cfg);
 
-    (void)cJSON_AddNumberToObject(out, "bandwidth",    (double)cfg.bandwidth);
+    char bndw[16];
+    (void)snprintf(bndw, sizeof(bndw), "%d MHz", (int)cfg.bandwidth);
+    (void)cJSON_AddStringToObject(out, "bandwidth",    bndw);
     (void)cJSON_AddNumberToObject(out, "central_freq", ((double)cfg.central_freq) / 10.0);
     (void)cJSON_AddBoolToObject(out,   "super_power",  (cfg.rf_super_power != 0) ? 1 : 0);
     (void)cJSON_AddNumberToObject(out, "power_dbm",    (double)cfg.rf_power);
@@ -169,13 +171,21 @@ int32_t web_api_halow_cfg_post( const cJSON *in, cJSON *out ){
 
     halow_config_load(&cfg);
 
-    if (json_get_int(in, "bandwidth", &i)) {
-        if (i > 0 && i < 64) {
-            cfg.bandwidth = (int8_t)i;
+    const cJSON *j;
+
+    j = cJSON_GetObjectItemCaseSensitive(in, "bandwidth");
+    if (j != NULL && cJSON_IsString(j) && j->valuestring != NULL) {
+        const char *s = j->valuestring;          /* "4 MHz" */
+        int bw = atoi(s);                        /* 4 */
+
+        if (bw > 0 && bw < 64) {
+            cfg.bandwidth = (int8_t)bw;
         }
+
+        os_printf("bndw(json) = %s -> %d\r\n", s, bw);
     }
     
-    const cJSON *j = cJSON_GetObjectItemCaseSensitive(in, "mcs_index");
+    j = cJSON_GetObjectItemCaseSensitive(in, "mcs_index");
     if (j != NULL && cJSON_IsString(j) && j->valuestring != NULL) {
         const char *s = j->valuestring;
         if (s[0] == 'M' && s[1] == 'C' && s[2] == 'S') {
