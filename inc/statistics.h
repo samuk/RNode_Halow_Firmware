@@ -17,6 +17,7 @@ typedef struct{
 void statistics_uptime_get(char* return_str, uint32_t max_len);
 void statistics_radio_register_rx_package(uint32_t len);
 void statistics_radio_register_tx_package(uint32_t len);
+void statistics_radio_reset(void);
 statistics_radio_t statistics_radio_get(void);
 int32_t statistics_init(void);
 

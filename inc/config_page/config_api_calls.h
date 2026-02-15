@@ -24,5 +24,6 @@ int32_t web_api_lbt_cfg_post( const cJSON *in, cJSON *out );
 
 int32_t web_api_dev_stat_get( const cJSON *in, cJSON *out );
 int32_t web_api_radio_stat_get( const cJSON *in, cJSON *out );
+int32_t web_api_radio_stat_post( const cJSON *in, cJSON *out );
 
 #endif // __CONFIG_API_CALLS_H__

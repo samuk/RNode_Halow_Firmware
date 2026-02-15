@@ -7,6 +7,8 @@
 #include <stdio.h>
 
 #include "cJSON.h"
+#include "lwip/netif.h"
+#include "lwip/ip4_addr.h"
 
 #include "config_page/config_api_calls.h"
 #include "config_page/config_api_dispatch.h"
@@ -23,6 +25,7 @@
 /* -------------------------------------------------------------------------- */
 
 static volatile uint32_t s_change_version = 0;
+extern struct netif *netif_default;
 
 void web_api_notify_change( void ){
     s_change_version++;
@@ -473,7 +476,9 @@ int32_t web_api_lbt_cfg_post( const cJSON *in, cJSON *out ){
 /* -------------------------------------------------------------------------- */
 
 int32_t web_api_dev_stat_get( const cJSON *in, cJSON *out ){
-    char uptime[32];
+    char s[64];
+    const char *hostname = "";
+    struct netif *nif;
 
     (void)in;
 
@@ -481,8 +486,38 @@ int32_t web_api_dev_stat_get( const cJSON *in, cJSON *out ){
         return WEB_API_RC_BAD_REQUEST;
     }
 
-    statistics_uptime_get(uptime, sizeof(uptime));
-    (void)cJSON_AddStringToObject(out, "uptime", uptime);
+    statistics_uptime_get(s, sizeof(s));
+    (void)cJSON_AddStringToObject(out, "uptime", s);
+
+    nif = netif_default;
+    if (nif != NULL) {
+        if (nif->hostname != NULL) {
+            hostname = nif->hostname;
+        }
+        ip4addr_ntoa_r(netif_ip4_addr(nif), s, sizeof(s));
+    } else {
+        s[0] = '\0';
+    }
+
+    (void)cJSON_AddStringToObject(out, "hostname", hostname);
+    (void)cJSON_AddStringToObject(out, "ip", s);
+    (void)cJSON_AddStringToObject(out, "ver", FW_FULL_VERSION);
+
+    if (nif != NULL) {
+        snprintf(s, sizeof(s),
+                 "%02X:%02X:%02X:%02X:%02X:%02X",
+                 nif->hwaddr[0],
+                 nif->hwaddr[1],
+                 nif->hwaddr[2],
+                 nif->hwaddr[3],
+                 nif->hwaddr[4],
+                 nif->hwaddr[5]);
+    } else {
+        s[0] = '\0';
+    }
+
+    (void)cJSON_AddStringToObject(out, "mac", s);
+
     return WEB_API_RC_OK;
 }
 
@@ -547,4 +582,10 @@ int32_t web_api_radio_stat_get( const cJSON *in, cJSON *out ){
     (void)cJSON_AddStringToObject(out, "bg_pwr_now_dbm", buf);
 
     return WEB_API_RC_OK;
+}
+
+int32_t web_api_radio_stat_post( const cJSON *in, cJSON *out ){
+    statistics_radio_reset();
+    web_api_notify_change();
+    return web_api_lbt_cfg_get(NULL, out);
 }

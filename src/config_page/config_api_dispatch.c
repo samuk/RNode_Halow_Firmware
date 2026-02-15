@@ -77,7 +77,7 @@ static const web_api_route_t s_api_routes[] = {
     { "api_tcp_server_cfg",     web_api_tcp_server_cfg_get,  web_api_tcp_server_cfg_post },
     { "api_lbt_cfg",            web_api_lbt_cfg_get,         web_api_lbt_cfg_post },
     { "api_dev_stat",           web_api_dev_stat_get,        NULL },
-    { "api_radio_stat",         web_api_radio_stat_get,      NULL },
+    { "api_radio_stat",         web_api_radio_stat_get,      web_api_radio_stat_post },
 };
 
 static const web_api_route_t *api_find_route( const char *endpoint ){

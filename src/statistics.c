@@ -31,7 +31,10 @@ statistics_radio_t statistics_radio_get(void){
 }
 
 void statistics_radio_reset(void){
-    memset(&g_stat_radio, 0, sizeof(statistics_radio_t));
+    g_stat_radio.rx_bytes = 0;
+    g_stat_radio.tx_bytes = 0;
+    g_stat_radio.rx_packets = 0;
+    g_stat_radio.tx_packets = 0;
 }
 
 void statistics_uptime_get(char* return_str, uint32_t max_len){

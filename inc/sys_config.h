@@ -2,6 +2,8 @@
 #define __SYS_CONFIG_H__
 
 #define PROJECT_TYPE           PRO_TYPE_WNB
+#define FW_VERSION              "0.5.0"
+#define FW_FULL_VERSION         FW_VERSION " (" __DATE__ " " __TIME__ ")"
 
 #define IP_SOF_BROADCAST       1
 #define LWIP_RAW               1
@@ -30,12 +32,12 @@
 #define SYS_FACTORY_PARAM_SIZE 2048
 
 #ifndef TDMA_BUFF_SIZE
-#define TDMA_BUFF_SIZE (20 * 1024)
+#define TDMA_BUFF_SIZE (40 * 1024)
 #endif
 
 #define SYS_HEAP_SIZE     (100 * 1024)
 
-#define WIFI_RX_BUFF_SIZE (20 * 1024) //(17*1024)
+#define WIFI_RX_BUFF_SIZE (40 * 1024) //(17*1024)
 
 #define SRAM_POOL_START   (srampool_start)
 #define SRAM_POOL_SIZE    (srampool_end - srampool_start)
