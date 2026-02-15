@@ -64,6 +64,13 @@
 #define HALOW_DBG_LEVEL         0
 #define TX_BUFFER_SIZE          (4*1024)
 
+//#define HALOW_DEBUG
+#ifdef HALOW_DEBUG
+#define halow_debug(fmt, ...)  os_printf("[HALW] " fmt "\r\n", ##__VA_ARGS__)
+#else
+#define halow_debug(fmt, ...)  do { } while (0)
+#endif
+
 /* ===== internal state ===== */
 
 static struct lmac_ops *g_ops = NULL;
@@ -88,13 +95,17 @@ static int32_t halow_lmac_rx(struct lmac_ops *ops,
                              int32_t len) {
     (void)ops;
 
+    halow_debug("rx: len=%ld", (long)len);
+
     if (!data || len < (int32_t)sizeof(struct ieee80211_hdr)) {
+        halow_debug("rx: drop (invalid data or too short)");
         return -1;
     }
 
     struct ieee80211_hdr *hdr = (struct ieee80211_hdr *)data;
 
     if ((hdr->frame_control & 0x000C) != WLAN_FTYPE_DATA) {
+        halow_debug("rx: drop (not data frame)");
         return -1;
     }
 
@@ -102,10 +113,12 @@ static int32_t halow_lmac_rx(struct lmac_ops *ops,
     int32_t payload_len    = len - (int32_t)sizeof(*hdr);
 
     if (payload_len <= 0 || !g_rx_cb) {
+        halow_debug("rx: no payload or cb=NULL");
         return 0;
     }
 
     g_rx_cb(info, payload, payload_len);
+
     return 0;
 }
 
@@ -317,7 +330,6 @@ bool halow_init(uint32_t rxbuf, uint32_t rxbuf_size,
     halow_cfg_sanitize(&config);
     halow_config_save(&config); // Incorrect values should be removed from DB
     halow_config_apply(&config);
-    halow_lbt_init();
     return true;
 }
 

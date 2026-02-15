@@ -132,7 +132,9 @@ float halow_lbt_ch_util_get(void){
     int abs_thr;
 
     busy = 0;
-
+    if(g_lbt_ctx_mutex.hdl == NULL){
+        return 0.0f;
+    }
     (void)os_mutex_lock(&g_lbt_ctx_mutex, -1);
 
     ctx = g_lbt_ctx;
@@ -167,10 +169,16 @@ float halow_lbt_ch_util_get(void){
 
 
 float halow_lbt_airtime_get(void){
+    if(g_lbt_ctx_mutex.hdl == NULL){
+        return 0.0f;
+    }
     return 0.0f;
 }
 
 int8_t halow_lbt_noise_dbm_now( int64_t sample_time_us ){
+    if(g_lbt_ctx_mutex.hdl == NULL){
+        return 0.0f;
+    }
     int64_t time_start = get_time_us();
     int64_t time_end = time_start + sample_time_us;
 
@@ -251,6 +259,9 @@ static int8_t noise_pxx_from_rb( halow_lbt_ctx_t *ctx ){
 }
 
 int8_t halow_lbt_background_short_dbm_get( void ){
+    if(g_lbt_ctx_mutex.hdl == NULL){
+        return 0.0f;
+    }
     halow_lbt_ctx_t *ctx;
     int8_t v = 0;
 
@@ -265,6 +276,9 @@ int8_t halow_lbt_background_short_dbm_get( void ){
 }
 
 int8_t halow_lbt_background_long_dbm_get( void ){
+    if(g_lbt_ctx_mutex.hdl == NULL){
+        return 0.0f;
+    }
     halow_lbt_ctx_t *ctx;
     int64_t now;
     uint64_t ts;

@@ -65,12 +65,7 @@ static void configdb_release(void){
 }
 
 int32_t configdb_init(void){
-    int32_t res = fal_init();
-    if (res <= 0) {
-        return -1;
-    }
-
-    res = (int32_t)fdb_kvdb_init(&g_cfg_db, "cfg", "fdb_kvdb1", NULL, 0);
+    int32_t res = (int32_t)fdb_kvdb_init(&g_cfg_db, "cfg", "fdb_kvdb1", NULL, 0);
     if (res != FDB_NO_ERR) {
         return -2;
     }

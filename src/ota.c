@@ -18,6 +18,112 @@
 #include "lib/fal/fal.h"
 #include "basic_include.h"
 
+
+#define OTA_DEBUG
+
+#ifdef OTA_DEBUG
+#define ota_dbg(fmt, ...) os_printf("[OTA] " fmt "\r\n", ##__VA_ARGS__)
+#else
+#define ota_dbg(fmt, ...) do { } while (0)
+#endif
+
+
+#define OTA_FAL_PART_NAME "ota_slot0"
+
+static const struct fal_partition *g_ota_part;
+static bool g_ota_erased;
+static uint32_t g_ota_total;
+
+static const struct fal_partition *ota_fal_part_get( void ){
+    if (g_ota_part != NULL) {
+        return g_ota_part;
+    }
+    g_ota_part = fal_partition_find(OTA_FAL_PART_NAME);
+    return g_ota_part;
+}
+
+static int32_t ota_fal_erase_if_needed( const struct fal_partition *p, uint32_t total, uint32_t off ){
+    if (p == NULL) {
+        return -10;
+    }
+
+    if (off == 0) {
+        g_ota_erased = false;
+        g_ota_total  = total;
+    }
+
+    if (g_ota_erased) {
+        if (g_ota_total != total) {
+            return -11;
+        }
+        return 0;
+    }
+
+    if (off != 0) {
+        return -12; // no begin (we expect first chunk at off=0)
+    }
+
+    if (total == 0) {
+        return -13;
+    }
+    if ((uint32_t)p->len < total) {
+        return -14;
+    }
+
+    int32_t er = fal_partition_erase(p, 0, p->len);
+    if (er < 0) {
+        return -15;
+    }
+
+    g_ota_erased = true;
+    return 0;
+}
+
+int32_t _libota_write_fw_ah( uint32_t tot_len, uint32_t off, const uint8_t *data, uint16_t len ){
+    const struct fal_partition *p;
+
+    if (data == NULL) {
+        return -1;
+    }
+    if (len == 0) {
+        return -2;
+    }
+
+    p = ota_fal_part_get();
+    if (p == NULL) {
+        return -3;
+    }
+
+    if (tot_len == 0) {
+        return -4;
+    }
+    if (off > tot_len) {
+        return -5;
+    }
+    if ((uint32_t)off + (uint32_t)len > tot_len) {
+        return -6;
+    }
+    if ((uint32_t)off + (uint32_t)len > (uint32_t)p->len) {
+        return -7;
+    }
+
+    int32_t er = ota_fal_erase_if_needed(p, tot_len, off);
+    if (er != 0) {
+        return er;
+    }
+
+    int32_t wr = fal_partition_write(p, off, data, len);
+    if (wr < 0) {
+        return -8;
+    }
+
+    if ((uint32_t)wr != (uint32_t)len) {
+        return -9;
+    }
+
+    return 0;
+}
+
 extern uint8 g_mac[6];
 extern int32_t __real_lwip_netif_hook_inputdata(struct netif* nif, uint8_t* data, uint32_t len);
 
@@ -61,7 +167,7 @@ static int ota_cmd_firmware_data(struct netif* nif, uint8_t* data, uint32_t len)
     //    return -1;
     //}
 
-    int32 r = libota_write_fw_ah(fw_total, fw_off, fw->data, fw_len);
+    int32 r = _libota_write_fw_ah(fw_total, fw_off, fw->data, fw_len);
     hgprintf("libota_write_fw_ah ret=%ld\r\n", (long)r);
     if (r != 0) {
         return -1;
@@ -177,6 +283,15 @@ int ota_reset_to_default( void ){
 
     if (fal_partition_erase(p, 0, p->len) < 0) {
         return -2;
+    }
+
+    p = fal_partition_find("littlefs");
+    if (p == NULL) {
+        return -3;
+    }
+
+    if (fal_partition_erase(p, 0, p->len) < 0) {
+        return -4;
     }
 
     return 0;

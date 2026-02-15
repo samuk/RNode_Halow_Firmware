@@ -189,18 +189,21 @@ __init int main(void) {
 
     gpio_set_dir(PA_7, GPIO_DIR_OUTPUT);
     gpio_set_val(PA_7, 0);
+    
+    fal_init();
+    //ota_reset_to_default();
     configdb_init();
     littlefs_init();
-    //ota_reset_to_default();
     boot_counter_update();
     sys_event_init(32);
     sys_event_take(0xffffffff, sys_event_hdl, 0);
 
     skbpool_init(SKB_POOL_ADDR, (uint32)SKB_POOL_SIZE, 90, 0);
     halow_init(WIFI_RX_BUFF_ADDR, WIFI_RX_BUFF_SIZE, TDMA_BUFF_ADDR, TDMA_BUFF_SIZE);
+    halow_lbt_init();
     halow_set_rx_cb(halow_rx_handler);
     sys_network_init();
-    config_page_init();
+    config_page_init(); 
     tftp_server_init();
     net_ip_init();
     statistics_init();

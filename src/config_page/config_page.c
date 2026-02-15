@@ -613,7 +613,7 @@ static void http_server_task( void *arg ){
 
 int32_t config_page_init( void ){
     int32_t ret;
-
+    lfs_mkdir(&g_lfs, WWW_DIR);
     ret = os_task_init((const uint8 *)"httpd", &g_http_task, http_server_task, 0);
     if (ret != 0) {
         return ret;
