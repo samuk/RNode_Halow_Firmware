@@ -1,5 +1,5 @@
 # dot files
-/.vscode/launch.json
+/.vscode
 /.settings
 /.eide/log
 /.eide.usr.ctx.json
@@ -15,5 +15,4 @@
 *.eide-template
 *.map
 __pycache__
-mongoose/www
-mongoose/_extract_tmp
+out
