@@ -22,6 +22,7 @@
 #include "lib/net/skmonitor/skmonitor.h"
 #include "lib/lmac/lmac_def.h"
 #include "halow.h"
+#include "halow_lbt.h"
 #include "tcp_server.h"
 #include "hal/spi_nor.h"
 #include <lib/fal/fal.h>
@@ -34,6 +35,7 @@
 #include "net_ip.h"
 #include "ota.h"
 #include "statistics.h"
+#include "indication.h"
 #ifdef MULTI_WAKEUP
 #include "lib/common/sleep_api.h"
 #include "hal/gpio.h"
@@ -46,9 +48,6 @@ static struct os_work main_wk;
 extern uint32_t srampool_start;
 extern uint32_t srampool_end;
 uint8 g_mac[6];
-
-//__attribute__((used))
-//struct system_status sys_status;
 
 //extern void lmac_transceive_statics(uint8 en);
 
@@ -93,21 +92,11 @@ __init static void sys_network_init(void) {
     }
 }
 
-static int32 sys_main_loop(struct os_work *work) {
-    static uint8_t  pa7_val  = 0;
-    static uint32_t seq      = 0;
-    char buf[32];
-
-    (void)work;
-
-    pa7_val = !pa7_val;
-    gpio_set_val(PA_7, pa7_val);
-
-    //int32_t len = os_snprintf(buf, sizeof(buf), "SEQ=%lu", (unsigned long)seq++);
-    //halow_tx((const uint8_t *)buf, len);
-    //int8_t  (int64_t sample_time_us);
-    //os_printf("%d\r\n", (int32_t)halow_lbt_noise_dbm_now(1000LL));
-    os_run_work_delay(&main_wk, 300);
+static int32 sys_blink_loop(struct os_work *work) {
+    static bool active = 0;
+    active = !active;
+    indication_led_main_set(active);
+    os_run_work_delay(&main_wk, active ? 20 : 4980);
     return 0;
 }
 
@@ -149,32 +138,6 @@ void assert_printf(char *msg, int line, char *file){
     for (;;) {}
 }
 
-static void heartbeat_task_fn( void *arg ){
-    (void)arg;
-
-    while (1) {
-        //bool ok = ota_wipe_unpack();
-        //os_printf("ota_unpack_run: %s", ok ? "OK" : "FAIL");
-        os_sleep_ms(20000);
-    }
-}
-
-static void heartbeat_task_start( void ){
-    static struct os_task ui_task;
-    int32_t ret;
-    ret = os_task_init((const uint8 *)"ui_hb",
-                       &ui_task,
-                       heartbeat_task_fn,
-                       0);
-    if (ret != 0) {
-        return;
-    }
-
-    (void)os_task_set_stacksize(&ui_task, 10*1024);
-    (void)os_task_set_priority(&ui_task, 40);
-    (void)os_task_run(&ui_task);
-}
-
 static void boot_counter_update(void){
     int32_t pwr_on_cnt = 0;
     configdb_get_i32("pwr_on_cnt", &pwr_on_cnt);
@@ -186,10 +149,8 @@ static void boot_counter_update(void){
 __init int main(void) {
     extern uint32 __sinit, __einit;
     mcu_watchdog_timeout(5);
-
-    gpio_set_dir(PA_7, GPIO_DIR_OUTPUT);
-    gpio_set_val(PA_7, 0);
     
+    indication_init();
     fal_init();
     //ota_reset_to_default();
     configdb_init();
@@ -207,9 +168,8 @@ __init int main(void) {
     tftp_server_init();
     net_ip_init();
     statistics_init();
-    heartbeat_task_start();
     tcp_server_init(tcp_to_halow_send);
-    OS_WORK_INIT(&main_wk, sys_main_loop,0);
+    OS_WORK_INIT(&main_wk, sys_blink_loop,0);
     os_run_work_delay(&main_wk, 1000);
     sysheap_collect_init(&sram_heap, (uint32)&__sinit, (uint32)&__einit); // delete init code from heap
     return 0;

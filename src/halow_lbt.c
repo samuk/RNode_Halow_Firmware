@@ -473,6 +473,7 @@ static void halow_lbt_ctx_free( halow_lbt_ctx_t *ctx ){
 }
 
 void halow_lbt_set_tx_as_active( void ){
+    indication_led_main_set(true);
     if (g_lbt_ctx_mutex.hdl == NULL) { 
         return; 
     }
@@ -493,6 +494,7 @@ void halow_lbt_set_tx_as_active( void ){
 }
 
 void halow_lbt_set_tx_as_deactive( void ){
+    indication_led_main_set(false);
     if (g_lbt_ctx_mutex.hdl == NULL) {
         return;
     }
