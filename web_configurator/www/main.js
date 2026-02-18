@@ -39,20 +39,8 @@
 
     function readLbtForm() {
         return {
-            en: document.getElementById('lbt_enable').checked,
-            sw: parseInt(document.getElementById('lbt_sw').value, 10),
-            lw: parseInt(document.getElementById('lbt_lw').value, 10),
-            lp: parseInt(document.getElementById('lbt_lp').value, 10),
-            roff: parseInt(document.getElementById('lbt_roff').value, 10),
-            abusy: parseInt(document.getElementById('lbt_abusy').value, 10),
-            txgr: parseInt(document.getElementById('lbt_txgr').value, 10),
-            txmax: parseInt(document.getElementById('lbt_txmax').value, 10),
-            bmin: parseInt(document.getElementById('lbt_bmin').value, 10),
-            bmax: parseInt(document.getElementById('lbt_bmax').value, 10),
             uen: document.getElementById('lbt_uen').checked,
-            umax: parseInt(document.getElementById('lbt_umax').value, 10),
-            uwin: parseInt(document.getElementById('lbt_uwin').value, 10),
-            uburst: parseInt(document.getElementById('lbt_uburst').value, 10)
+            umax: parseInt(document.getElementById('lbt_umax').value, 10)
         };
     }
 
@@ -102,7 +90,7 @@
     function setupDirtyTracking() {
         const map = [
             { group: 'halow', btn: 'save_halow', ids: ['halow_power_dbm','halow_central_freq','halow_mcs_index','halow_bandwidth','halow_super_power'] },
-            { group: 'lbt',   btn: 'save_lbt',   ids: ['lbt_enable','lbt_sw','lbt_lw','lbt_lp','lbt_roff','lbt_abusy','lbt_txgr','lbt_txmax','lbt_bmin','lbt_bmax','lbt_uen','lbt_umax','lbt_uwin','lbt_uburst'] },
+            { group: 'lbt',   btn: 'save_lbt',   ids: ['lbt_uen','lbt_umax'] },
             { group: 'net',   btn: 'save_net',   ids: ['net_dhcp','net_ip_address','net_gw_address','net_netmask'] },
             { group: 'tcp',   btn: 'save_tcp',   ids: ['tcp_enable','tcp_port','tcp_whitelist'] }
         ];
@@ -188,10 +176,6 @@
         document.getElementById('halow_mcs_index').addEventListener('change', updateBandwidthDisabled);
         document.getElementById('save_halow').addEventListener('click', saveHalow);
         // LBT
-        document.getElementById('lbt_enable').addEventListener('change', () => {
-            updateLbtDisabled();
-            updateLbtUtilDisabled();
-        });
         document.getElementById('lbt_uen').addEventListener('change', updateLbtUtilDisabled);
         document.getElementById('save_lbt').addEventListener('click', saveLbt);
         // Network
@@ -222,11 +206,8 @@
      * prevent user interaction.
      */
     function updateLbtDisabled() {
-        const enabled = document.getElementById('lbt_enable').checked;
-        const container = document.getElementById('lbt_fields');
-        container.querySelectorAll('input, select').forEach(el => {
-            el.disabled = !enabled;
-        });
+        // LBT parameters are not supported on current firmware.
+        // Keep only utilisation limit controls.
     }
 
     /**
@@ -236,13 +217,11 @@
      * disabled.
      */
     function updateLbtUtilDisabled() {
-        const lbtEnabled = document.getElementById('lbt_enable').checked;
         const utilEnabled = document.getElementById('lbt_uen').checked;
-        const disable = !(lbtEnabled && utilEnabled);
-        ['lbt_umax', 'lbt_uwin', 'lbt_uburst'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.disabled = disable;
-        });
+        const el = document.getElementById('lbt_umax');
+        if (el) {
+            el.disabled = !utilEnabled;
+        }
     }
 
     /**
@@ -372,23 +351,8 @@
 
 		// LBT settings
 		const lbt = pick(state?.lbt, state?.api_lbt_cfg, state?.lbt_cfg);
-		setCheckbox('lbt_enable', lbt.en);
-		setInput('lbt_sw', lbt.sw);
-		setInput('lbt_lw', lbt.lw);
-		setInput('lbt_lp', lbt.lp);
-		setInput('lbt_roff', lbt.roff);
-		setInput('lbt_abusy', lbt.abusy);
-		setInput('lbt_txgr', lbt.txgr);
-		setInput('lbt_txmax', lbt.txmax);
-		setInput('lbt_bmin', lbt.bmin);
-		setInput('lbt_bmax', lbt.bmax);
-
 		setCheckbox('lbt_uen', lbt.uen);
 		setInput('lbt_umax', lbt.umax);
-		setInput('lbt_uwin', lbt.uwin);
-		setInput('lbt_uburst', lbt.uburst);
-
-		updateLbtDisabled();
 		updateLbtUtilDisabled();
 
 		// Network settings
@@ -498,20 +462,8 @@
      */
     async function saveLbt() {
         const payload = {
-            en: document.getElementById('lbt_enable').checked,
-            sw: parseInt(document.getElementById('lbt_sw').value, 10),
-            lw: parseInt(document.getElementById('lbt_lw').value, 10),
-            lp: parseInt(document.getElementById('lbt_lp').value, 10),
-            roff: parseInt(document.getElementById('lbt_roff').value, 10),
-            abusy: parseInt(document.getElementById('lbt_abusy').value, 10),
-            txgr: parseInt(document.getElementById('lbt_txgr').value, 10),
-            txmax: parseInt(document.getElementById('lbt_txmax').value, 10),
-            bmin: parseInt(document.getElementById('lbt_bmin').value, 10),
-            bmax: parseInt(document.getElementById('lbt_bmax').value, 10),
             uen: document.getElementById('lbt_uen').checked,
-            umax: parseInt(document.getElementById('lbt_umax').value, 10),
-            uwin: parseInt(document.getElementById('lbt_uwin').value, 10),
-            uburst: parseInt(document.getElementById('lbt_uburst').value, 10)
+            umax: parseInt(document.getElementById('lbt_umax').value, 10)
         };
         try {
             await fetch('/api/lbt_cfg', {
