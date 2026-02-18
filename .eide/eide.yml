@@ -101,11 +101,20 @@ targets:
               disable: false
             - name: Compress bin
               abortAfterFailed: false
-              command: ${workspaceFolder}/pack/prepare_firmware.py ${OutDir}/${ProjectName}.bin
+              command: python ${workspaceFolder}/pack/prepare_firmware.py ${OutDir}/${ProjectName}.bin -o ${workspaceFolder}/out/fw.bin
+              disable: false
+            - name: Create OTA
+              abortAfterFailed: false
+              command: python ${workspaceFolder}/pack/build_OTA.py ${workspaceFolder}/out ${workspaceFolder}/out/fw.bin
               disable: false
           asm-compiler:
             ASM_FLAGS: -mcpu=ck803 -g -pipe -D__NO_BOARD_INIT -DTXW4002ACK803
-          beforeBuildTasks: []
+          beforeBuildTasks:
+            - name: mkdir out
+              abortAfterFailed: false
+              command: rm -rf "${workspaceFolder}/out" && mkdir "${workspaceFolder}/out"
+              disable: false
+              stopBuildAfterFailed: true
           c/cpp-compiler:
             CXX_FLAGS: -D_GLIBCXX_USE_C99_STDIO
             C_FLAGS: -mcpu=ck803 -Os -g -Wall -ffunction-sections -fdata-sections -Wno-comment -Wno-unused-function -Wno-unused-but-set-variable -mno-required-printf -pipe -D__NO_BOARD_INIT -DTXW4002ACK803 -DSKBPOOL_ENABLE -DMPOOL_ALLOC -DCONFIG_UMAC4
