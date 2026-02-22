@@ -31,15 +31,11 @@ extern struct spi_nor_flash flash0;
 static uint32_t spi_nor_size_from_jedec(uint32_t jedec_id){
     uint8_t cap = jedec_id & 0xFF;
 
-    switch (cap) {
-    case 0x15: return 2 * 1024 * 1024;   /* 16 Mbit  */
-    case 0x16: return 4 * 1024 * 1024;   /* 32 Mbit  */
-    case 0x17: return 8 * 1024 * 1024;   /* 64 Mbit  */
-    case 0x18: return 16 * 1024 * 1024;  /* 128 Mbit */
-    case 0x19: return 32 * 1024 * 1024;  /* 256 Mbit */
-    default:
+    if (cap < 0x10 || cap > 0x1F) {
         return 0;
     }
+
+    return (1UL << cap);
 }
 
 static int init(void){
